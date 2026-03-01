@@ -1,0 +1,29 @@
+{
+    "name": "스텝바이스텝",
+    "short_name": "스텝바이스텝",
+    "description": "라인댄스 회원을 위한 수업 일정, 안무 영상, 공지사항 앱",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0a0a0f",
+    "theme_color": "#0a0a0f",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": [
+        "entertainment",
+        "education",
+        "lifestyle"
+    ]
+}

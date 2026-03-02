@@ -5,6 +5,7 @@ import songs from '../data/songs';
 import { challenges } from '../data/challenges';
 
 export default function ProfilePage() {
+    const [userName, setUserName] = useState(() => localStorage.getItem('userName') || '회원');
     const [darkMode, setDarkMode] = useState(profile.settings.darkMode);
     const [notifications, setNotifications] = useState(profile.settings.notifications);
 
@@ -19,7 +20,7 @@ export default function ProfilePage() {
                 <div className="profile-avatar">
                     {profile.profileEmoji}
                 </div>
-                <h2 className="profile-name">{profile.name}</h2>
+                <h2 className="profile-name">{userName}</h2>
                 <p className="profile-nickname">@{profile.nickname}</p>
                 <div className="profile-level">
                     🎯 {profile.level} · Lv.{profile.levelNum}
@@ -133,6 +134,16 @@ export default function ProfilePage() {
                         className={`toggle ${notifications ? 'active' : ''}`}
                         onClick={() => setNotifications(!notifications)}
                     />
+                </div>
+                <div className="setting-item" onClick={() => {
+                    const name = prompt('이름을 변경해주세요', userName);
+                    if (name && name.trim()) {
+                        setUserName(name.trim());
+                        localStorage.setItem('userName', name.trim());
+                    }
+                }} style={{ cursor: 'pointer' }}>
+                    <span className="setting-label">✏️ 이름 변경</span>
+                    <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)' }}>{userName}</span>
                 </div>
                 <div className="setting-item">
                     <span className="setting-label">

@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import songs from '../data/songs';
 import announcements from '../data/announcements';
@@ -8,6 +9,20 @@ import communityPosts from '../data/community';
 const levelText = ['자유', '⭐', '⭐⭐', '⭐⭐⭐', '⭐⭐⭐⭐', '⭐⭐⭐⭐⭐'];
 
 export default function HomePage() {
+    const [userName, setUserName] = useState(() => localStorage.getItem('userName') || '');
+
+    useEffect(() => {
+        if (!userName) {
+            const name = prompt('안녕하세요! 이름을 입력해주세요 :)');
+            if (name && name.trim()) {
+                setUserName(name.trim());
+                localStorage.setItem('userName', name.trim());
+            } else {
+                setUserName('회원');
+                localStorage.setItem('userName', '회원');
+            }
+        }
+    }, []);
     const thisWeekSongs = songs.filter(s => s.isThisWeek);
     const latestAnnouncements = announcements.slice(0, 2);
     const activeChallenges = challenges.filter(c => !c.isCompleted).slice(0, 2);
@@ -20,7 +35,7 @@ export default function HomePage() {
         <div>
             {/* Greeting Card */}
             <div className="greeting-card">
-                <h2>{profile.name}님, 오늘도 신나게 춤춰요! 💃</h2>
+                <h2>{userName}님, 오늘도 신나게 춤춰요! 💃</h2>
                 <p>현재 레벨: {profile.level} · 연속 {profile.stats.streakDays}일 출석 중 🔥</p>
                 <div className="greeting-stats">
                     <div className="greeting-stat">
@@ -105,7 +120,17 @@ export default function HomePage() {
             {/* This Week's Songs */}
             <div className="section-title">
                 <h2>🎵 이번 주 수업곡</h2>
-                <Link to="/library" className="see-all">전체보기 →</Link>
+                <div style={{ display: 'flex', gap: 'var(--space-sm)', alignItems: 'center' }}>
+                    <Link to="/playlist" className="see-all" style={{
+                        background: 'var(--gradient-primary)',
+                        padding: '4px 12px',
+                        borderRadius: 'var(--radius-full)',
+                        color: 'white',
+                        fontSize: 'var(--font-size-xs)',
+                        fontWeight: 600
+                    }}>▶ 연속재생</Link>
+                    <Link to="/library" className="see-all">전체보기 →</Link>
+                </div>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)', marginBottom: 'var(--space-lg)' }}>

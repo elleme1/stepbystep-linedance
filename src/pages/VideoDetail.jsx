@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import songs from '../data/songs';
 import VideoPlayer from '../components/VideoPlayer';
@@ -8,6 +9,7 @@ export default function VideoDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
     const song = songs.find(s => s.id === Number(id));
+    const [showSteps, setShowSteps] = useState(false);
 
     if (!song) {
         return (
@@ -47,22 +49,43 @@ export default function VideoDetail() {
                 </div>
             </div>
 
-            {/* Step Sheet */}
+            {/* Step Sheet Toggle Button */}
             <div style={{ marginTop: 'var(--space-lg)' }}>
-                <div className="section-title">
-                    <h2>📋 스텝시트</h2>
-                </div>
-                <div className="step-sheet">
-                    {song.steps.map((step, idx) => (
-                        <div className="step-item" key={idx}>
-                            <div className="step-count">{step.count}</div>
-                            <div className="step-content">
-                                <h4>{step.move}</h4>
-                                <p>{step.desc}</p>
+                <button
+                    className="step-sheet-toggle"
+                    onClick={() => setShowSteps(!showSteps)}
+                >
+                    <span>📋 스텝시트</span>
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        style={{
+                            width: '20px',
+                            height: '20px',
+                            transition: 'transform 0.3s ease',
+                            transform: showSteps ? 'rotate(180deg)' : 'rotate(0deg)'
+                        }}
+                    >
+                        <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                </button>
+                {showSteps && (
+                    <div className="step-sheet">
+                        {song.steps.map((step, idx) => (
+                            <div className="step-item" key={idx}>
+                                <div className="step-count">{step.count}</div>
+                                <div className="step-content">
+                                    <h4>{step.move}</h4>
+                                    <p>{step.desc}</p>
+                                </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );

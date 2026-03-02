@@ -31,7 +31,18 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').catch((error) => {
+        navigator.serviceWorker.register('/sw.js').then((reg) => {
+          // 60초마다 업데이트 확인
+          setInterval(() => reg.update(), 60000);
+          reg.addEventListener('updatefound', () => {
+            const newWorker = reg.installing;
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'activated') {
+                window.location.reload();
+              }
+            });
+          });
+        }).catch((error) => {
           console.error('Service Worker 등록 실패:', error);
         });
       });

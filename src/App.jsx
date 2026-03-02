@@ -9,6 +9,7 @@ import ProfilePage from './pages/ProfilePage';
 import ChallengePage from './pages/ChallengePage';
 import CommunityPage from './pages/CommunityPage';
 import SearchPage from './pages/SearchPage';
+import PlaylistPage from './pages/PlaylistPage';
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="/challenge" element={<ChallengePage />} />
           <Route path="/community" element={<CommunityPage />} />
           <Route path="/search" element={<SearchPage />} />
+          <Route path="/playlist" element={<PlaylistPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

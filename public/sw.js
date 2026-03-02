@@ -1,40 +1,26 @@
-// 스텝바이스텝 Service Worker
-const CACHE_NAME = 'stepbystep-v1';
+// 스텝바이스텝 Service Worker - 자동 업데이트 지원
+const CACHE_NAME = 'stepbystep-v5';
 const OFFLINE_URL = '/';
 
-// 캐시할 핵심 리소스
-const PRECACHE_URLS = [
-    '/',
-    '/manifest.json'
-];
-
-// Install: 핵심 리소스 프리캐시
+// Install: 즉시 활성화
 self.addEventListener('install', (event) => {
-    event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => {
-            return cache.addAll(PRECACHE_URLS);
-        })
-    );
     self.skipWaiting();
 });
 
-// Activate: 이전 캐시 정리
+// Activate: 이전 캐시 모두 삭제 후 즉시 제어
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((cacheNames) => {
             return Promise.all(
-                cacheNames
-                    .filter((name) => name !== CACHE_NAME)
-                    .map((name) => caches.delete(name))
+                cacheNames.map((name) => caches.delete(name))
             );
-        })
+        }).then(() => self.clients.claim())
     );
-    self.clients.claim();
 });
 
-// Fetch: Network First 전략
+// Fetch: Network First 전략 (항상 최신 콘텐츠 우선)
 self.addEventListener('fetch', (event) => {
-    // YouTube API 등 외부 요청은 캐시하지 않음
+    // 외부 요청은 캐시하지 않음
     if (!event.request.url.startsWith(self.location.origin)) {
         return;
     }
@@ -42,7 +28,6 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
         fetch(event.request)
             .then((response) => {
-                // 성공하면 캐시에 저장
                 if (response.status === 200) {
                     const responseClone = response.clone();
                     caches.open(CACHE_NAME).then((cache) => {
@@ -52,12 +37,10 @@ self.addEventListener('fetch', (event) => {
                 return response;
             })
             .catch(() => {
-                // 네트워크 실패 시 캐시에서 제공
                 return caches.match(event.request).then((cachedResponse) => {
                     if (cachedResponse) {
                         return cachedResponse;
                     }
-                    // HTML 요청이면 오프라인 페이지로 폴백
                     if (event.request.mode === 'navigate') {
                         return caches.match(OFFLINE_URL);
                     }

@@ -1,6 +1,6 @@
 // 회원 프로필 데이터
 const profile = {
-    name: "홍길동",
+    name: "행촌",
     nickname: "댄싱퀸",
     level: "초급",
     levelNum: 2,

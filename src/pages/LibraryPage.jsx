@@ -70,10 +70,24 @@ export default function LibraryPage() {
                 ))}
             </div>
 
-            {/* Results Count */}
-            <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)', marginBottom: 'var(--space-sm)' }}>
-                {filteredSongs.length}곡
-            </p>
+            {/* Results Count + Playlist Button */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-sm)' }}>
+                <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)' }}>
+                    {filteredSongs.length}곡
+                </p>
+                <Link to="/playlist" style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    background: 'var(--gradient-primary)',
+                    padding: '5px 14px',
+                    borderRadius: 'var(--radius-full)',
+                    color: 'white',
+                    fontSize: 'var(--font-size-xs)',
+                    fontWeight: 600,
+                    textDecoration: 'none'
+                }}>▶ 전체 연속재생</Link>
+            </div>
 
             {/* Grid */}
             {filteredSongs.length === 0 ? (

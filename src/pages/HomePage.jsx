@@ -7,12 +7,11 @@ export default function HomePage() {
 
     // 💡 [데모 데이터] 나중에는 서버나 DB에서 '오늘 진도 나간 곡'을 자동으로 불러옵니다.
     const todayVideo = {
-        titleKor: '텍사스 타임',
-        titleEng: 'Texas Time',
+        titleKor: '와이',
+        titleEng: 'WHY',
         level: '초급',
-        tip: '3번째 턴(Turn) 도실 때 어지럽지 않게 시선 고정(스파팅) 주의하세요! 👀',
-        // 라인댄스 느낌의 고화질 임시 이미지입니다.
-        thumbnail: 'https://images.unsplash.com/photo-1547153760-18fc86324498?auto=format&fit=crop&q=80&w=800'
+        tip: '이번 주 신곡! 기본 스텝에 집중하시고, 방향 전환할 때 중심 잡기 연습해 보세요! 🎵',
+        thumbnail: 'https://images.unsplash.com/photo-1504609813442-a8924e83f76e?auto=format&fit=crop&q=80&w=800'
     };
 
     return (

@@ -25,21 +25,52 @@
 <body>
   <noscript>앱을 사용하려면 기기의 자바스크립트를 활성화해주세요.</noscript>
 
-  <div id="root" style="background-color: #0a0a0f; min-height: 100vh;"></div>
+  <div id="root"
+    style="background-color: #0a0a0f; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+    <style>
+      .initial-loader {
+        width: 48px;
+        height: 48px;
+        border: 4px solid rgba(255, 255, 255, 0.1);
+        border-top-color: #ff3366;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 16px;
+      }
+
+      @keyframes spin {
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+    <div class="initial-loader"></div>
+    <div style="color: #888; font-size: 15px; font-family: sans-serif;">앱을 준비하는 중입니다 💃</div>
+  </div>
 
   <script type="module" src="/src/main.jsx"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js').then((reg) => {
-          // 60초마다 업데이트 확인
-          setInterval(() => reg.update(), 60000);
+
+          // 배터리와 데이터 절약을 위해 업데이트 확인 주기를 1시간으로 완화
+          setInterval(() => reg.update(), 1000 * 60 * 60);
+
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
             newWorker.addEventListener('statechange', () => {
+
               if (newWorker.state === 'activated') {
-                window.location.reload();
+                if (navigator.serviceWorker.controller) {
+
+                  if (confirm('✨ 새로운 안무 영상이나 공지가 업데이트되었습니다!\n지금 새로고침하여 최신 버전을 확인하시겠습니까?\n(취소 시 다음 번 접속 때 자연스럽게 적용됩니다)')) {
+                    window.location.reload();
+                  }
+
+                }
               }
+
             });
           });
         }).catch((error) => {

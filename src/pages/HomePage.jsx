@@ -1,17 +1,20 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HomePage.css';
+import songs from '../data/songs';
 
 export default function HomePage() {
     const navigate = useNavigate();
 
-    // 💡 [데모 데이터] 나중에는 서버나 DB에서 '오늘 진도 나간 곡'을 자동으로 불러옵니다.
+    // songs.js에서 이번 주 수업곡(isThisWeek: true)을 자동으로 불러옵니다.
+    const thisWeekSong = songs.find(s => s.isThisWeek) || songs[0];
+    const levelLabels = { 1: '초급', 2: '중급', 3: '고급' };
     const todayVideo = {
-        titleKor: '와이',
-        titleEng: 'WHY',
-        level: '초급',
-        tip: '이번 주 신곡! 기본 스텝에 집중하시고, 방향 전환할 때 중심 잡기 연습해 보세요! 🎵',
-        thumbnail: 'https://images.unsplash.com/photo-1504609813442-a8924e83f76e?auto=format&fit=crop&q=80&w=800'
+        titleKor: thisWeekSong.title,
+        titleEng: `${thisWeekSong.artist} · ${thisWeekSong.genre}`,
+        level: levelLabels[thisWeekSong.level] || '초급',
+        tip: thisWeekSong.steps?.[0] ? `첫 구간(${thisWeekSong.steps[0].count}): ${thisWeekSong.steps[0].move} — ${thisWeekSong.steps[0].desc}` : '기본 스텝에 집중해 보세요!',
+        thumbnail: thisWeekSong.thumbnail
     };
 
     return (

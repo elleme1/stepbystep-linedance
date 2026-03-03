@@ -174,7 +174,7 @@ select {
 .page-content {
   flex: 1;
   padding: var(--space-md);
-  padding-bottom: calc(var(--nav-height) + var(--safe-area-bottom) + var(--space-lg));
+  padding-bottom: calc(var(--nav-height) + 16px + var(--safe-area-bottom) + var(--space-lg));
   max-width: 600px;
   width: 100%;
   margin: 0 auto;
@@ -187,8 +187,8 @@ select {
   left: 0;
   right: 0;
   z-index: 100;
-  height: calc(var(--nav-height) + var(--safe-area-bottom));
-  padding-bottom: var(--safe-area-bottom);
+  height: calc(var(--nav-height) + 16px + var(--safe-area-bottom));
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
   display: flex;
   align-items: center;
   justify-content: space-around;

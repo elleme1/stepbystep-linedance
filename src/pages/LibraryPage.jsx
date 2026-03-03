@@ -128,10 +128,22 @@ export default function LibraryPage() {
             {/* Archived Songs Section */}
             {archivedSongs.length > 0 && (
                 <>
-                    <div style={{ marginTop: 'var(--space-lg)', marginBottom: 'var(--space-sm)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'var(--space-lg)', marginBottom: 'var(--space-sm)' }}>
                         <h3 style={{ fontSize: 'var(--font-size-base)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
                             📦 보관함 <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)', fontWeight: 400 }}>{archivedSongs.length}곡</span>
                         </h3>
+                        <Link to="/playlist?mode=archive" style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            background: 'var(--gradient-secondary)',
+                            padding: '5px 14px',
+                            borderRadius: 'var(--radius-full)',
+                            color: 'white',
+                            fontSize: 'var(--font-size-xs)',
+                            fontWeight: 600,
+                            textDecoration: 'none'
+                        }}>▶ 연속재생</Link>
                     </div>
                     {renderSongGrid(archivedSongs)}
                 </>

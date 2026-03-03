@@ -1,9 +1,12 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import songs from '../data/songs';
 
 const levelText = ['자유', '⭐', '⭐⭐', '⭐⭐⭐', '⭐⭐⭐⭐', '⭐⭐⭐⭐⭐'];
 
 export default function PlaylistPage() {
+    const [searchParams] = useSearchParams();
+    const mode = searchParams.get('mode') || 'thisweek';
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
     const [isAutoPlay, setIsAutoPlay] = useState(true);
@@ -28,12 +31,15 @@ export default function PlaylistPage() {
     stateRef.current = { isAutoPlay, isRepeat, isPlaying, currentIndex, speed, isShuffle, shuffledOrder };
 
     const speeds = [0.5, 0.75, 1, 1.25];
-    const thisWeekSongs = songs.filter(s => s.isThisWeek);
-    const totalSongs = thisWeekSongs.length;
+    const playlistSongs = useMemo(() => {
+        if (mode === 'archive') return songs.filter(s => !s.isThisWeek);
+        return songs.filter(s => s.isThisWeek);
+    }, [mode]);
+    const totalSongs = playlistSongs.length;
 
     // Shuffle helper
     const generateShuffleOrder = useCallback(() => {
-        const order = thisWeekSongs.map((_, i) => i);
+        const order = playlistSongs.map((_, i) => i);
         for (let i = order.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [order[i], order[j]] = [order[j], order[i]];
@@ -48,7 +54,7 @@ export default function PlaylistPage() {
         return idx;
     }, [isShuffle, shuffledOrder]);
 
-    const currentSong = thisWeekSongs[getActualIndex(currentIndex)];
+    const currentSong = playlistSongs[getActualIndex(currentIndex)];
 
     // Progress tracking
     const startProgressTracking = () => {
@@ -80,7 +86,7 @@ export default function PlaylistPage() {
         const createPlayer = () => {
             if (!mounted || !window.YT || !window.YT.Player || !containerRef.current) return;
 
-            const videoId = thisWeekSongs[0]?.youtubeId;
+            const videoId = playlistSongs[0]?.youtubeId;
             if (!videoId) return;
             loadedVideoId.current = videoId;
 
@@ -99,14 +105,14 @@ export default function PlaylistPage() {
                         try {
                             playerRef.current.setPlaybackRate(stateRef.current.speed);
                             setDuration(playerRef.current.getDuration());
-                        } catch (e) {}
+                        } catch (e) { }
                     },
                     onStateChange: (event) => {
                         if (!mounted) return;
 
                         if (event.data === window.YT.PlayerState.PLAYING) {
                             setIsPlaying(true);
-                            try { setDuration(event.target.getDuration()); } catch (e) {}
+                            try { setDuration(event.target.getDuration()); } catch (e) { }
                             startProgressTracking();
                         } else if (event.data === window.YT.PlayerState.PAUSED) {
                             setIsPlaying(false);
@@ -120,7 +126,7 @@ export default function PlaylistPage() {
                                 try {
                                     event.target.seekTo(0);
                                     event.target.playVideo();
-                                } catch (e) {}
+                                } catch (e) { }
                             } else if (s.isAutoPlay) {
                                 if (s.currentIndex < totalSongs - 1) {
                                     setCurrentIndex(s.currentIndex + 1);
@@ -155,7 +161,7 @@ export default function PlaylistPage() {
                 if (playerRef.current && playerRef.current.destroy) {
                     playerRef.current.destroy();
                 }
-            } catch (e) {}
+            } catch (e) { }
             playerRef.current = null;
         };
     }, []);
@@ -175,7 +181,7 @@ export default function PlaylistPage() {
                 playerRef.current.cueVideoById(currentSong.youtubeId);
             }
             playerRef.current.setPlaybackRate(speed);
-        } catch (e) {}
+        } catch (e) { }
 
         setProgress(0);
         setCurrentTime(0);
@@ -206,7 +212,7 @@ export default function PlaylistPage() {
                 if (playerRef.current && playerRef.current.seekTo) {
                     playerRef.current.seekTo(0);
                 }
-            } catch (e) {}
+            } catch (e) { }
         } else {
             setCurrentIndex(prev => prev > 0 ? prev - 1 : totalSongs - 1);
             setIsPlaying(true);
@@ -226,7 +232,7 @@ export default function PlaylistPage() {
             } else {
                 playerRef.current.playVideo();
             }
-        } catch (e) {}
+        } catch (e) { }
     };
 
     const handleSpeedChange = (newSpeed) => {
@@ -235,7 +241,7 @@ export default function PlaylistPage() {
             if (playerRef.current && playerRef.current.setPlaybackRate) {
                 playerRef.current.setPlaybackRate(newSpeed);
             }
-        } catch (e) {}
+        } catch (e) { }
     };
 
     const handleProgressClick = (e) => {
@@ -245,7 +251,7 @@ export default function PlaylistPage() {
             if (playerRef.current && playerRef.current.seekTo && duration > 0) {
                 playerRef.current.seekTo(pct * duration);
             }
-        } catch (e2) {}
+        } catch (e2) { }
     };
 
     const handleShuffleToggle = () => {
@@ -398,7 +404,7 @@ export default function PlaylistPage() {
                     </span>
                 </div>
                 <div className="playlist-list" ref={playlistRef}>
-                    {thisWeekSongs.map((song, idx) => {
+                    {playlistSongs.map((song, idx) => {
                         const actualCurrent = getActualIndex(currentIndex);
                         const isActive = idx === actualCurrent;
                         return (

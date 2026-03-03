@@ -5,6 +5,7 @@ import announcements from '../data/announcements';
 import profile from '../data/profile';
 import { challenges, weeklyGoals } from '../data/challenges';
 import communityPosts from '../data/community';
+import InstallButton from '../components/InstallButton';
 
 const levelText = ['자유', '⭐', '⭐⭐', '⭐⭐⭐', '⭐⭐⭐⭐', '⭐⭐⭐⭐⭐'];
 
@@ -33,6 +34,9 @@ export default function HomePage() {
 
     return (
         <div>
+            {/* PWA Install Button */}
+            <InstallButton />
+
             {/* Greeting Card */}
             <div className="greeting-card">
                 <h2>{userName}님, 오늘도 신나게 춤춰요! 💃</h2>

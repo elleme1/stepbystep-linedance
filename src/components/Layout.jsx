@@ -2,7 +2,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import BottomNav from './BottomNav';
 
 const pageTitles = {
-    '/': '스텝바이스텝',
+    '/': '구양희 STEP-BY-STEP',
     '/schedule': '수업 일정',
     '/library': '영상 라이브러리',
     '/announce': '공지사항',
@@ -17,7 +17,7 @@ export default function Layout() {
     const isVideoDetail = location.pathname.startsWith('/video/');
 
     // Get page title based on current path
-    const title = pageTitles[location.pathname] || '스텝바이스텝';
+    const title = pageTitles[location.pathname] || '구양희 STEP-BY-STEP';
 
     return (
         <div className="app-layout">

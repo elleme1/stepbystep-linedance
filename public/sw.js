@@ -1,5 +1,5 @@
-// 스텝바이스텝 Service Worker - 자동 업데이트 지원
-const CACHE_NAME = 'stepbystep-v5';
+// 구양희 STEP-BY-STEP Service Worker - 자동 업데이트 지원
+const CACHE_NAME = 'stepbystep-v6';
 const OFFLINE_URL = '/';
 
 // Install: 즉시 활성화

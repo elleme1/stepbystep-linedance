@@ -103,7 +103,7 @@ export default function BottomNav() {
             <nav className="side-nav desktop-nav">
                 <div className="side-nav-brand">
                     <span className="side-nav-logo">💃</span>
-                    <span className="side-nav-title">스텝바이스텝</span>
+                    <span className="side-nav-title">구양희 STEP-BY-STEP</span>
                 </div>
                 <div className="side-nav-items">
                     {navItems.map((item) => (
@@ -119,7 +119,7 @@ export default function BottomNav() {
                     ))}
                 </div>
                 <div className="side-nav-footer">
-                    <p>© 2026 스텝바이스텝</p>
+                    <p>© 2026 구양희 STEP-BY-STEP</p>
                 </div>
             </nav>
         </>

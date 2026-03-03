@@ -1,0 +1,239 @@
+/* --- src/pages/VideoPage.css --- */
+
+.video-container {
+    background-color: #0a0a0f;
+    color: #ffffff;
+    min-height: 100vh;
+    padding-bottom: 100px;
+    /* 맨 아래 하단 탭바와 리스트가 겹치지 않게 방어 */
+}
+
+/* --- 1. 상단 고정(Sticky) 헤더 & 필터 --- */
+.video-header-wrapper {
+    position: sticky;
+    top: 0;
+    background-color: rgba(10, 10, 15, 0.95);
+    /* 살짝 투명해서 스크롤 시 뒤가 은은하게 비침 */
+    backdrop-filter: blur(10px);
+    /* 아이폰처럼 배경 블러 처리 */
+    padding: 24px 20px 16px 20px;
+    z-index: 10;
+    border-bottom: 1px solid #1a1a24;
+}
+
+.video-page-title {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.video-page-subtitle {
+    margin: 0 0 20px 0;
+    font-size: 15px;
+    color: #a0a0b0;
+}
+
+/* 알약(Pill) 탭 스크롤 영역 */
+.tab-scroll-container {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    /* 스크롤바 가리기 위한 여백 */
+    scrollbar-width: none;
+    /* 파이어폭스 스크롤바 숨김 */
+}
+
+.tab-scroll-container::-webkit-scrollbar {
+    display: none;
+    /* 크롬/사파리 스크롤바 숨김 */
+}
+
+.tab-pill {
+    flex-shrink: 0;
+    /* 글씨가 길어도 버튼이 찌그러지지 않게 방어 */
+    background-color: #1a1a24;
+    color: #a0a0b0;
+    border: 1px solid #2a2a35;
+    border-radius: 24px;
+    /* 완벽한 알약 모양 */
+    padding: 10px 20px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+/* 선택된 탭은 강렬한 네온 핑크로 짠! */
+.tab-pill.active {
+    background-color: #ff3366;
+    color: #ffffff;
+    border-color: #ff3366;
+    box-shadow: 0 4px 12px rgba(255, 51, 102, 0.4);
+}
+
+/* --- 2. 영상 리스트 뷰 (1줄 디자인) --- */
+.video-list {
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.empty-message {
+    text-align: center;
+    padding: 60px 0;
+    color: #888899;
+    font-size: 16px;
+}
+
+/* 리스트 1칸의 전체 디자인 */
+.video-list-item {
+    display: flex;
+    align-items: center;
+    background-color: #16161e;
+    border-radius: 16px;
+    padding: 12px;
+    gap: 16px;
+    cursor: pointer;
+    transition: transform 0.1s, background-color 0.2s;
+    border: 1px solid #2a2a35;
+}
+
+.video-list-item:active {
+    transform: scale(0.98);
+    /* 누를 때 살짝 들어가는 손맛 */
+    background-color: #1a1a24;
+}
+
+/* 💖 찜한(좋아요) 리스트는 테두리에 예쁜 핑크색 포인트를 줍니다 */
+.video-list-item.liked-item {
+    border-color: rgba(255, 51, 102, 0.3);
+    background-color: rgba(255, 51, 102, 0.05);
+}
+
+/* 왼쪽 썸네일 (가로 모드 고정) */
+.list-thumbnail {
+    position: relative;
+    width: 130px;
+    /* 스마트폰에서 보기 딱 좋은 황금 크기 */
+    aspect-ratio: 16 / 9;
+    border-radius: 10px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background-color: #000;
+}
+
+.list-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.8;
+}
+
+.list-play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 51, 102, 0.8);
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    padding-left: 3px;
+    /* 세모 재생버튼 중앙 정렬 */
+}
+
+/* 오른쪽 텍스트 정보 */
+.list-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    /* 긴 글씨가 박스 밖으로 튀어나가는 현상 완벽 방지! */
+}
+
+.info-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.info-date {
+    font-size: 13px;
+    color: #a0a0b0;
+}
+
+.info-level {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 6px;
+    border-radius: 4px;
+}
+
+/* 직관적인 난이도별 뱃지 색상 다르게 처리 */
+.level-easy {
+    background-color: rgba(76, 175, 80, 0.2);
+    color: #81c784;
+}
+
+/* 초록 */
+.level-medium {
+    background-color: rgba(255, 152, 0, 0.2);
+    color: #ffb74d;
+}
+
+/* 주황 */
+.level-hard {
+    background-color: rgba(244, 67, 54, 0.2);
+    color: #e57373;
+}
+
+/* 빨강 */
+
+.info-title-eng {
+    margin: 0 0 4px 0;
+    font-size: 17px;
+    font-weight: 800;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* 글씨 길면 ... 처리 */
+}
+
+.info-title-kor {
+    margin: 0;
+    font-size: 14px;
+    color: #bbbbcc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 오른쪽 끝 찜하기(하트) 버튼 */
+.heart-btn {
+    background: none;
+    border: none;
+    font-size: 26px;
+    /* 어르신들이 누르기 쉽게 크기를 확 키움 */
+    padding: 16px;
+    /* 🚨 Fat-finger(굵은 손가락) 방어: 터치 영역 히트박스 대폭 확장! */
+    margin-right: -8px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    /* 안드로이드 터치 깜빡임 방지 */
+}
+
+.heart-btn:active {
+    transform: scale(1.3);
+    /* 누를 때 하트가 심장처럼 쿵쾅! 커짐 */
+}

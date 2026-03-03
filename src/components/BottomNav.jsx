@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom';
 
-const navItems = [
+// 메인 4탭 (모바일 하단 네비 + 데스크톱 공통)
+const mainNavItems = [
     {
         to: '/',
         label: '홈',
@@ -33,15 +34,19 @@ const navItems = [
         )
     },
     {
-        to: '/challenge',
-        label: '도전',
+        to: '/theory',
+        label: '이론',
         icon: (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="8" r="7" />
-                <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" />
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
             </svg>
         )
-    },
+    }
+];
+
+// 데스크톱에서만 추가로 보여줄 보조 메뉴
+const extraNavItems = [
     {
         to: '/community',
         label: '커뮤니티',
@@ -65,38 +70,22 @@ const navItems = [
         )
     },
     {
-        to: '/profile',
-        label: '프로필',
+        to: '/announce',
+        label: '공지',
         icon: (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-            </svg>
-        )
-    },
-    {
-        to: '/theory',
-        label: '이론',
-        icon: (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                <path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0" />
             </svg>
         )
     }
 ];
 
-// Mobile: show only 5 items in bottom nav
-const mobileNavItems = navItems.filter(item =>
-    ['/', '/schedule', '/library', '/theory', '/profile'].includes(item.to)
-);
-
 export default function BottomNav() {
     return (
         <>
-            {/* Mobile Bottom Nav */}
+            {/* Mobile Bottom Nav - 4 Tabs */}
             <nav className="bottom-nav mobile-nav">
-                {mobileNavItems.map((item) => (
+                {mainNavItems.map((item) => (
                     <NavLink
                         key={item.to}
                         to={item.to}
@@ -116,11 +105,22 @@ export default function BottomNav() {
                     <span className="side-nav-title">구양희 STEP-BY-STEP</span>
                 </div>
                 <div className="side-nav-items">
-                    {navItems.map((item) => (
+                    {mainNavItems.map((item) => (
                         <NavLink
                             key={item.to}
                             to={item.to}
                             end={item.to === '/'}
+                            className={({ isActive }) => `side-nav-item ${isActive ? 'active' : ''}`}
+                        >
+                            {item.icon}
+                            <span>{item.label}</span>
+                        </NavLink>
+                    ))}
+                    <div style={{ borderTop: '1px solid var(--border-color)', margin: '8px 0' }} />
+                    {extraNavItems.map((item) => (
+                        <NavLink
+                            key={item.to}
+                            to={item.to}
                             className={({ isActive }) => `side-nav-item ${isActive ? 'active' : ''}`}
                         >
                             {item.icon}

@@ -6,8 +6,6 @@ const pageTitles = {
     '/schedule': '수업 일정',
     '/library': '영상 라이브러리',
     '/announce': '공지사항',
-    '/profile': '마이페이지',
-    '/challenge': '도전 과제',
     '/community': '커뮤니티',
     '/search': '검색',
     '/theory': '이론 학습',

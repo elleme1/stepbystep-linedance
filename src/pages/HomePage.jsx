@@ -1,210 +1,94 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import songs from '../data/songs';
-import announcements from '../data/announcements';
-import profile from '../data/profile';
-import { challenges, weeklyGoals } from '../data/challenges';
-import communityPosts from '../data/community';
-import InstallButton from '../components/InstallButton';
-
-const levelText = ['자유', '⭐', '⭐⭐', '⭐⭐⭐', '⭐⭐⭐⭐', '⭐⭐⭐⭐⭐'];
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import './HomePage.css';
 
 export default function HomePage() {
-    const [userName, setUserName] = useState(() => localStorage.getItem('userName') || '');
+    const navigate = useNavigate();
 
-    useEffect(() => {
-        if (!userName) {
-            const name = prompt('안녕하세요! 이름을 입력해주세요 :)');
-            if (name && name.trim()) {
-                setUserName(name.trim());
-                localStorage.setItem('userName', name.trim());
-            } else {
-                setUserName('회원');
-                localStorage.setItem('userName', '회원');
-            }
-        }
-    }, []);
-    const thisWeekSongs = songs.filter(s => s.isThisWeek);
-    const latestAnnouncements = announcements.slice(0, 2);
-    const activeChallenges = challenges.filter(c => !c.isCompleted).slice(0, 2);
-    const hotPosts = communityPosts.sort((a, b) => b.likes - a.likes).slice(0, 2);
-
-    const getProgressPercent = (current, target) =>
-        Math.min(Math.round((current / target) * 100), 100);
+    // 💡 [데모 데이터] 나중에는 서버나 DB에서 '오늘 진도 나간 곡'을 자동으로 불러옵니다.
+    const todayVideo = {
+        titleKor: '텍사스 타임',
+        titleEng: 'Texas Time',
+        level: '초급',
+        tip: '3번째 턴(Turn) 도실 때 어지럽지 않게 시선 고정(스파팅) 주의하세요! 👀',
+        // 라인댄스 느낌의 고화질 임시 이미지입니다.
+        thumbnail: 'https://images.unsplash.com/photo-1547153760-18fc86324498?auto=format&fit=crop&q=80&w=800'
+    };
 
     return (
-        <div>
-            {/* PWA Install Button */}
-            <InstallButton />
+        <div className="home-container">
 
-            {/* Greeting Card */}
-            <div className="greeting-card">
-                <h2>{userName}님, 오늘도 신나게 춤춰요! 💃</h2>
-                <p>현재 레벨: {profile.level} · 연속 {profile.stats.streakDays}일 출석 중 🔥</p>
-                <div className="greeting-stats">
-                    <div className="greeting-stat">
-                        <span className="stat-num">{profile.stats.totalClasses}</span>
-                        <span className="stat-text">총 출석</span>
+            {/* 1. 상단 환영 인사 및 공지 배너 */}
+            <header className="home-header">
+                <h1 className="greeting-title">
+                    오늘도 신나게<br />스텝 밟아볼까요? 💃
+                </h1>
+
+                {/* 공지 배너 (누르면 커뮤니티로 1초 만에 이동합니다) */}
+                <div className="notice-banner" onClick={() => navigate('/community')}>
+                    <span className="notice-badge">공지</span>
+                    <p className="notice-text">이번 주 금요일 오전반은 <b>휴강</b>입니다.</p>
+                </div>
+            </header>
+
+            {/* 2. 👑 VIP석 : 오늘 배운 안무 (초집중 구역) */}
+            <section className="vip-section">
+                <div className="vip-header">
+                    <h2 className="vip-title">🔥 오늘 배운 안무</h2>
+                    <span className="level-badge">{todayVideo.level}</span>
+                </div>
+
+                {/* 영상 썸네일 카드 (누르면 비디오 페이지로 이동) */}
+                <div className="vip-card" onClick={() => navigate('/video')}>
+                    <div className="thumbnail-wrapper">
+                        <img src={todayVideo.thumbnail} alt={todayVideo.titleKor} className="thumbnail-img" />
+
+                        {/* 🔴 어르신들이 본능적으로 누르게 되는 거대한 핑크색 재생 버튼 */}
+                        <div className="play-overlay">
+                            <div className="play-button">▶</div>
+                        </div>
                     </div>
-                    <div className="greeting-stat">
-                        <span className="stat-num">{profile.stats.totalSongs}</span>
-                        <span className="stat-text">배운 곡</span>
-                    </div>
-                    <div className="greeting-stat">
-                        <span className="stat-num">{profile.stats.attendanceRate}%</span>
-                        <span className="stat-text">출석률</span>
+
+                    <div className="vip-info">
+                        <h3 className="video-title-eng">{todayVideo.titleEng}</h3>
+                        <p className="video-title-kor">{todayVideo.titleKor}</p>
+
+                        {/* ✨ 오프라인 수업의 감동을 이어주는 원장님 메모장 */}
+                        <div className="director-tip">
+                            <span className="tip-icon">💡</span>
+                            <div className="tip-content">
+                                <strong>원장님 꿀팁:</strong>
+                                <span>{todayVideo.tip}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            {/* Weekly Goals Mini */}
-            <div className="section-title">
-                <h2>📊 주간 목표</h2>
-                <Link to="/challenge" className="see-all">전체보기 →</Link>
-            </div>
-            <div className="weekly-mini-row">
-                {Object.entries(weeklyGoals).map(([key, goal]) => {
-                    const pct = getProgressPercent(goal.current, goal.target);
-                    return (
-                        <Link to="/challenge" key={key} className="glass-card weekly-mini-card">
-                            <div className="weekly-mini-bar">
-                                <div className="weekly-mini-fill" style={{ width: `${pct}%` }} />
-                            </div>
-                            <div className="weekly-mini-info">
-                                <span className="weekly-mini-label">{goal.label}</span>
-                                <span className="weekly-mini-value">{goal.current}/{goal.target}</span>
-                            </div>
-                        </Link>
-                    );
-                })}
-            </div>
+            {/* 3. 🚀 하단 퀵 메뉴 (도전/프로필 빈자리를 채우는 큰 네모 버튼 2개) */}
+            <section className="quick-actions">
+                <h2 className="quick-title">무엇을 찾으시나요?</h2>
+                <div className="action-grid">
 
-            {/* Challenge Progress */}
-            {activeChallenges.length > 0 && (
-                <>
-                    <div className="section-title" style={{ marginTop: 'var(--space-lg)' }}>
-                        <h2>🎯 진행 중인 도전</h2>
-                        <Link to="/challenge" className="see-all">전체보기 →</Link>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)', marginBottom: 'var(--space-lg)' }}>
-                        {activeChallenges.map(ch => {
-                            const pct = getProgressPercent(ch.current, ch.target);
-                            return (
-                                <Link to="/challenge" key={ch.id}>
-                                    <div className="glass-card challenge-mini-card">
-                                        <div className="challenge-mini-left">
-                                            <span className="challenge-mini-emoji">{ch.emoji}</span>
-                                            <div>
-                                                <h3 className="challenge-mini-title">{ch.title}</h3>
-                                                <span className="challenge-mini-deadline">⏰ {ch.deadline}</span>
-                                            </div>
-                                        </div>
-                                        <div className="challenge-mini-progress">
-                                            <svg viewBox="0 0 36 36" className="challenge-mini-ring">
-                                                <path
-                                                    className="ring-bg"
-                                                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                                                />
-                                                <path
-                                                    className="ring-fill"
-                                                    strokeDasharray={`${pct}, 100`}
-                                                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                                                />
-                                                <text x="18" y="20.5" className="ring-text">{pct}%</text>
-                                            </svg>
-                                        </div>
-                                    </div>
-                                </Link>
-                            );
-                        })}
-                    </div>
-                </>
-            )}
+                    <button className="action-btn" onClick={() => navigate('/community')}>
+                        <span className="btn-icon">💬</span>
+                        <div className="btn-text">
+                            <strong>회원 소통방</strong>
+                            <span>질문하고 수다떨기</span>
+                        </div>
+                    </button>
 
-            {/* This Week's Songs */}
-            <div className="section-title">
-                <h2>🎵 이번 주 수업곡</h2>
-                <div style={{ display: 'flex', gap: 'var(--space-sm)', alignItems: 'center' }}>
-                    <Link to="/playlist" className="see-all" style={{
-                        background: 'var(--gradient-primary)',
-                        padding: '4px 12px',
-                        borderRadius: 'var(--radius-full)',
-                        color: 'white',
-                        fontSize: 'var(--font-size-xs)',
-                        fontWeight: 600
-                    }}>▶ 연속재생</Link>
-                    <Link to="/library" className="see-all">전체보기 →</Link>
+                    <button className="action-btn" onClick={() => navigate('/search')}>
+                        <span className="btn-icon">🔍</span>
+                        <div className="btn-text">
+                            <strong>지난 안무 검색</strong>
+                            <span>안무·음악 찾기</span>
+                        </div>
+                    </button>
+
                 </div>
-            </div>
+            </section>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)', marginBottom: 'var(--space-lg)' }}>
-                {thisWeekSongs.map((song) => (
-                    <Link to={`/video/${song.id}`} key={song.id}>
-                        <div className="glass-card song-card">
-                            <div className="song-thumbnail">
-                                <img src={song.thumbnail} alt={song.title} loading="lazy" />
-                                <div className="play-overlay">
-                                    <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" /></svg>
-                                </div>
-                            </div>
-                            <div className="song-info">
-                                <h3>{song.title}</h3>
-                                <div className="song-meta">
-                                    <span>{song.artist}</span>
-                                    <span className="dot" />
-                                    <span>{levelText[song.level]}</span>
-                                    <span className="dot" />
-                                    <span>{song.genre}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </Link>
-                ))}
-            </div>
-
-            {/* Community Hot Posts */}
-            <div className="section-title">
-                <h2>💬 커뮤니티 인기글</h2>
-                <Link to="/community" className="see-all">전체보기 →</Link>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)', marginBottom: 'var(--space-lg)' }}>
-                {hotPosts.map(post => (
-                    <Link to="/community" key={post.id}>
-                        <div className="glass-card community-mini-card">
-                            <div className="community-mini-left">
-                                <span className="community-mini-avatar">{post.authorEmoji}</span>
-                                <div>
-                                    <h3 className="community-mini-title">{post.title}</h3>
-                                    <span className="community-mini-meta">
-                                        {post.author} · ❤️ {post.likes} · 💬 {post.comments}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </Link>
-                ))}
-            </div>
-
-            {/* Latest Announcements */}
-            <div className="section-title">
-                <h2>📢 최신 공지</h2>
-                <Link to="/announce" className="see-all">전체보기 →</Link>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
-                {latestAnnouncements.map((a) => (
-                    <Link to="/announce" key={a.id}>
-                        <div className="glass-card">
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)', marginBottom: '4px' }}>
-                                {a.isPinned && <span className="pinned-icon">📌</span>}
-                                <span className={`category-badge ${a.category}`}>{a.category}</span>
-                            </div>
-                            <h3 style={{ fontSize: 'var(--font-size-base)', fontWeight: 600 }}>{a.title}</h3>
-                            <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)', marginTop: '4px' }}>{a.date}</p>
-                        </div>
-                    </Link>
-                ))}
-            </div>
         </div>
     );
 }

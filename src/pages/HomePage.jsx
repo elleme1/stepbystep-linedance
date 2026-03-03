@@ -10,8 +10,8 @@ export default function HomePage() {
     const thisWeekSong = songs.find(s => s.isThisWeek) || songs[0];
     const levelLabels = { 1: '초급', 2: '중급', 3: '고급' };
     const todayVideo = {
-        titleKor: thisWeekSong.title,
-        titleEng: `${thisWeekSong.artist} · ${thisWeekSong.genre}`,
+        titleEng: thisWeekSong.title,
+        titleKor: `${thisWeekSong.artist} · ${thisWeekSong.genre}`,
         level: levelLabels[thisWeekSong.level] || '초급',
         tip: thisWeekSong.steps?.[0] ? `첫 구간(${thisWeekSong.steps[0].count}): ${thisWeekSong.steps[0].move} — ${thisWeekSong.steps[0].desc}` : '기본 스텝에 집중해 보세요!',
         thumbnail: thisWeekSong.thumbnail
@@ -41,7 +41,7 @@ export default function HomePage() {
                 </div>
 
                 {/* 영상 썸네일 카드 (누르면 비디오 페이지로 이동) */}
-                <div className="vip-card" onClick={() => navigate('/video')}>
+                <div className="vip-card" onClick={() => navigate(`/video/${thisWeekSong.id}`)}>
                     <div className="thumbnail-wrapper">
                         <img src={todayVideo.thumbnail} alt={todayVideo.titleKor} className="thumbnail-img" />
 

@@ -11,7 +11,7 @@ const songs = [
     counts: 32,
     genre: "유로댄스",
     youtubeId: "cmJiGKTb6v4",
-    thumbnail: "https://img.youtube.com/vi/cmJiGKTb6v4/mqdefault.jpg",
+    thumbnail: "https://img.youtube.com/vi/cmJiGKTb6v4/hqdefault.jpg",
     isThisWeek: true,
     steps: [
       { count: "1-8", move: "V 스텝 & 차차 (V Step & Cha Cha)", desc: "오른발 앞 대각선 → 왼발 앞 대각선 → 오른발 뒤 → 왼발 모아 → 차차차" },
@@ -31,7 +31,7 @@ const songs = [
     counts: 32,
     genre: "발라드",
     youtubeId: "XXr1fM_eWBM",
-    thumbnail: "https://img.youtube.com/vi/XXr1fM_eWBM/mqdefault.jpg",
+    thumbnail: "https://img.youtube.com/vi/XXr1fM_eWBM/hqdefault.jpg",
     isThisWeek: false,
     steps: [
       { count: "1-8", move: "사이드 스텝 & 터치 (Side Step & Touch)", desc: "오른발 사이드 → 왼발 터치 → 왼발 사이드 → 오른발 터치" },
@@ -51,7 +51,7 @@ const songs = [
     counts: 32,
     genre: "팝",
     youtubeId: "vdjI6kPFBYY",
-    thumbnail: "https://img.youtube.com/vi/vdjI6kPFBYY/mqdefault.jpg",
+    thumbnail: "https://img.youtube.com/vi/vdjI6kPFBYY/hqdefault.jpg",
     isThisWeek: false,
     steps: [
       { count: "1-8", move: "사이드 터치 (Side Touch)", desc: "오른발 사이드 터치 → 왼발 사이드 터치 2회" },
@@ -71,7 +71,7 @@ const songs = [
     counts: 32,
     genre: "가요",
     youtubeId: "5H1cmZ9r1zw",
-    thumbnail: "https://img.youtube.com/vi/5H1cmZ9r1zw/mqdefault.jpg",
+    thumbnail: "https://img.youtube.com/vi/5H1cmZ9r1zw/hqdefault.jpg",
     isThisWeek: false,
     steps: [
       { count: "1-8", move: "사이드 스텝 & 터치 (Side Step & Touch)", desc: "오른발 사이드 → 왼발 터치 → 왼발 사이드 → 오른발 터치" },
@@ -91,7 +91,7 @@ const songs = [
     counts: 32,
     genre: "팝",
     youtubeId: "4P58kFsXb9U",
-    thumbnail: "https://img.youtube.com/vi/4P58kFsXb9U/mqdefault.jpg",
+    thumbnail: "https://img.youtube.com/vi/4P58kFsXb9U/hqdefault.jpg",
     isThisWeek: false,
     steps: [
       { count: "1-8", move: "셔플 & 록 스텝 (Shuffle & Rock Step)", desc: "오른쪽 셔플 → 앞 록 → 리커버" },
@@ -111,7 +111,7 @@ const songs = [
     counts: 32,
     genre: "팝",
     youtubeId: "gAxTZlRztRk",
-    thumbnail: "https://img.youtube.com/vi/gAxTZlRztRk/mqdefault.jpg",
+    thumbnail: "https://img.youtube.com/vi/gAxTZlRztRk/hqdefault.jpg",
     isThisWeek: false,
     steps: [
       { count: "1-8", move: "사이드 터치 & 크로스 (Side Touch & Cross)", desc: "오른발 사이드 → 왼발 터치 → 왼발 크로스 → 오른발 사이드" },
@@ -131,7 +131,7 @@ const songs = [
     counts: 32,
     genre: "라틴팝",
     youtubeId: "oD1r1UAWObk",
-    thumbnail: "https://img.youtube.com/vi/oD1r1UAWObk/mqdefault.jpg",
+    thumbnail: "https://img.youtube.com/vi/oD1r1UAWObk/hqdefault.jpg",
     isThisWeek: false,
     steps: [
       { count: "1-8", move: "사이드 스텝 & 차차 (Side Step & Cha Cha)", desc: "오른발 사이드 → 왼발 모아 → 차차차" },
@@ -151,7 +151,7 @@ const songs = [
     counts: 32,
     genre: "컨트리",
     youtubeId: "l6vjpsH1emg",
-    thumbnail: "https://img.youtube.com/vi/l6vjpsH1emg/mqdefault.jpg",
+    thumbnail: "https://img.youtube.com/vi/l6vjpsH1emg/hqdefault.jpg",
     isThisWeek: false,
     steps: [
       { count: "1-8", move: "바인 & 터치 (Vine & Touch)", desc: "오른쪽 그레이프바인 → 왼발 터치" },
@@ -171,7 +171,7 @@ const songs = [
     counts: 64,
     genre: "컨트리",
     youtubeId: "Vz-KfQUKzdw",
-    thumbnail: "https://img.youtube.com/vi/Vz-KfQUKzdw/mqdefault.jpg",
+    thumbnail: "https://img.youtube.com/vi/Vz-KfQUKzdw/hqdefault.jpg",
     isThisWeek: false,
     steps: [
       { count: "1-16", move: "워크 & 피봇 턴 (Walk & Pivot Turn)", desc: "앞으로 워크 → 1/2 피봇 턴 → 셔플 앞" },

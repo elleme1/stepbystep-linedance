@@ -73,12 +73,22 @@ const navItems = [
                 <circle cx="12" cy="7" r="4" />
             </svg>
         )
+    },
+    {
+        to: '/theory',
+        label: '이론',
+        icon: (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg>
+        )
     }
 ];
 
 // Mobile: show only 5 items in bottom nav
 const mobileNavItems = navItems.filter(item =>
-    ['/', '/schedule', '/library', '/challenge', '/profile'].includes(item.to)
+    ['/', '/schedule', '/library', '/theory', '/profile'].includes(item.to)
 );
 
 export default function BottomNav() {

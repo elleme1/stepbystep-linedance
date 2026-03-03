@@ -10,6 +10,7 @@ const pageTitles = {
     '/challenge': '도전 과제',
     '/community': '커뮤니티',
     '/search': '검색',
+    '/theory': '이론 학습',
 };
 
 export default function Layout() {

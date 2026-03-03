@@ -10,6 +10,7 @@ import ChallengePage from './pages/ChallengePage';
 import CommunityPage from './pages/CommunityPage';
 import SearchPage from './pages/SearchPage';
 import PlaylistPage from './pages/PlaylistPage';
+import TheoryPage from './pages/TheoryPage';
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
           <Route path="/community" element={<CommunityPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/playlist" element={<PlaylistPage />} />
+          <Route path="/theory" element={<TheoryPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

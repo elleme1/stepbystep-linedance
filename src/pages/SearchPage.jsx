@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import songs from '../data/songs';
-
-const levelText = ['자유', '⭐', '⭐⭐', '⭐⭐⭐', '⭐⭐⭐⭐', '⭐⭐⭐⭐⭐'];
+import { levelStars } from '../data/constants';
 
 const popularSearches = ['Cupid Shuffle', '차차', '컨트리', '입문', 'Bomba'];
 const recentSearches = ['Tush Push', '라틴'];
@@ -108,7 +107,7 @@ export default function SearchPage() {
                                             <div className="song-meta">
                                                 <span>{song.artist}</span>
                                                 <span className="dot" />
-                                                <span>{levelText[song.level]}</span>
+                                                <span>{levelStars[song.level]}</span>
                                                 <span className="dot" />
                                                 <span>{song.genre}</span>
                                             </div>
@@ -150,7 +149,7 @@ export default function SearchPage() {
                                             <div className="song-meta">
                                                 <span>{song.artist}</span>
                                                 <span className="dot" />
-                                                <span>{levelText[song.level]}</span>
+                                                <span>{levelStars[song.level]}</span>
                                                 <span className="dot" />
                                                 <span>{song.genre}</span>
                                             </div>

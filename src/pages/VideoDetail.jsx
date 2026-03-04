@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import songs from '../data/songs';
 import VideoPlayer from '../components/VideoPlayer';
-
-const levelText = ['자유', '⭐ 입문', '⭐⭐ 초급', '⭐⭐⭐ 중급', '⭐⭐⭐⭐ 고급', '⭐⭐⭐⭐⭐ 최상급'];
+import { levelText } from '../data/constants';
 
 export default function VideoDetail() {
     const { id } = useParams();

@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import songs from '../data/songs';
-
-const levelText = ['자유', '⭐', '⭐⭐', '⭐⭐⭐', '⭐⭐⭐⭐', '⭐⭐⭐⭐⭐'];
+import { levelStars } from '../data/constants';
 
 export default function PlaylistPage() {
     const [searchParams] = useSearchParams();
@@ -286,7 +285,7 @@ export default function PlaylistPage() {
                         <div className="playlist-song-title-row">
                             <h2>{currentSong.title}</h2>
                             <span className={`level-badge level-${currentSong.level}`}>
-                                {levelText[currentSong.level]}
+                                {levelStars[currentSong.level]}
                             </span>
                         </div>
                         <p className="playlist-song-artist">
@@ -437,7 +436,7 @@ export default function PlaylistPage() {
                                     <p>{song.artist} · {song.genre}</p>
                                 </div>
                                 <span className={`level-badge level-${song.level}`}>
-                                    {levelText[song.level]}
+                                    {levelStars[song.level]}
                                 </span>
                             </div>
                         );

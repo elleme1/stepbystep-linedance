@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import songs from '../data/songs';
+import { levelStars } from '../data/constants';
 
-const levelText = ['자유', '⭐', '⭐⭐', '⭐⭐⭐', '⭐⭐⭐⭐', '⭐⭐⭐⭐⭐'];
-const genres = ['전체', '컨트리', '라틴', '힙합', '팝', '컨트리록'];
+const genres = ['전체', ...new Set(songs.map(s => s.genre))];
 const levels = ['전체', '⭐ 입문', '⭐⭐ 초급', '⭐⭐⭐ 중급'];
 
 export default function LibraryPage() {
@@ -49,7 +49,7 @@ export default function LibraryPage() {
                             <div className="library-item-meta">
                                 <span>{song.artist}</span>
                                 <span className={`level-badge level-${song.level}`}>
-                                    {levelText[song.level]}
+                                    {levelStars[song.level]}
                                 </span>
                             </div>
                         </div>

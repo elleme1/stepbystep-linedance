@@ -4,7 +4,9 @@ import BottomNav from './BottomNav';
 const pageTitles = {
     '/': '구양희 STEP-BY-STEP',
     '/schedule': '수업 일정',
+    '/videos': '영상',
     '/library': '영상 라이브러리',
+    '/playlist': '연속 재생',
     '/announce': '공지사항',
     '/community': '커뮤니티',
     '/search': '검색',

@@ -1,35 +1,39 @@
+import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+// 🪟 공통 레이아웃 (상단 타이틀 + 하단 메뉴바를 묶어주는 틀)
 import Layout from './components/Layout';
+
+// 📄 메인 4-Tab 화면들
 import HomePage from './pages/HomePage';
 import SchedulePage from './pages/SchedulePage';
-import LibraryPage from './pages/LibraryPage';
-import VideoDetail from './pages/VideoDetail';
-import AnnouncePage from './pages/AnnouncePage';
-// import ProfilePage from './pages/ProfilePage';  // 기능 비활성화 (파일 보관 중)
-// import ChallengePage from './pages/ChallengePage';  // 기능 비활성화 (파일 보관 중)
+import VideoPage from './pages/VideoPage';
+import TheoryPage from './pages/TheoryPage';
+
+// 📄 서브 화면들
 import CommunityPage from './pages/CommunityPage';
 import SearchPage from './pages/SearchPage';
+import VideoDetail from './pages/VideoDetail';
 import PlaylistPage from './pages/PlaylistPage';
-import TheoryPage from './pages/TheoryPage';
-import VideoPage from './pages/VideoPage';
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
+
+          {/* 메인 4-Tab 경로 */}
           <Route path="/" element={<HomePage />} />
           <Route path="/schedule" element={<SchedulePage />} />
-          <Route path="/library" element={<LibraryPage />} />
-          <Route path="/video/:id" element={<VideoDetail />} />
-          <Route path="/videos" element={<VideoPage />} />
-          <Route path="/announce" element={<AnnouncePage />} />
-          {/* <Route path="/profile" element={<ProfilePage />} /> */}
-          {/* <Route path="/challenge" element={<ChallengePage />} /> */}
+          <Route path="/video" element={<VideoPage />} />
+          <Route path="/theory" element={<TheoryPage />} />
+
+          {/* 서브 경로 */}
           <Route path="/community" element={<CommunityPage />} />
           <Route path="/search" element={<SearchPage />} />
+          <Route path="/video/:id" element={<VideoDetail />} />
           <Route path="/playlist" element={<PlaylistPage />} />
-          <Route path="/theory" element={<TheoryPage />} />
+
         </Route>
       </Routes>
     </BrowserRouter>

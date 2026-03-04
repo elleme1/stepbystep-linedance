@@ -1,166 +1,116 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import songs from '../data/songs';
-import { levelStars } from '../data/constants';
-
-const popularSearches = ['Cupid Shuffle', '차차', '컨트리', '입문', 'Bomba'];
-const recentSearches = ['Tush Push', '라틴'];
+import React, { useState } from 'react';
+import './SearchPage.css'; // ✨ 검색방 전용 디자인 연결
 
 export default function SearchPage() {
-    const [query, setQuery] = useState('');
-    const [showResults, setShowResults] = useState(false);
+    const [keyword, setKeyword] = useState('');
+    const [isSearching, setIsSearching] = useState(false);
 
-    const results = songs.filter(song =>
-        query.length >= 1 && (
-            song.title.toLowerCase().includes(query.toLowerCase()) ||
-            song.artist.toLowerCase().includes(query.toLowerCase()) ||
-            song.genre.includes(query) ||
-            song.choreographer.toLowerCase().includes(query.toLowerCase())
-        )
-    );
+    // 💡 어르신들이 가장 많이 찾는 추천 해시태그 (터치 한 번으로 검색 끝!)
+    const popularTags = ['#초급', '#텍사스타임', '#팝송', '#다이어트', '#스트레칭', '#차차차'];
 
-    const handleSearch = (text) => {
-        setQuery(text);
-        setShowResults(true);
+    // 검색 실행 함수 (돋보기 누르거나 해시태그 누를 때 작동)
+    const handleSearch = (term) => {
+        if (!term) return;
+        // '#' 기호가 있으면 떼고 깔끔하게 검색어에 넣기
+        const cleanTerm = term.replace('#', '');
+
+        setKeyword(cleanTerm);
+        setIsSearching(true);
+
+        // 진짜 앱처럼 0.8초 동안 검색하는 척(로딩) 하다가 결과를 짠! 보여줍니다
+        setTimeout(() => {
+            setIsSearching(false);
+        }, 800);
     };
 
     return (
-        <div>
-            {/* Search Bar */}
-            <div className="search-page-bar">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="11" cy="11" r="8" />
-                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                </svg>
-                <input
-                    type="text"
-                    placeholder="곡명, 아티스트, 장르로 검색..."
-                    value={query}
-                    onChange={(e) => handleSearch(e.target.value)}
-                    autoFocus
-                />
-                {query && (
-                    <button className="search-clear" onClick={() => { setQuery(''); setShowResults(false); }}>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <line x1="18" y1="6" x2="6" y2="18" />
-                            <line x1="6" y1="6" x2="18" y2="18" />
-                        </svg>
-                    </button>
+        <div className="search-container">
+
+            {/* 1. 큼직한 검색창 영역 */}
+            <div className="search-header">
+                <div className="search-input-box">
+                    <span className="search-icon">🔍</span>
+                    <input
+                        type="text"
+                        className="search-input"
+                        placeholder="안무 제목이나 장르를 검색하세요"
+                        value={keyword}
+                        onChange={(e) => setKeyword(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleSearch(keyword)}
+                    />
+                    {/* 글씨가 있을 때만 엑스(X) 버튼이 생겨서 한 번에 지울 수 있게 해줍니다 */}
+                    {keyword && (
+                        <button className="clear-btn" onClick={() => setKeyword('')}>✕</button>
+                    )}
+                </div>
+            </div>
+
+            {/* 2. 어르신 맞춤형 원터치 해시태그 버튼들 (검색 안 했을 때만 보임) */}
+            {!keyword && !isSearching && (
+                <div className="recommend-section">
+                    <h3 className="section-title">🔥 인기 검색어 (터치해보세요!)</h3>
+                    <p className="section-subtitle">자판을 칠 필요 없이 톡! 누르기만 하세요.</p>
+                    <div className="tag-cloud">
+                        {popularTags.map(tag => (
+                            <button
+                                key={tag}
+                                className="hashtag-btn"
+                                onClick={() => handleSearch(tag)}
+                            >
+                                {tag}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* 3. 검색 결과 영역 */}
+            <div className="result-section">
+                {isSearching ? (
+                    // 검색 중일 때 빙글빙글 도는 핑크색 로딩 애니메이션
+                    <div className="loading-spinner">
+                        <div className="spinner"></div>
+                        <p>열심히 안무를 찾고 있습니다... 💃</p>
+                    </div>
+                ) : keyword ? (
+                    // 검색이 끝났을 때 보여주는 결과 화면
+                    <div className="search-result">
+                        <p className="result-info">
+                            <strong className="highlight">'{keyword}'</strong> 검색 결과입니다.
+                        </p>
+                        {/* 데모용 가짜 영상 카드 1 */}
+                        <div className="result-card">
+                            <div className="result-thumbnail">
+                                <span className="play-icon">▶</span>
+                            </div>
+                            <div className="result-details">
+                                <span className="badge">초급</span>
+                                <h4 className="result-title">텍사스 타임 (Texas Time)</h4>
+                                <p className="result-desc">구양희 원장 · 3개월 전</p>
+                            </div>
+                        </div>
+                        {/* 데모용 가짜 영상 카드 2 */}
+                        <div className="result-card">
+                            <div className="result-thumbnail" style={{ backgroundColor: '#2a2a35' }}>
+                                <span className="play-icon">▶</span>
+                            </div>
+                            <div className="result-details">
+                                <span className="badge">입문</span>
+                                <h4 className="result-title">기초 스텝 모음</h4>
+                                <p className="result-desc">구양희 원장 · 5개월 전</p>
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    // 아무것도 검색 안 했을 때 (초기 화면) 하단 안내
+                    <div className="empty-state">
+                        <div className="empty-icon">🎧</div>
+                        <p>예전에 배웠던 안무가 기억 안 나시나요?</p>
+                        <p className="sub-text">위의 핑크색 버튼을 터치해보세요!</p>
+                    </div>
                 )}
             </div>
 
-            {!showResults || query.length === 0 ? (
-                <>
-                    {/* Recent Searches */}
-                    {recentSearches.length > 0 && (
-                        <div style={{ marginBottom: 'var(--space-lg)' }}>
-                            <div className="section-title">
-                                <h2>🕐 최근 검색</h2>
-                            </div>
-                            <div className="search-tags">
-                                {recentSearches.map(term => (
-                                    <button
-                                        key={term}
-                                        className="search-tag recent"
-                                        onClick={() => handleSearch(term)}
-                                    >
-                                        {term}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Popular Searches */}
-                    <div>
-                        <div className="section-title">
-                            <h2>🔥 인기 검색</h2>
-                        </div>
-                        <div className="search-tags">
-                            {popularSearches.map((term, idx) => (
-                                <button
-                                    key={term}
-                                    className="search-tag popular"
-                                    onClick={() => handleSearch(term)}
-                                >
-                                    <span className="search-rank">{idx + 1}</span>
-                                    {term}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Browse All */}
-                    <div style={{ marginTop: 'var(--space-lg)' }}>
-                        <div className="section-title">
-                            <h2>📚 전체 곡 ({songs.length}곡)</h2>
-                        </div>
-                        <div className="search-all-list">
-                            {songs.map(song => (
-                                <Link to={`/video/${song.id}`} key={song.id}>
-                                    <div className="glass-card song-card">
-                                        <div className="song-thumbnail">
-                                            <img src={song.thumbnail} alt={song.title} loading="lazy" />
-                                        </div>
-                                        <div className="song-info">
-                                            <h3>{song.title}</h3>
-                                            <div className="song-meta">
-                                                <span>{song.artist}</span>
-                                                <span className="dot" />
-                                                <span>{levelStars[song.level]}</span>
-                                                <span className="dot" />
-                                                <span>{song.genre}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-                </>
-            ) : (
-                <>
-                    {/* Search Results */}
-                    <p className="search-result-count">
-                        "{query}" 검색 결과 {results.length}건
-                    </p>
-
-                    {results.length === 0 ? (
-                        <div className="empty-state">
-                            <div className="empty-emoji">🔍</div>
-                            <p>검색 결과가 없습니다</p>
-                            <p style={{ marginTop: '4px', fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)' }}>
-                                다른 키워드로 검색해보세요
-                            </p>
-                        </div>
-                    ) : (
-                        <div className="search-results-list">
-                            {results.map(song => (
-                                <Link to={`/video/${song.id}`} key={song.id}>
-                                    <div className="glass-card song-card">
-                                        <div className="song-thumbnail">
-                                            <img src={song.thumbnail} alt={song.title} loading="lazy" />
-                                            <div className="play-overlay">
-                                                <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" /></svg>
-                                            </div>
-                                        </div>
-                                        <div className="song-info">
-                                            <h3>{song.title}</h3>
-                                            <div className="song-meta">
-                                                <span>{song.artist}</span>
-                                                <span className="dot" />
-                                                <span>{levelStars[song.level]}</span>
-                                                <span className="dot" />
-                                                <span>{song.genre}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-                    )}
-                </>
-            )}
         </div>
     );
 }

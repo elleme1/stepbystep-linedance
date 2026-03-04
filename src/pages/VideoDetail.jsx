@@ -10,19 +10,28 @@ export default function VideoDetail() {
     const song = songs.find(s => s.id === Number(id));
     const [showSteps, setShowSteps] = useState(false);
 
+    // 안전한 뒤로가기: 히스토리가 없으면 영상 목록으로 이동
+    const goBack = () => {
+        if (window.history.length > 1) {
+            navigate(-1);
+        } else {
+            navigate('/video', { replace: true });
+        }
+    };
+
     if (!song) {
         return (
             <div className="empty-state">
                 <div className="empty-emoji">❌</div>
                 <p>곡을 찾을 수 없습니다</p>
-                <button className="back-button" onClick={() => navigate(-1)}>← 돌아가기</button>
+                <button className="back-button" onClick={goBack}>← 돌아가기</button>
             </div>
         );
     }
 
     return (
         <div>
-            <button className="back-button" onClick={() => navigate(-1)}>
+            <button className="back-button" onClick={goBack}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="15 18 9 12 15 6" />
                 </svg>

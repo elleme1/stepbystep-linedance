@@ -1,0 +1,50 @@
+.bottom-nav {
+    position: fixed;
+    /* 👈 아까 relative로 바꿨던 것을 다시 fixed로 단단하게 고정합니다! */
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(22, 22, 30, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid #2a2a35;
+    z-index: 10;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 64px;
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 25%;
+    height: 100%;
+    text-decoration: none;
+    color: #888899;
+    gap: 4px;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.nav-icon {
+    font-size: 24px;
+    filter: grayscale(100%) opacity(0.5);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.nav-label {
+    font-size: 11px;
+    font-weight: 700;
+    transition: color 0.2s;
+}
+
+.nav-item.active {
+    color: #ff3366;
+}
+
+.nav-item.active .nav-icon {
+    filter: grayscale(0%) opacity(1);
+    transform: translateY(-4px) scale(1.15);
+}

@@ -1,0 +1,253 @@
+/* --- src/pages/SearchPage.css --- */
+
+.search-container {
+    background-color: #0a0a0f;
+    color: #ffffff;
+    min-height: 100vh;
+}
+
+/* --- 1. 검색창 --- */
+.search-header {
+    padding: 20px;
+    background-color: rgba(10, 10, 15, 0.95);
+    position: sticky;
+    top: 56px;
+    /* 뒤로가기 헤더 바로 밑에 고정! */
+    z-index: 10;
+    border-bottom: 1px solid #1a1a24;
+}
+
+.search-input-box {
+    display: flex;
+    align-items: center;
+    background-color: #1a1a24;
+    border: 1px solid #2a2a35;
+    border-radius: 12px;
+    padding: 0 16px;
+    height: 52px;
+    /* 어르신들 손가락에 맞춘 두툼한 높이 */
+    transition: border-color 0.2s;
+}
+
+.search-input-box:focus-within {
+    border-color: #ff3366;
+    /* 타자 칠 때 핑크색 테두리로 강조! */
+    box-shadow: 0 0 0 3px rgba(255, 51, 102, 0.2);
+}
+
+.search-icon {
+    font-size: 20px;
+    color: #888899;
+    margin-right: 12px;
+}
+
+.search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 16px;
+    outline: none;
+}
+
+.search-input::placeholder {
+    color: #666677;
+}
+
+/* 엑스(X) 버튼 */
+.clear-btn {
+    background: #333344;
+    color: #ffffff;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+/* --- 2. 원터치 해시태그 --- */
+.recommend-section {
+    padding: 24px 20px;
+    animation: fadeIn 0.5s ease;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #dddddd;
+    margin: 0 0 6px 0;
+}
+
+.section-subtitle {
+    font-size: 14px;
+    color: #ff3366;
+    margin: 0 0 16px 0;
+    font-weight: 700;
+}
+
+.tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    /* 자리가 없으면 알아서 밑으로 줄바꿈 */
+    gap: 10px;
+}
+
+.hashtag-btn {
+    background-color: rgba(255, 51, 102, 0.08);
+    color: #ff3366;
+    border: 1px solid rgba(255, 51, 102, 0.3);
+    padding: 12px 18px;
+    border-radius: 20px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.hashtag-btn:active {
+    background-color: #ff3366;
+    color: #ffffff;
+    transform: scale(0.95);
+    /* 누를 때 쏙 들어가는 쫀득한 손맛! */
+}
+
+/* --- 3. 검색 결과 영역 --- */
+.result-section {
+    padding: 0 20px 100px 20px;
+}
+
+/* 초기 빈 화면 안내 */
+.empty-state {
+    text-align: center;
+    padding: 40px 0;
+    animation: fadeIn 0.5s ease;
+}
+
+.empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.empty-state p {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    color: #dddddd;
+}
+
+.empty-state .sub-text {
+    font-size: 14px;
+    color: #888899;
+}
+
+/* 빙글빙글 로딩 */
+.loading-spinner {
+    text-align: center;
+    padding: 60px 0;
+    color: #888899;
+}
+
+.spinner {
+    width: 36px;
+    height: 36px;
+    border: 4px solid rgba(255, 51, 102, 0.2);
+    border-top-color: #ff3366;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 16px auto;
+}
+
+/* 결과 카드 */
+.search-result {
+    animation: fadeIn 0.3s ease;
+}
+
+.result-info {
+    font-size: 15px;
+    color: #a0a0b0;
+    margin-bottom: 16px;
+}
+
+.result-info .highlight {
+    color: #ff3366;
+    font-size: 16px;
+}
+
+.result-card {
+    display: flex;
+    gap: 16px;
+    background-color: #1a1a24;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #2a2a35;
+    margin-bottom: 12px;
+}
+
+.result-thumbnail {
+    width: 100px;
+    height: 70px;
+    background-color: #16161e;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.play-icon {
+    color: #ff3366;
+    font-size: 20px;
+}
+
+.result-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.badge {
+    align-self: flex-start;
+    background-color: #333344;
+    color: #a0a0b0;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+}
+
+.result-title {
+    margin: 0 0 4px 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.result-desc {
+    margin: 0;
+    font-size: 12px;
+    color: #888899;
+}
+
+/* 부드럽게 나타나는 애니메이션 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}

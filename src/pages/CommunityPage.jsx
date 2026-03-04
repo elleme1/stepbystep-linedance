@@ -1,112 +1,132 @@
-import { useState } from 'react';
-import communityPosts from '../data/community';
-
-const categories = ['전체', '자유', '영상공유', 'Q&A'];
+import React, { useState } from 'react';
+import './CommunityPage.css';
 
 export default function CommunityPage() {
-    const [filter, setFilter] = useState('전체');
+    const [activeTab, setActiveTab] = useState('전체글');
+    const tabs = ['전체글', '📢 공지사항', '👋 가입인사', '💃 댄스 수다'];
 
-    const filteredPosts = communityPosts.filter(
-        p => filter === '전체' || p.category === filter
-    );
+    // ✨ [핵심 해결책] 팝업 오류를 막고 예쁜 진짜 앱 알림(Toast)을 띄워주는 기능
+    const [toastMsg, setToastMsg] = useState('');
+    const showToast = (msg) => {
+        setToastMsg(msg);
+        setTimeout(() => setToastMsg(''), 2500); // 2.5초 뒤에 스르륵 사라집니다
+    };
 
-    const formatDate = (dateStr) => {
-        const date = new Date(dateStr);
-        const now = new Date();
-        const diff = Math.floor((now - date) / (1000 * 60 * 60 * 24));
-        if (diff === 0) return '오늘';
-        if (diff === 1) return '어제';
-        if (diff < 7) return `${diff}일 전`;
-        return dateStr.replace(/-/g, '.');
+    const [posts, setPosts] = useState([
+        {
+            id: 1, category: '📢 공지사항', author: '구양희 원장', isDirector: true, time: '2시간 전',
+            content: '회원님들~ 오늘 수업 때 배운 "텍사스 타임" 영상이 [영상 보관함]에 업로드 되었습니다! 주말 동안 집에서 영상 보시면서 복습 꼭 해오세요~ 사랑합니다 ❤️',
+            image: null, likes: 45, comments: 12, isLiked: false
+        },
+        {
+            id: 2, category: '👋 가입인사', author: '초보댄서 영희', isDirector: false, time: '5시간 전',
+            content: '안녕하세요! 이번 달부터 화목 오전반에서 수업 듣게 된 영희입니다. 라인댄스는 처음이라 많이 뚝딱거리지만 잘 부탁드립니다!!',
+            image: 'https://images.unsplash.com/photo-1547153760-18fc86324498?auto=format&fit=crop&q=80&w=400',
+            likes: 28, comments: 8, isLiked: true
+        },
+        {
+            id: 3, category: '💃 댄스 수다', author: '스텝여왕 금자', isDirector: false, time: '1일 전',
+            content: '어제 새로 산 댄스화 신고 뛰었더니 발이 하나도 안 아프네요 호호~ 다들 무릎 조심하시고 내일 뵙겠습니다.',
+            image: null, likes: 15, comments: 3, isLiked: false
+        }
+    ]);
+
+    const displayPosts = activeTab === '전체글' ? posts : posts.filter(p => p.category === activeTab);
+
+    const toggleLike = (id) => {
+        setPosts(posts.map(post => {
+            if (post.id === id) {
+                const newLiked = !post.isLiked;
+                // ❤️ 하트를 누르면 칭찬 알림이 뜹니다!
+                if (newLiked) showToast('❤️ 게시글에 좋아요를 눌렀습니다!');
+                return {
+                    ...post,
+                    isLiked: newLiked,
+                    likes: newLiked ? post.likes + 1 : post.likes - 1
+                };
+            }
+            return post;
+        }));
     };
 
     return (
-        <div>
-            {/* Category Tabs */}
+        <div className="community-container">
+
             <div className="community-tabs">
-                {categories.map(cat => (
+                {tabs.map(tab => (
                     <button
-                        key={cat}
-                        className={`filter-btn ${filter === cat ? 'active' : ''}`}
-                        onClick={() => setFilter(cat)}
+                        key={tab}
+                        className={`comm-tab ${activeTab === tab ? 'active' : ''}`}
+                        onClick={() => setActiveTab(tab)}
                     >
-                        {cat === 'Q&A' ? '❓ Q&A' : cat === '영상공유' ? '🎬 영상' : cat === '자유' ? '💬 자유' : '전체'}
+                        {tab}
                     </button>
                 ))}
             </div>
 
-            {/* Posts */}
-            {filteredPosts.length === 0 ? (
-                <div className="empty-state">
-                    <div className="empty-emoji">📭</div>
-                    <p>게시글이 없습니다</p>
-                </div>
-            ) : (
-                <div className="community-feed">
-                    {filteredPosts.map(post => (
-                        <div className="glass-card community-post" key={post.id}>
-                            {/* Author Row */}
-                            <div className="post-author-row">
-                                <div className="post-avatar">{post.authorEmoji}</div>
-                                <div className="post-author-info">
-                                    <span className="post-author-name">{post.author}</span>
-                                    <span className="post-date">{formatDate(post.date)}</span>
-                                </div>
-                                <span className={`category-badge ${post.category === '자유' ? '기타' : post.category === '영상공유' ? '행사' : '수업'}`}>
-                                    {post.category}
-                                </span>
+            <div className="post-list">
+                {displayPosts.map(post => (
+                    <div key={post.id} className={`post-card ${post.isDirector ? 'director-card' : ''}`}>
+
+                        <div className="post-header">
+                            <div className={`post-avatar ${post.isDirector ? 'director-avatar' : ''}`}>
+                                {post.isDirector ? '👑' : post.author.charAt(0)}
                             </div>
-
-                            {/* Content */}
-                            <h3 className="post-title">{post.title}</h3>
-                            <p className="post-content">{post.content}</p>
-
-                            {/* Video indicator */}
-                            {post.hasVideo && (
-                                <div className="post-video-indicator">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <polygon points="5 3 19 12 5 21 5 3" />
-                                    </svg>
-                                    <span>영상 포함</span>
+                            <div className="post-author-info">
+                                <div className="author-name-row">
+                                    <span className="post-author">{post.author}</span>
+                                    {post.isDirector && <span className="director-badge">원장님</span>}
                                 </div>
-                            )}
-
-                            {/* Actions */}
-                            <div className="post-actions">
-                                <button className={`post-action-btn ${post.isLiked ? 'liked' : ''}`}>
-                                    <svg viewBox="0 0 24 24" fill={post.isLiked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
-                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                                    </svg>
-                                    <span>{post.likes}</span>
-                                </button>
-                                <button className="post-action-btn">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                                    </svg>
-                                    <span>{post.comments}</span>
-                                </button>
-                                <button className="post-action-btn">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <circle cx="18" cy="5" r="3" />
-                                        <circle cx="6" cy="12" r="3" />
-                                        <circle cx="18" cy="19" r="3" />
-                                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-                                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
-                                    </svg>
-                                </button>
+                                <span className="post-time">{post.time} · {post.category}</span>
                             </div>
                         </div>
-                    ))}
+
+                        <div className="post-body">
+                            <p className="post-text">{post.content}</p>
+                            {post.image && (
+                                <div className="post-image-wrapper">
+                                    <img src={post.image} alt="첨부 사진" className="post-image" />
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="post-footer">
+                            {/* ❤️ 하트 버튼 */}
+                            <button
+                                className={`action-btn like-btn ${post.isLiked ? 'liked' : ''}`}
+                                onClick={() => toggleLike(post.id)}
+                            >
+                                <span className="icon">{post.isLiked ? '❤️' : '🤍'}</span>
+                                <span>좋아요 {post.likes}</span>
+                            </button>
+
+                            {/* 💬 오류를 일으키던 옛날 팝업(alert)을 지우고, 예쁜 토스트 창으로 변경! */}
+                            <button className="action-btn comment-btn" onClick={() => showToast('💬 [댓글 쓰기] 기능은 준비 중입니다!')}>
+                                <span className="icon">💬</span>
+                                <span>댓글 {post.comments}</span>
+                            </button>
+                        </div>
+
+                    </div>
+                ))}
+            </div>
+
+            {/* ✏️ 글쓰기 버튼도 토스트 알림창으로 변경! */}
+            <button
+                className="fab-write-btn"
+                onClick={() => showToast('✍️ [새 글 쓰기] 화면을 준비 중입니다!')}
+            >
+                <span className="fab-icon">✏️</span>
+                <span className="fab-text">글쓰기</span>
+            </button>
+
+            {/* ✨ [핵심] 화면 아래에서 스르륵 나타나는 진짜 앱 알림창 (Toast) */}
+            {toastMsg && (
+                <div className="toast-message">
+                    {toastMsg}
                 </div>
             )}
 
-            {/* FAB - Write Button */}
-            <button className="community-fab" onClick={() => { }}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-            </button>
         </div>
     );
 }

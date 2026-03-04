@@ -1,0 +1,286 @@
+/* --- src/pages/CommunityPage.css --- */
+
+.community-container {
+    background-color: #0a0a0f;
+    color: #ffffff;
+    min-height: 100vh;
+    /* 서브 화면이라 하단 탭 메뉴는 없지만, FAB 버튼이 글씨를 가리지 않게 맨 아래 여백 넉넉히! */
+    padding-bottom: 120px;
+}
+
+/* --- 1. 상단 탭 --- */
+.community-tabs {
+    position: sticky;
+    top: 56px;
+    /* Layout.jsx의 헤더(타이틀) 높이인 56px만큼 띄워서 그 바로 밑에 착! 고정 */
+    z-index: 10;
+    background-color: rgba(10, 10, 15, 0.95);
+    backdrop-filter: blur(10px);
+    display: flex;
+    gap: 10px;
+    padding: 16px 20px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    border-bottom: 1px solid #1a1a24;
+}
+
+.community-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.comm-tab {
+    flex-shrink: 0;
+    background-color: #1a1a24;
+    color: #a0a0b0;
+    border: 1px solid #2a2a35;
+    border-radius: 24px;
+    padding: 10px 18px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 선택된 탭은 핑크색으로 불이 들어옵니다 */
+.comm-tab.active {
+    background-color: #ff3366;
+    color: #ffffff;
+    border-color: #ff3366;
+    box-shadow: 0 4px 12px rgba(255, 51, 102, 0.4);
+}
+
+/* --- 2. 게시글 카드 (피드) --- */
+.post-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px 0;
+    /* 밴드처럼 좌우 화면을 꽉 차게 쓰기 위해 좌우 패딩을 뺌! */
+}
+
+.post-card {
+    background-color: #16161e;
+    padding: 20px 20px 12px 20px;
+    border-top: 1px solid #2a2a35;
+    border-bottom: 1px solid #2a2a35;
+}
+
+/* 👑 원장님 공지글은 은은한 황금빛 테두리로 특별 대우! */
+.post-card.director-card {
+    background-color: rgba(255, 204, 0, 0.05);
+    border-top: 2px solid rgba(255, 204, 0, 0.5);
+    border-bottom: 2px solid rgba(255, 204, 0, 0.5);
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+/* 프로필 동그라미 */
+.post-avatar {
+    width: 44px;
+    height: 44px;
+    background-color: #2a2a35;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: #fff;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+/* 원장님 전용 황금 테두리 프사 */
+.post-avatar.director-avatar {
+    background-color: rgba(255, 204, 0, 0.2);
+    border: 2px solid #ffcc00;
+    font-size: 24px;
+}
+
+.post-author-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.author-name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.post-author {
+    font-size: 16px;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+/* 원장님 황금 뱃지 */
+.director-badge {
+    background-color: #ffcc00;
+    color: #000;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.post-time {
+    font-size: 13px;
+    color: #888899;
+}
+
+/* 글 내용 */
+.post-body {
+    margin-bottom: 16px;
+}
+
+.post-text {
+    margin: 0;
+    font-size: 16px;
+    /* 돋보기 없이도 잘 보이는 시원한 글씨 */
+    line-height: 1.6;
+    color: #dddddd;
+    word-break: keep-all;
+    /* 단어 끊김 완벽 방지 */
+}
+
+.post-image-wrapper {
+    margin-top: 16px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #2a2a35;
+}
+
+.post-image {
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    display: block;
+}
+
+/* 하단 좋아요/댓글 버튼 영역 */
+.post-footer {
+    display: flex;
+    border-top: 1px solid #2a2a35;
+    padding-top: 12px;
+    gap: 8px;
+}
+
+.action-btn {
+    flex: 1;
+    /* 반반씩 공간을 쫙 갈라서 터치 영역을 엄청 넓게 만듦! */
+    background: transparent;
+    border: none;
+    color: #a0a0b0;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 12px 0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    /* 스마트폰 터치 깜빡임 지우기 */
+}
+
+.action-btn:active {
+    background-color: #2a2a35;
+}
+
+.action-btn.liked {
+    color: #ff3366;
+    /* 눌렀을 때 핑크색 글씨와 하트로 변신! */
+}
+
+.action-btn .icon {
+    font-size: 18px;
+}
+
+/* --- 3. ✏️ 떠다니는 글쓰기 버튼 (FAB) --- */
+.fab-write-btn {
+    position: fixed;
+    right: 20px;
+    /* 서브 화면이라 하단 메뉴가 없으므로 아이폰 홈 스와이프 바 위로 안전하게 착! */
+    bottom: calc(30px + env(safe-area-inset-bottom));
+    background-color: #ff3366;
+    color: #ffffff;
+    border: none;
+    border-radius: 30px;
+    /* 긴 알약 모양 */
+    padding: 14px 24px 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 17px;
+    font-weight: 800;
+    box-shadow: 0 8px 24px rgba(255, 51, 102, 0.5);
+    /* 예쁜 핑크색 그림자 */
+    cursor: pointer;
+    z-index: 100;
+    transition: transform 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.fab-write-btn:active {
+    transform: scale(0.95);
+    /* 누르면 쏙! 들어가는 쫀득한 손맛 */
+}
+
+.fab-icon {
+    font-size: 20px;
+}
+
+/* --- 아래 코드만 CSS 맨 밑에 덧붙여 추가해 주세요 --- */
+
+/* 🍞 화면 하단에 스르륵 나타나는 토스트 알림창 */
+.toast-message {
+    position: fixed;
+    bottom: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 51, 102, 0.95);
+    /* 반투명한 네온 핑크빛 */
+    color: #ffffff;
+    padding: 14px 24px;
+    border-radius: 30px;
+    font-size: 15px;
+    font-weight: 800;
+    z-index: 9999;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    white-space: nowrap;
+    pointer-events: none;
+    /* 클릭을 방해하지 않음 */
+    /* 나타났다가 2.5초 뒤에 알아서 사라지는 마법 애니메이션 */
+    animation: slideUpFade 2.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes slideUpFade {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, 40px);
+    }
+
+    15% {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+
+    85% {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, 40px);
+    }
+}

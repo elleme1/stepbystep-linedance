@@ -176,6 +176,7 @@ const songs = [
     counts: 32,
     genre: "컨트리",
     youtubeId: "l6vjpsH1emg",
+    tutorialId: "6zz5NOfWsJA",
     thumbnail: "https://img.youtube.com/vi/l6vjpsH1emg/hqdefault.jpg",
     isThisWeek: false,
     steps: [

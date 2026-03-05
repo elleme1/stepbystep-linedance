@@ -15,6 +15,7 @@ export default function VideoDetail() {
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
+    const [videoEnded, setVideoEnded] = useState(false);
 
     const playerRef = useRef(null);
     const containerRef = useRef(null);
@@ -63,15 +64,12 @@ export default function VideoDetail() {
                         if (!mounted) return;
                         if (event.data === window.YT.PlayerState.PLAYING) {
                             setIsPlaying(true);
+                            setVideoEnded(false);
                         } else if (event.data === window.YT.PlayerState.PAUSED) {
                             setIsPlaying(false);
                         } else if (event.data === window.YT.PlayerState.ENDED) {
                             setIsPlaying(false);
-                            // 유튜브 추천 영상 화면 차단: 처음으로 되돌림
-                            try {
-                                event.target.seekTo(0);
-                                event.target.pauseVideo();
-                            } catch (e) { }
+                            setVideoEnded(true);
                         }
                     }
                 }
@@ -118,9 +116,9 @@ export default function VideoDetail() {
                         const dur = playerRef.current.getDuration ? playerRef.current.getDuration() : 0;
                         if (dur > 0) setDuration(dur);
 
-                        // 🚫 유튜브 추천 화면 차단: 끝나기 0.5초 전에 미리 멈춤
-                        if (dur > 0 && time >= dur - 0.5 && !clipActive) {
-                            playerRef.current.seekTo(0, true);
+                        // 🚫 유튜브 추천 화면 차단: 끝나기 3초 전에 오버레이 표시
+                        if (dur > 0 && time >= dur - 3 && !clipActive) {
+                            setVideoEnded(true);
                             playerRef.current.pauseVideo();
                             setIsPlaying(false);
                             return;
@@ -210,6 +208,37 @@ export default function VideoDetail() {
                         <p style={{ fontSize: '14px', color: '#888', margin: 0, textAlign: 'center', padding: '0 20px' }}>
                             원장님이 곧 친절한 스텝 설명 영상을 올려주실 거예요! 🎬
                         </p>
+                    </div>
+                )}
+
+                {/* 🚫 영상 종료 오버레이 - 유튜브 추천 화면 차단 */}
+                {videoEnded && (
+                    <div style={{
+                        position: 'absolute', inset: 0, zIndex: 10,
+                        background: 'rgba(10, 10, 15, 0.95)',
+                        display: 'flex', flexDirection: 'column',
+                        alignItems: 'center', justifyContent: 'center', gap: '16px'
+                    }}>
+                        <span style={{ fontSize: '48px' }}>🎬</span>
+                        <p style={{ fontSize: '18px', fontWeight: '800', color: '#fff', margin: 0 }}>
+                            영상이 끝났습니다
+                        </p>
+                        <button
+                            onClick={() => {
+                                setVideoEnded(false);
+                                try {
+                                    playerRef.current.seekTo(0, true);
+                                    playerRef.current.playVideo();
+                                } catch (e) { }
+                            }}
+                            style={{
+                                background: 'linear-gradient(135deg, #ff2d55, #ff6699)',
+                                border: 'none', color: '#fff', fontSize: '16px', fontWeight: '800',
+                                padding: '14px 32px', borderRadius: '12px', cursor: 'pointer',
+                                boxShadow: '0 4px 16px rgba(255, 45, 85, 0.4)',
+                                marginTop: '8px'
+                            }}
+                        >🔄 다시 보기</button>
                     </div>
                 )}
             </div>

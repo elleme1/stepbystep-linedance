@@ -156,6 +156,7 @@ const songs = [
     counts: 32,
     genre: "라틴팝",
     youtubeId: "oD1r1UAWObk",
+    tutorialId: "wixCZ2dY7gc",
     thumbnail: "https://img.youtube.com/vi/oD1r1UAWObk/hqdefault.jpg",
     isThisWeek: false,
     steps: [

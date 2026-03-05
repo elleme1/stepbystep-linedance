@@ -1,45 +1,18 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import songs from '../data/songs';
+import { levelText } from '../data/constants';
 
 export default function VideoDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [viewMode, setViewMode] = useState('main');
 
-    // 🚨 [완벽해진 보물창고] 서랍 번호를 1, 2, 3번으로 고쳤습니다!
-    const videoDB = [
-        {
-            id: '1', // 밖에서 1번 카드를 눌렀을 때
-            title: "[쉬운중급] Why - Tiggy Line Dance",
-            choreographer: "LinedanceEunheeYoon",
-            tags: ["유로댄스", "★★ 초급", "최신안무"],
-            description: "A B A A, A B A A Tag, A B A A\n\n발동작이 헷갈리신다면 위 탭에서 [친절한 스텝 설명]을 눌러 천천히 복습해 보세요!",
-            mainVideoId: "M7lc1UVf-VE",     // (테스트용) 구글 개발자 공식 테스트 영상
-            tutorialVideoId: "M7lc1UVf-VE"
-        },
-        {
-            id: '2', // 밖에서 2번 카드를 눌렀을 때
-            title: "[발라드] 정말 잘해왔어 (You've Done Really Well)",
-            choreographer: "헬로핑 (Helloping)",
-            tags: ["발라드", "★★ 초급"],
-            description: "아름다운 발라드 음악에 맞춰 추는 우아한 라인댄스입니다.\n감정을 담아 부드럽게 스텝을 밟아보세요.",
-            mainVideoId: "M7lc1UVf-VE",
-            tutorialVideoId: "M7lc1UVf-VE"
-        },
-        {
-            id: '3', // 👈 아까 원장님이 밖에서 누르신 3번 카드의 진짜 서랍입니다!!
-            title: "[입문] This Is My Life",
-            choreographer: "NEW CHOREO",
-            tags: ["팝", "★ 입문"],
-            description: "라인댄스를 처음 접하시는 분들도 쉽게 따라 할 수 있는 아주 신나는 입문용 안무입니다!\n자신감 있게 즐겨보세요!",
-            mainVideoId: "M7lc1UVf-VE",
-            tutorialVideoId: "M7lc1UVf-VE"
-        }
-    ];
+    // songs.js에서 해당 id의 곡 데이터를 자동으로 가져옵니다!
+    const song = songs.find(s => s.id === Number(id)) || songs[0];
 
-    // 창고에서 번호에 맞는 데이터를 똑똑하게 꺼냅니다. (없으면 1번을 꺼냅니다)
-    const videoData = videoDB.find(video => String(video.id) === String(id)) || videoDB[0];
-    const currentVideoId = viewMode === 'main' ? videoData.mainVideoId : videoData.tutorialVideoId;
+    // 실전 영상은 songs.js의 youtubeId, 튜토리얼은 나중에 추가 가능
+    const currentVideoId = viewMode === 'main' ? song.youtubeId : (song.tutorialId || song.youtubeId);
 
     return (
         <div style={{ backgroundColor: '#0a0a0f', minHeight: '100%', display: 'flex', flexDirection: 'column', color: '#fff' }}>
@@ -99,26 +72,63 @@ export default function VideoDetail() {
                     </button>
                 </div>
 
-                {/* 🏷️ 하단 글씨 영역 (창고에서 꺼내온 정보가 자동으로 들어갑니다!) */}
+                {/* 🏷️ 태그 */}
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
-                    {videoData.tags.map((tag, idx) => (
-                        <span key={idx} style={{ background: 'rgba(255,45,85,0.15)', color: '#ff2d55', padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold' }}>
-                            {tag}
+                    <span style={{ background: 'rgba(255,45,85,0.15)', color: '#ff2d55', padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold' }}>
+                        {song.genre}
+                    </span>
+                    <span style={{ background: 'rgba(255,45,85,0.15)', color: '#ff2d55', padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold' }}>
+                        {levelText[song.level]}
+                    </span>
+                    {song.isThisWeek && (
+                        <span style={{ background: 'rgba(255,45,85,0.15)', color: '#ff2d55', padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold' }}>
+                            이번주 수업곡
                         </span>
-                    ))}
+                    )}
                 </div>
+
                 <h1 style={{ fontSize: '22px', fontWeight: '800', lineHeight: '1.4', marginBottom: '8px', wordBreak: 'keep-all' }}>
-                    {videoData.title} {/* 👈 창고에서 꺼내온 제목 */}
+                    {song.title}
                 </h1>
                 <p style={{ color: '#aaa', fontSize: '14px', marginBottom: '24px' }}>
-                    안무가: {videoData.choreographer}
+                    🎵 {song.artist} · 💃 {song.choreographer}
                 </p>
 
+                {/* � 안무 정보 */}
+                <div style={{ display: 'flex', gap: '10px', marginBottom: '24px', flexWrap: 'wrap' }}>
+                    <span style={{ background: '#1a1a24', padding: '8px 14px', borderRadius: '8px', fontSize: '13px', color: '#ccc' }}>
+                        🎼 BPM {song.bpm}
+                    </span>
+                    <span style={{ background: '#1a1a24', padding: '8px 14px', borderRadius: '8px', fontSize: '13px', color: '#ccc' }}>
+                        🧱 {song.walls === 0 ? '무한벽' : `${song.walls}벽`}
+                    </span>
+                    <span style={{ background: '#1a1a24', padding: '8px 14px', borderRadius: '8px', fontSize: '13px', color: '#ccc' }}>
+                        🔢 {song.counts} 카운트
+                    </span>
+                </div>
+
+                {/* 📝 스텝시트 */}
                 <div style={{ padding: '20px', backgroundColor: '#1a1a24', borderRadius: '12px', border: '1px solid #2a2a35' }}>
-                    <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', color: '#ff2d55' }}>📝 원장님의 안무 노트</h3>
-                    <p style={{ color: '#ddd', fontSize: '15px', lineHeight: '1.6', margin: 0, wordBreak: 'keep-all', whiteSpace: 'pre-line' }}>
-                        {videoData.description} {/* 👈 창고에서 꺼내온 설명 */}
-                    </p>
+                    <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', color: '#ff2d55' }}>📝 스텝시트</h3>
+                    {song.steps.map((step, idx) => (
+                        <div key={idx} style={{
+                            display: 'flex', gap: '12px', marginBottom: idx < song.steps.length - 1 ? '14px' : 0,
+                            paddingBottom: idx < song.steps.length - 1 ? '14px' : 0,
+                            borderBottom: idx < song.steps.length - 1 ? '1px solid #2a2a35' : 'none'
+                        }}>
+                            <span style={{
+                                flexShrink: 0, background: '#ff2d55', color: '#fff',
+                                padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold',
+                                height: 'fit-content'
+                            }}>
+                                {step.count}
+                            </span>
+                            <div>
+                                <p style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: '700', color: '#fff' }}>{step.move}</p>
+                                <p style={{ margin: 0, fontSize: '14px', color: '#aaa', lineHeight: '1.5' }}>{step.desc}</p>
+                            </div>
+                        </div>
+                    ))}
                 </div>
 
             </div>

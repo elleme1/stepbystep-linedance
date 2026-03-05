@@ -116,6 +116,7 @@ const songs = [
     counts: 32,
     genre: "팝",
     youtubeId: "4P58kFsXb9U",
+    tutorialId: "ZwkcYVuyBlw",
     thumbnail: "https://img.youtube.com/vi/4P58kFsXb9U/hqdefault.jpg",
     isThisWeek: false,
     steps: [

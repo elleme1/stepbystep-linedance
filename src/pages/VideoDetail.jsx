@@ -82,6 +82,8 @@ export default function VideoDetail() {
                     modestbranding: 1,
                     playsinline: 1,
                     autoplay: 0,
+                    cc_load_policy: 1,
+                    cc_lang_pref: 'ko',
                 },
                 events: {
                     onReady: () => {

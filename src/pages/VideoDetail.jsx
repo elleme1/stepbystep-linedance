@@ -63,9 +63,15 @@ export default function VideoDetail() {
                         if (!mounted) return;
                         if (event.data === window.YT.PlayerState.PLAYING) {
                             setIsPlaying(true);
-                        } else if (event.data === window.YT.PlayerState.PAUSED ||
-                            event.data === window.YT.PlayerState.ENDED) {
+                        } else if (event.data === window.YT.PlayerState.PAUSED) {
                             setIsPlaying(false);
+                        } else if (event.data === window.YT.PlayerState.ENDED) {
+                            setIsPlaying(false);
+                            // 유튜브 추천 영상 화면 차단: 처음으로 되돌림
+                            try {
+                                event.target.seekTo(0);
+                                event.target.pauseVideo();
+                            } catch (e) { }
                         }
                     }
                 }

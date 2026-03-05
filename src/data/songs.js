@@ -3,8 +3,8 @@ const songs = [
   {
     id: 10,
     title: "Everyone Needs a Hero",
-    artist: "Various",
-    choreographer: "Unknown",
+    artist: "Adam Lambert",
+    choreographer: "Roy Verdonk, Grace David & Jef Camps",
     level: 2,
     bpm: 120,
     walls: 2,

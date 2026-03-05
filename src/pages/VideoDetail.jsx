@@ -115,8 +115,15 @@ export default function VideoDetail() {
                         const time = playerRef.current.getCurrentTime();
                         setCurrentTime(time);
 
-                        if (playerRef.current.getDuration) {
-                            setDuration(playerRef.current.getDuration());
+                        const dur = playerRef.current.getDuration ? playerRef.current.getDuration() : 0;
+                        if (dur > 0) setDuration(dur);
+
+                        // 🚫 유튜브 추천 화면 차단: 끝나기 0.5초 전에 미리 멈춤
+                        if (dur > 0 && time >= dur - 0.5 && !clipActive) {
+                            playerRef.current.seekTo(0, true);
+                            playerRef.current.pauseVideo();
+                            setIsPlaying(false);
+                            return;
                         }
 
                         // 클립 반복: 끝점 넘으면 시작점으로 되돌림

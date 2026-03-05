@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import songs from '../data/songs';
 import { levelStars } from '../data/constants';
 
 export default function PlaylistPage() {
     const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
     const mode = searchParams.get('mode') || 'thisweek';
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -269,6 +270,27 @@ export default function PlaylistPage() {
 
     return (
         <div className="playlist-page">
+            {/* 돌아가기 버튼 */}
+            <div style={{
+                padding: '12px 16px', display: 'flex', alignItems: 'center',
+                position: 'sticky', top: 0, zIndex: 20,
+                background: 'linear-gradient(180deg, rgba(10,10,15,1) 0%, rgba(10,10,15,0.9) 80%, rgba(10,10,15,0) 100%)'
+            }}>
+                <button
+                    onClick={() => navigate(-1)}
+                    style={{
+                        background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff',
+                        fontSize: '15px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px',
+                        padding: '8px 16px', borderRadius: '20px', cursor: 'pointer', backdropFilter: 'blur(10px)'
+                    }}
+                >
+                    <span style={{ fontSize: '22px', paddingBottom: '2px' }}>‹</span> 돌아가기
+                </button>
+                <h2 style={{ margin: '0 0 0 12px', fontSize: '16px', color: '#fff', fontWeight: '700' }}>
+                    {mode === 'thisweek' ? '🎵 이번주 곡 연속재생' : '🎶 전체 곡 연속재생'}
+                </h2>
+            </div>
+
             {/* Now Playing Section */}
             <div className="playlist-now-playing">
                 <div className="playlist-video-area">

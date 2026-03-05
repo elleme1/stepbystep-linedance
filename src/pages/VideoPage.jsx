@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import songs from '../data/songs';
 import { levelText } from '../data/constants';
@@ -8,6 +8,26 @@ export default function VideoPage() {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('전체');
     const [likedIds, setLikedIds] = useState([]);
+    const [showScrollTop, setShowScrollTop] = useState(false);
+    const [showScrollBottom, setShowScrollBottom] = useState(true);
+
+    // 스크롤 위치에 따라 화살표 버튼 보이기/숨기기
+    const handleScroll = useCallback(() => {
+        const scrollTop = window.scrollY;
+        const scrollHeight = document.documentElement.scrollHeight;
+        const clientHeight = window.innerHeight;
+        setShowScrollTop(scrollTop > 300);
+        setShowScrollBottom(scrollTop + clientHeight < scrollHeight - 200);
+    }, []);
+
+    useEffect(() => {
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll();
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [handleScroll]);
+
+    const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+    const scrollToBottom = () => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
 
     // 장르와 레벨 목록을 데이터에서 자동 추출
     const genres = useMemo(() => {
@@ -145,6 +165,60 @@ export default function VideoPage() {
                             </div>
                         );
                     })
+                )}
+            </div>
+
+            {/* 🔼🔽 스크롤 화살표 플로팅 버튼 */}
+            <div style={{
+                position: 'fixed',
+                right: '16px',
+                bottom: 'calc(80px + env(safe-area-inset-bottom))',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '10px',
+                zIndex: 20
+            }}>
+                {showScrollTop && (
+                    <button
+                        onClick={scrollToTop}
+                        style={{
+                            width: '48px', height: '48px',
+                            borderRadius: '50%',
+                            backgroundColor: 'rgba(255, 51, 102, 0.85)',
+                            color: '#fff',
+                            border: 'none',
+                            fontSize: '22px',
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            backdropFilter: 'blur(8px)',
+                            transition: 'transform 0.2s, opacity 0.3s'
+                        }}
+                        aria-label="맨 위로"
+                    >
+                        ▲
+                    </button>
+                )}
+                {showScrollBottom && (
+                    <button
+                        onClick={scrollToBottom}
+                        style={{
+                            width: '48px', height: '48px',
+                            borderRadius: '50%',
+                            backgroundColor: 'rgba(255, 51, 102, 0.85)',
+                            color: '#fff',
+                            border: 'none',
+                            fontSize: '22px',
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            backdropFilter: 'blur(8px)',
+                            transition: 'transform 0.2s, opacity 0.3s'
+                        }}
+                        aria-label="맨 아래로"
+                    >
+                        ▼
+                    </button>
                 )}
             </div>
 

@@ -53,6 +53,7 @@ const songs = [
     counts: 32,
     genre: "발라드",
     youtubeId: "XXr1fM_eWBM",
+    tutorialId: "DtG5WTkFqV8",
     thumbnail: "https://img.youtube.com/vi/XXr1fM_eWBM/hqdefault.jpg",
     isThisWeek: false,
     steps: [

@@ -95,6 +95,7 @@ const songs = [
     counts: 32,
     genre: "가요",
     youtubeId: "5H1cmZ9r1zw",
+    tutorialId: "bTedOVhtdSA",
     thumbnail: "https://img.youtube.com/vi/5H1cmZ9r1zw/hqdefault.jpg",
     isThisWeek: false,
     steps: [
@@ -195,6 +196,7 @@ const songs = [
     counts: 64,
     genre: "컨트리",
     youtubeId: "Vz-KfQUKzdw",
+    tutorialId: "GRMkkKLjjXk",
     thumbnail: "https://img.youtube.com/vi/Vz-KfQUKzdw/hqdefault.jpg",
     isThisWeek: false,
     steps: [

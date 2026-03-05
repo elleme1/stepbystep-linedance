@@ -32,6 +32,7 @@ const songs = [
     counts: 32,
     genre: "유로댄스",
     youtubeId: "cmJiGKTb6v4",
+    tutorialId: "1-Pm_HFmz10",
     thumbnail: "https://img.youtube.com/vi/cmJiGKTb6v4/hqdefault.jpg",
     isThisWeek: false,
     steps: [

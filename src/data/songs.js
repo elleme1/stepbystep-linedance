@@ -1,6 +1,26 @@
 // 라인댄스 안무곡 데이터
 const songs = [
   {
+    id: 10,
+    title: "Everyone Needs a Hero",
+    artist: "Various",
+    choreographer: "Unknown",
+    level: 2,
+    bpm: 120,
+    walls: 2,
+    counts: 64,
+    genre: "팝",
+    youtubeId: "ooJ8nB37RnE",
+    thumbnail: "https://img.youtube.com/vi/ooJ8nB37RnE/hqdefault.jpg",
+    isThisWeek: true,
+    steps: [
+      { count: "1-16", move: "워크 & 턴 (Walk & Turn)", desc: "앞으로 워크 → 1/4 턴 → 사이드 스텝" },
+      { count: "17-32", move: "셔플 & 록 스텝 (Shuffle & Rock Step)", desc: "오른쪽 셔플 → 앞 록 → 리커버" },
+      { count: "33-48", move: "바인 & 크로스 (Vine & Cross)", desc: "오른쪽 그레이프바인 → 크로스 스텝" },
+      { count: "49-64", move: "스웨이 & 턴 (Sway & Turn)", desc: "힙 스웨이 → 1/2 피봇 턴 → 터치" }
+    ]
+  },
+  {
     id: 1,
     title: "Why",
     artist: "Tiggy",
@@ -12,7 +32,7 @@ const songs = [
     genre: "유로댄스",
     youtubeId: "cmJiGKTb6v4",
     thumbnail: "https://img.youtube.com/vi/cmJiGKTb6v4/hqdefault.jpg",
-    isThisWeek: true,
+    isThisWeek: false,
     steps: [
       { count: "1-8", move: "V 스텝 & 차차 (V Step & Cha Cha)", desc: "오른발 앞 대각선 → 왼발 앞 대각선 → 오른발 뒤 → 왼발 모아 → 차차차" },
       { count: "9-16", move: "셔플 & 록 스텝 (Shuffle & Rock Step)", desc: "오른쪽 셔플 → 앞 록 → 리커버" },

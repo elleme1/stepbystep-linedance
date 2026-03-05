@@ -31,11 +31,30 @@ export default function VideoDetail() {
 
     return (
         <div>
-            <button className="back-button" onClick={goBack}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="15 18 9 12 15 6" />
-                </svg>
-                돌아가기
+            {/* 🔙 절대 안 가려지는 뒤로가기 버튼 */}
+            <button
+                onClick={goBack}
+                style={{
+                    position: 'fixed',
+                    top: '10px',
+                    left: '10px',
+                    zIndex: 9999,
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '50%',
+                    background: 'rgba(0,0,0,0.7)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    color: '#fff',
+                    fontSize: '20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    padding: 0,
+                }}
+            >
+                ←
             </button>
 
             {/* Video Player */}

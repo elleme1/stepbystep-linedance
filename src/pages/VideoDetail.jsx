@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import songs from '../data/songs';
 import { levelText } from '../data/constants';
@@ -8,55 +8,22 @@ export default function VideoDetail() {
     const navigate = useNavigate();
     const [viewMode, setViewMode] = useState('main');
 
-    // 캡션 관련 상태
-    const [captionEnabled, setCaptionEnabled] = useState(true);
-    const [currentStepIdx, setCurrentStepIdx] = useState(-1);
+    // 🎬 클립(구간 반복) 상태
+    const [clipStart, setClipStart] = useState(null);
+    const [clipEnd, setClipEnd] = useState(null);
+    const [clipActive, setClipActive] = useState(false);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
-    const [captionOffset, setCaptionOffset] = useState(0); // 초 단위 오프셋 조정
 
     const playerRef = useRef(null);
     const containerRef = useRef(null);
     const progressInterval = useRef(null);
-    const loadedVideoId = useRef(null);
     const [playerReady, setPlayerReady] = useState(false);
 
     const song = songs.find(s => s.id === Number(id)) || songs[0];
     const hasTutorial = !!song.tutorialId;
     const currentVideoId = viewMode === 'main' ? song.youtubeId : (song.tutorialId || null);
-
-    // BPM 기반으로 카운트를 시간(초)으로 변환
-    // 1비트 = 60/BPM 초
-    const beatDuration = 60 / song.bpm;
-
-    // steps의 count 범위를 시간 범위로 변환
-    const stepTimings = song.steps.map(step => {
-        const countRange = step.count.split('-').map(Number);
-        const startCount = countRange[0];
-        const endCount = countRange[1] || startCount;
-        return {
-            ...step,
-            startTime: (startCount - 1) * beatDuration,
-            endTime: endCount * beatDuration,
-        };
-    });
-
-    // 현재 재생 시간에 맞는 스텝 인덱스 찾기
-    const findCurrentStep = useCallback((time) => {
-        const adjustedTime = time - captionOffset;
-        if (adjustedTime < 0) return -1;
-
-        // 전체 한 사이클 길이 (초)
-        const cycleLength = song.counts * beatDuration;
-        // 현재 사이클 내 위치
-        const posInCycle = adjustedTime % cycleLength;
-
-        for (let i = 0; i < stepTimings.length; i++) {
-            if (posInCycle >= stepTimings[i].startTime && posInCycle < stepTimings[i].endTime) {
-                return i;
-            }
-        }
-        return -1;
-    }, [captionOffset, beatDuration, song.counts, stepTimings]);
 
     // YouTube Player 초기화
     useEffect(() => {
@@ -67,13 +34,15 @@ export default function VideoDetail() {
         const createPlayer = () => {
             if (!mounted || !containerRef.current) return;
 
-            // 기존 플레이어 정리
             if (playerRef.current) {
                 try { playerRef.current.destroy(); } catch (e) { }
                 playerRef.current = null;
             }
 
-            loadedVideoId.current = currentVideoId;
+            // 클립 상태 초기화
+            setClipStart(null);
+            setClipEnd(null);
+            setClipActive(false);
 
             playerRef.current = new window.YT.Player(containerRef.current, {
                 videoId: currentVideoId,
@@ -126,23 +95,33 @@ export default function VideoDetail() {
         };
     }, [currentVideoId]);
 
-    // 캡션 추적 인터벌
+    // 클립 반복 + 시간 추적 인터벌
     useEffect(() => {
         if (progressInterval.current) {
             clearInterval(progressInterval.current);
             progressInterval.current = null;
         }
 
-        if (isPlaying && captionEnabled && playerRef.current) {
+        if (isPlaying && playerRef.current) {
             progressInterval.current = setInterval(() => {
                 try {
                     if (playerRef.current && playerRef.current.getCurrentTime) {
                         const time = playerRef.current.getCurrentTime();
-                        const idx = findCurrentStep(time);
-                        setCurrentStepIdx(idx);
+                        setCurrentTime(time);
+
+                        if (playerRef.current.getDuration) {
+                            setDuration(playerRef.current.getDuration());
+                        }
+
+                        // 클립 반복: 끝점 넘으면 시작점으로 되돌림
+                        if (clipActive && clipStart !== null && clipEnd !== null) {
+                            if (time >= clipEnd) {
+                                playerRef.current.seekTo(clipStart, true);
+                            }
+                        }
                     }
-                } catch (e) { /* player may be destroyed */ }
-            }, 200); // 200ms마다 업데이트
+                } catch (e) { }
+            }, 200);
         }
 
         return () => {
@@ -151,15 +130,42 @@ export default function VideoDetail() {
                 progressInterval.current = null;
             }
         };
-    }, [isPlaying, captionEnabled, findCurrentStep]);
+    }, [isPlaying, clipActive, clipStart, clipEnd]);
 
-    // 캡션 오프셋 조절
-    const adjustOffset = (delta) => {
-        setCaptionOffset(prev => {
-            const next = prev + delta;
-            return Math.max(-10, Math.min(30, next));
-        });
+    // 🎬 클립 제어 함수
+    const formatTime = (sec) => {
+        if (sec === null || isNaN(sec)) return '--:--';
+        const m = Math.floor(sec / 60);
+        const s = Math.floor(sec % 60);
+        return `${m}:${String(s).padStart(2, '0')}`;
     };
+
+    const setClipPoint = (type) => {
+        try {
+            const time = playerRef.current?.getCurrentTime?.() || 0;
+            if (type === 'start') {
+                setClipStart(time);
+                if (clipEnd !== null && time >= clipEnd) setClipEnd(null);
+                setClipActive(false);
+            } else {
+                if (clipStart !== null && time > clipStart) {
+                    setClipEnd(time);
+                    setClipActive(true);
+                }
+            }
+        } catch (e) { }
+    };
+
+    const clearClip = () => {
+        setClipStart(null);
+        setClipEnd(null);
+        setClipActive(false);
+    };
+
+    // 클립 구간 비율 (프로그레스 바용)
+    const clipStartPct = (clipStart !== null && duration > 0) ? (clipStart / duration * 100) : 0;
+    const clipEndPct = (clipEnd !== null && duration > 0) ? (clipEnd / duration * 100) : 0;
+    const currentPct = (duration > 0) ? (currentTime / duration * 100) : 0;
 
     return (
         <div style={{ backgroundColor: '#0a0a0f', minHeight: '100%', display: 'flex', flexDirection: 'column', color: '#fff' }}>
@@ -195,87 +201,112 @@ export default function VideoDetail() {
                 )}
             </div>
 
-            {/* 🎯 실시간 스텝 캡션 바 */}
-            {captionEnabled && currentVideoId && (
+            {/* 🎬 구간 반복(클립) 패널 */}
+            {currentVideoId && (
                 <div style={{
-                    background: 'linear-gradient(135deg, #1a1025, #0f1a2e)',
-                    borderBottom: '1px solid #2a2a35',
-                    padding: '0',
-                    position: 'relative',
-                    overflow: 'hidden',
+                    background: '#12121a', borderBottom: '1px solid #2a2a35',
+                    padding: '14px 20px 16px'
                 }}>
-                    {/* 캡션 내용 */}
+                    {/* 프로그레스 바 */}
                     <div style={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        padding: '14px 20px', gap: '12px', minHeight: '56px'
+                        position: 'relative', height: '6px', background: '#2a2a35',
+                        borderRadius: '3px', marginBottom: '12px', overflow: 'visible'
                     }}>
-                        {currentStepIdx >= 0 && isPlaying ? (
-                            <>
-                                <span style={{
-                                    background: '#ff2d55', color: '#fff',
-                                    padding: '4px 10px', borderRadius: '6px',
-                                    fontSize: '13px', fontWeight: 'bold', flexShrink: 0,
-                                    animation: 'pulse 1s ease-in-out infinite'
-                                }}>
-                                    {stepTimings[currentStepIdx].count}
-                                </span>
-                                <span style={{
-                                    fontSize: '16px', fontWeight: '800', color: '#fff',
-                                    textShadow: '0 0 10px rgba(255,45,85,0.5)',
-                                    animation: 'fadeInCaption 0.3s ease'
-                                }}>
-                                    {stepTimings[currentStepIdx].move}
-                                </span>
-                            </>
-                        ) : isPlaying ? (
-                            <span style={{ fontSize: '15px', color: '#888', fontStyle: 'italic' }}>
-                                🎵 인트로 / 전환 구간...
-                            </span>
-                        ) : (
-                            <span style={{ fontSize: '15px', color: '#666' }}>
-                                ▶ 영상을 재생하면 스텝 이름이 자동으로 표시됩니다
-                            </span>
+                        {/* 클립 구간 하이라이트 */}
+                        {clipStart !== null && clipEnd !== null && (
+                            <div style={{
+                                position: 'absolute', top: 0, left: `${clipStartPct}%`,
+                                width: `${clipEndPct - clipStartPct}%`, height: '100%',
+                                background: 'rgba(255, 45, 85, 0.4)', borderRadius: '3px'
+                            }} />
+                        )}
+                        {/* 현재 재생 위치 */}
+                        <div style={{
+                            position: 'absolute', top: '-3px', left: `${currentPct}%`,
+                            width: '12px', height: '12px', background: '#fff',
+                            borderRadius: '50%', transform: 'translateX(-6px)',
+                            boxShadow: '0 0 8px rgba(255,255,255,0.5)',
+                            transition: 'left 0.2s linear'
+                        }} />
+                        {/* 시작 마커 */}
+                        {clipStart !== null && (
+                            <div style={{
+                                position: 'absolute', top: '-5px', left: `${clipStartPct}%`,
+                                width: '3px', height: '16px', background: '#00cc66',
+                                borderRadius: '2px', transform: 'translateX(-1.5px)'
+                            }} />
+                        )}
+                        {/* 끝 마커 */}
+                        {clipEnd !== null && (
+                            <div style={{
+                                position: 'absolute', top: '-5px', left: `${clipEndPct}%`,
+                                width: '3px', height: '16px', background: '#ff2d55',
+                                borderRadius: '2px', transform: 'translateX(-1.5px)'
+                            }} />
                         )}
                     </div>
 
-                    {/* 타이밍 조절 바 */}
-                    <div style={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        gap: '8px', padding: '4px 20px 10px', fontSize: '13px', color: '#666'
-                    }}>
-                        <button onClick={() => adjustOffset(-0.5)} style={{
-                            background: '#1a1a24', border: '1px solid #2a2a35', color: '#aaa',
-                            padding: '4px 10px', borderRadius: '6px', fontSize: '12px', cursor: 'pointer'
-                        }}>◀ -0.5초</button>
-                        <span style={{ color: '#888', fontSize: '12px', minWidth: '80px', textAlign: 'center' }}>
-                            타이밍 {captionOffset > 0 ? `+${captionOffset}` : captionOffset}초
-                        </span>
-                        <button onClick={() => adjustOffset(0.5)} style={{
-                            background: '#1a1a24', border: '1px solid #2a2a35', color: '#aaa',
-                            padding: '4px 10px', borderRadius: '6px', fontSize: '12px', cursor: 'pointer'
-                        }}>+0.5초 ▶</button>
-                        <button
-                            onClick={() => setCaptionEnabled(false)}
-                            style={{
-                                background: 'transparent', border: '1px solid #3a3a45', color: '#666',
-                                padding: '4px 8px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer',
-                                marginLeft: '4px'
-                            }}
-                        >끄기</button>
-                    </div>
-                </div>
-            )}
+                    {/* 클립 상태 표시 */}
+                    {clipActive && (
+                        <div style={{
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            gap: '8px', marginBottom: '10px', padding: '8px 12px',
+                            background: 'rgba(255, 45, 85, 0.1)', borderRadius: '8px',
+                            border: '1px solid rgba(255, 45, 85, 0.3)'
+                        }}>
+                            <span style={{ animation: 'pulse 1s infinite', fontSize: '14px' }}>🔁</span>
+                            <span style={{ fontSize: '14px', fontWeight: '700', color: '#ff6688' }}>
+                                구간 반복 중: {formatTime(clipStart)} → {formatTime(clipEnd)}
+                                ({Math.round(clipEnd - clipStart)}초)
+                            </span>
+                        </div>
+                    )}
 
-            {/* 캡션 끈 상태: 다시 켜기 버튼 */}
-            {!captionEnabled && currentVideoId && (
-                <div style={{ padding: '8px 20px', textAlign: 'center' }}>
-                    <button
-                        onClick={() => setCaptionEnabled(true)}
-                        style={{
-                            background: '#1a1a24', border: '1px solid #2a2a35', color: '#888',
-                            padding: '6px 16px', borderRadius: '8px', fontSize: '13px', cursor: 'pointer'
-                        }}
-                    >📺 스텝 자막 켜기</button>
+                    {/* 클립 버튼들 */}
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <button
+                            onClick={() => setClipPoint('start')}
+                            style={{
+                                flex: 1, padding: '12px 8px', borderRadius: '10px', border: 'none',
+                                fontSize: '14px', fontWeight: '700', cursor: 'pointer',
+                                background: clipStart !== null ? '#00cc66' : '#1c1c28',
+                                color: clipStart !== null ? '#fff' : '#aaa',
+                                transition: 'all 0.2s'
+                            }}
+                        >
+                            {clipStart !== null ? `▶ ${formatTime(clipStart)}` : '▶ 시작점'}
+                        </button>
+                        <button
+                            onClick={() => setClipPoint('end')}
+                            disabled={clipStart === null}
+                            style={{
+                                flex: 1, padding: '12px 8px', borderRadius: '10px', border: 'none',
+                                fontSize: '14px', fontWeight: '700', cursor: clipStart !== null ? 'pointer' : 'default',
+                                background: clipEnd !== null ? '#ff2d55' : '#1c1c28',
+                                color: clipEnd !== null ? '#fff' : (clipStart !== null ? '#aaa' : '#555'),
+                                opacity: clipStart === null ? 0.5 : 1,
+                                transition: 'all 0.2s'
+                            }}
+                        >
+                            {clipEnd !== null ? `⏹ ${formatTime(clipEnd)}` : '⏹ 끝점'}
+                        </button>
+                        {(clipStart !== null || clipEnd !== null) && (
+                            <button
+                                onClick={clearClip}
+                                style={{
+                                    padding: '12px 14px', borderRadius: '10px', border: '1px solid #3a3a45',
+                                    background: 'transparent', color: '#888', fontSize: '14px',
+                                    fontWeight: '700', cursor: 'pointer'
+                                }}
+                            >✕</button>
+                        )}
+                    </div>
+
+                    {!clipActive && (
+                        <p style={{ fontSize: '12px', color: '#555', textAlign: 'center', margin: '8px 0 0', lineHeight: '1.5' }}>
+                            💡 영상 재생 중 어려운 구간의 시작점과 끝점을 찍으면 그 부분만 반복됩니다
+                        </p>
+                    )}
                 </div>
             )}
 
@@ -343,35 +374,24 @@ export default function VideoDetail() {
                     </span>
                 </div>
 
-                {/* 📝 스텝시트 (캡션과 연동 하이라이트) */}
+                {/* 📝 스텝시트 */}
                 <div style={{ padding: '20px', backgroundColor: '#1a1a24', borderRadius: '12px', border: '1px solid #2a2a35' }}>
                     <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', color: '#ff2d55' }}>📝 스텝시트</h3>
                     {song.steps.map((step, idx) => (
                         <div key={idx} style={{
                             display: 'flex', gap: '12px', marginBottom: idx < song.steps.length - 1 ? '14px' : 0,
                             paddingBottom: idx < song.steps.length - 1 ? '14px' : 0,
-                            borderBottom: idx < song.steps.length - 1 ? '1px solid #2a2a35' : 'none',
-                            padding: '10px',
-                            borderRadius: '8px',
-                            backgroundColor: currentStepIdx === idx && isPlaying ? 'rgba(255, 45, 85, 0.1)' : 'transparent',
-                            borderLeft: currentStepIdx === idx && isPlaying ? '3px solid #ff2d55' : '3px solid transparent',
-                            transition: 'all 0.3s ease'
+                            borderBottom: idx < song.steps.length - 1 ? '1px solid #2a2a35' : 'none'
                         }}>
                             <span style={{
-                                flexShrink: 0, background: currentStepIdx === idx && isPlaying ? '#ff2d55' : '#2a2a35',
-                                color: '#fff',
+                                flexShrink: 0, background: '#ff2d55', color: '#fff',
                                 padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold',
-                                height: 'fit-content',
-                                transition: 'all 0.3s ease'
+                                height: 'fit-content'
                             }}>
                                 {step.count}
                             </span>
                             <div>
-                                <p style={{
-                                    margin: '0 0 4px 0', fontSize: '15px', fontWeight: '700',
-                                    color: currentStepIdx === idx && isPlaying ? '#ff2d55' : '#fff',
-                                    transition: 'color 0.3s ease'
-                                }}>{step.move}</p>
+                                <p style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: '700', color: '#fff' }}>{step.move}</p>
                                 <p style={{ margin: 0, fontSize: '14px', color: '#aaa', lineHeight: '1.5' }}>{step.desc}</p>
                             </div>
                         </div>
@@ -384,11 +404,7 @@ export default function VideoDetail() {
             <style>{`
                 @keyframes pulse {
                     0%, 100% { opacity: 1; }
-                    50% { opacity: 0.7; }
-                }
-                @keyframes fadeInCaption {
-                    from { opacity: 0; transform: translateY(4px); }
-                    to { opacity: 1; transform: translateY(0); }
+                    50% { opacity: 0.4; }
                 }
             `}</style>
         </div>

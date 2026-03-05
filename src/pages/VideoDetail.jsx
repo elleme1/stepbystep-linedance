@@ -11,8 +11,9 @@ export default function VideoDetail() {
     // songs.js에서 해당 id의 곡 데이터를 자동으로 가져옵니다!
     const song = songs.find(s => s.id === Number(id)) || songs[0];
 
-    // 실전 영상은 songs.js의 youtubeId, 튜토리얼은 나중에 추가 가능
-    const currentVideoId = viewMode === 'main' ? song.youtubeId : (song.tutorialId || song.youtubeId);
+    // 실전 영상은 songs.js의 youtubeId 사용
+    const hasTutorial = !!song.tutorialId;
+    const currentVideoId = viewMode === 'main' ? song.youtubeId : (song.tutorialId || null);
 
     return (
         <div style={{ backgroundColor: '#0a0a0f', minHeight: '100%', display: 'flex', flexDirection: 'column', color: '#fff' }}>
@@ -30,17 +31,30 @@ export default function VideoDetail() {
                 </button>
             </div>
 
-            {/* 📺 유튜브 영상 플레이어 */}
+            {/* 📺 유튜브 영상 플레이어 또는 준비 중 안내 */}
             <div style={{ width: '100%', aspectRatio: '16/9', backgroundColor: '#000' }}>
-                <iframe
-                    width="100%"
-                    height="100%"
-                    src={`https://www.youtube.com/embed/${currentVideoId}?autoplay=0&rel=0`}
-                    title="YouTube video player"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                ></iframe>
+                {currentVideoId ? (
+                    <iframe
+                        width="100%"
+                        height="100%"
+                        src={`https://www.youtube.com/embed/${currentVideoId}?autoplay=0&rel=0`}
+                        title="YouTube video player"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                    ></iframe>
+                ) : (
+                    <div style={{
+                        width: '100%', height: '100%', display: 'flex', flexDirection: 'column',
+                        alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #1a1a2e, #16213e)'
+                    }}>
+                        <span style={{ fontSize: '48px', marginBottom: '16px' }}>👣</span>
+                        <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#fff', margin: '0 0 8px 0' }}>스텝 설명 영상 준비 중</p>
+                        <p style={{ fontSize: '14px', color: '#888', margin: 0, textAlign: 'center', padding: '0 20px' }}>
+                            원장님이 곧 친절한 스텝 설명 영상을 올려주실 거예요! 🎬
+                        </p>
+                    </div>
+                )}
             </div>
 
             <div style={{ padding: '24px 20px', flex: 1, paddingBottom: 'calc(24px + env(safe-area-inset-bottom))' }}>

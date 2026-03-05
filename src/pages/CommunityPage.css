@@ -284,3 +284,237 @@
         transform: translate(-50%, 40px);
     }
 }
+
+/* --- 4. 글 삭제 버튼 --- */
+.post-delete-btn {
+    margin-left: auto;
+    background: transparent;
+    border: 1px solid #3a3a45;
+    color: #888;
+    font-size: 14px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.post-delete-btn:active {
+    background: rgba(255, 51, 102, 0.2);
+    color: #ff3366;
+    border-color: #ff3366;
+}
+
+/* --- 5. 빈 목록 안내 --- */
+.empty-posts {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+    font-size: 16px;
+    line-height: 2;
+}
+
+/* --- 6. 📝 글쓰기 모달 --- */
+.write-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(6px);
+    z-index: 1000;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    animation: fadeIn 0.2s;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.write-modal {
+    background: #1a1a24;
+    border-radius: 24px 24px 0 0;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+.write-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid #2a2a35;
+}
+
+.write-modal-header h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+}
+
+.write-modal-close {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #fff;
+    font-size: 18px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.write-modal-body {
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.write-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.write-field label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #a0a0b0;
+}
+
+.write-category-group {
+    display: flex;
+    gap: 10px;
+}
+
+.write-cat-btn {
+    flex: 1;
+    background: #2a2a35;
+    border: 2px solid #3a3a45;
+    color: #a0a0b0;
+    padding: 12px 4px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.write-cat-btn.active {
+    background: rgba(255, 51, 102, 0.15);
+    border-color: #ff3366;
+    color: #ff3366;
+}
+
+.write-input {
+    background: #2a2a35;
+    border: 2px solid #3a3a45;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 16px;
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.write-input:focus {
+    border-color: #ff3366;
+}
+
+.write-input::placeholder {
+    color: #555;
+}
+
+.write-textarea {
+    background: #2a2a35;
+    border: 2px solid #3a3a45;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 16px;
+    line-height: 1.6;
+    padding: 14px 16px;
+    resize: none;
+    outline: none;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.write-textarea:focus {
+    border-color: #ff3366;
+}
+
+.write-textarea::placeholder {
+    color: #555;
+}
+
+.write-char-count {
+    text-align: right;
+    font-size: 13px;
+    color: #666;
+}
+
+.write-modal-footer {
+    display: flex;
+    gap: 12px;
+    padding: 16px 24px 24px;
+    border-top: 1px solid #2a2a35;
+}
+
+.write-cancel-btn {
+    flex: 1;
+    background: #2a2a35;
+    border: none;
+    color: #a0a0b0;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 16px;
+    border-radius: 14px;
+    cursor: pointer;
+}
+
+.write-submit-btn {
+    flex: 2;
+    background: linear-gradient(135deg, #ff3366, #ff6699);
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 800;
+    padding: 16px;
+    border-radius: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(255, 51, 102, 0.4);
+    transition: transform 0.2s;
+}
+
+.write-submit-btn:active {
+    transform: scale(0.97);
+}

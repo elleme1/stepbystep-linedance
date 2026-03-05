@@ -68,7 +68,7 @@ export default function Layout() {
                 maxWidth: '100vw',
                 boxSizing: 'border-box',
                 overflowX: 'hidden',
-                paddingBottom: isMainTab ? 'calc(64px + env(safe-area-inset-bottom))' : 'env(safe-area-inset-bottom)'
+                paddingBottom: isMainTab ? 'calc(120px + env(safe-area-inset-bottom))' : 'env(safe-area-inset-bottom)'
             }}>
                 <Outlet />
             </main>

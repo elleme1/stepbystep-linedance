@@ -27,10 +27,10 @@ export default function HomePage() {
                     오늘도 신나게<br />스텝 밟아볼까요? 💃
                 </h1>
 
-                {/* 공지 배너 (누르면 커뮤니티로 1초 만에 이동합니다) */}
+                {/* 공지 배너 - 구향희 원장님 인사말 */}
                 <div className="notice-banner" onClick={() => navigate('/community')}>
-                    <span className="notice-badge">공지</span>
-                    <p className="notice-text">이번 주 금요일 오전반은 <b>휴강</b>입니다.</p>
+                    <span className="notice-badge">인사말</span>
+                    <p className="notice-text">💖 안녕하세요! 전용 앱을 드디어 오픈했어요! 편하게 복습해 보세요 ✨</p>
                 </div>
             </header>
 

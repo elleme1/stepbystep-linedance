@@ -1,4 +1,4 @@
-// 구양희 STEP-BY-STEP Service Worker - 자동 업데이트 + SPA 라우팅 지원
+// 구향희 STEP-BY-STEP Service Worker - 자동 업데이트 + SPA 라우팅 지원
 const CACHE_NAME = 'stepbystep-v8';
 const OFFLINE_URL = '/';
 

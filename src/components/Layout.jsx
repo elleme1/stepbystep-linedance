@@ -28,7 +28,7 @@ export default function Layout() {
     }
 
     const getHeaderTitle = () => {
-        if (path === '/') return '구양희 스텝바이스텝 💃';
+        if (path === '/') return '구향희 스텝바이스텝 💃';
         if (path === '/schedule') return '수업 일정';
         if (path === '/video') return '영상 보관함';
         if (path === '/theory') return '마스터 클래스';

@@ -213,27 +213,21 @@ export default function TheoryPage() {
                                     {item.videoUrl ? (
                                         <div
                                             style={{
-                                                marginTop: 'var(--space-sm)',
-                                                borderRadius: 'var(--radius-md)',
+                                                marginTop: '12px',
+                                                borderRadius: '12px',
                                                 overflow: 'hidden',
-                                                position: 'relative',
-                                                paddingBottom: '177.78%', /* 9:16 Shorts 비율 */
-                                                height: 0,
-                                                maxWidth: '280px',
-                                                margin: 'var(--space-sm) auto 0'
+                                                width: '100%',
+                                                aspectRatio: '16 / 9',
+                                                background: '#000'
                                             }}
                                             onClick={(e) => e.stopPropagation()}
                                         >
                                             <iframe
                                                 src={`https://www.youtube.com/embed/${item.videoUrl}?rel=0`}
                                                 style={{
-                                                    position: 'absolute',
-                                                    top: 0,
-                                                    left: 0,
                                                     width: '100%',
                                                     height: '100%',
-                                                    border: 'none',
-                                                    borderRadius: 'var(--radius-md)'
+                                                    border: 'none'
                                                 }}
                                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                                 allowFullScreen

@@ -123,7 +123,7 @@ export default function TheoryPage() {
 
                             {/* Expanded Content */}
                             <div style={{
-                                maxHeight: isExpanded ? '600px' : '0',
+                                maxHeight: isExpanded ? '1200px' : '0',
                                 overflow: 'hidden',
                                 transition: 'max-height 0.4s ease, padding 0.3s ease',
                                 paddingTop: isExpanded ? 'var(--space-md)' : '0'

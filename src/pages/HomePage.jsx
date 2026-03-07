@@ -9,7 +9,7 @@ export default function HomePage() {
 
     // songs.js에서 이번 주 수업곡(isThisWeek: true)을 자동으로 불러옵니다.
     const thisWeekSong = songs.find(s => s.isThisWeek) || songs[0];
-    const levelLabels = { 1: '초급', 2: '중급', 3: '고급' };
+    const levelLabels = { 1: '입문', 2: '초급', 3: '중급', 4: '고급', 5: '최상급' };
     const todayVideo = {
         titleEng: thisWeekSong.title,
         titleKor: `${thisWeekSong.artist} · ${thisWeekSong.genre}`,

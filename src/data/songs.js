@@ -5,7 +5,7 @@ const songs = [
     title: "Everyone Needs a Hero",
     artist: "Adam Lambert",
     choreographer: "Roy Verdonk, Grace David & Jef Camps",
-    level: 2,
+    level: 3,
     bpm: 120,
     walls: 2,
     counts: 64,

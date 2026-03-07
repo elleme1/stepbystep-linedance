@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HomePage.css';
 import songs from '../data/songs';
 
 export default function HomePage() {
     const navigate = useNavigate();
+    const [greetingOpen, setGreetingOpen] = useState(false);
 
     // songs.js에서 이번 주 수업곡(isThisWeek: true)을 자동으로 불러옵니다.
     const thisWeekSong = songs.find(s => s.isThisWeek) || songs[0];
@@ -32,6 +33,32 @@ export default function HomePage() {
                     <p className="notice-text">이번 주 금요일 오전반은 <b>휴강</b>입니다.</p>
                 </div>
             </header>
+
+            {/* ✨ 구향희 선생님 인사말 카드 */}
+            <section className="greeting-card-section">
+                <div className="greeting-card" onClick={() => setGreetingOpen(!greetingOpen)}>
+                    <div className="greeting-card-header">
+                        <div className="greeting-avatar">💖</div>
+                        <div className="greeting-meta">
+                            <h3 className="greeting-author">구향희 원장님의 인사말</h3>
+                            <span className="greeting-date">스텝바이스텝 라인댄스</span>
+                        </div>
+                        <span className={`greeting-toggle ${greetingOpen ? 'open' : ''}`}>▼</span>
+                    </div>
+
+                    <div className={`greeting-body ${greetingOpen ? 'expanded' : ''}`}>
+                        <p>안녕하세요, 스텝바이스텝 라인댄스 가족 여러분! 구향희입니다. 💖</p>
+                        <p>📱 회원님들이 원하실 때 언제 어디서든 연습하실 수 있도록 전용 앱을 드디어 오픈했어요! ✨</p>
+                        <p>💃 평소 헷갈렸던 스텝이나 다시 보고 싶은 안무 영상이 있다면, 이제 앱을 통해 편하게 복습해 보세요. 🎶</p>
+                        <p>🙋‍♀️ 앱 설치가 어렵거나 사용 방법이 궁금하시다면 다음 수업 시간에 제가 직접 친절하게 안내해 드릴 테니 걱정 마세요. 😊</p>
+                        <p>🌟 앞으로도 저와 함께 건강하고 신나게 스텝을 밟아 보아요! 회원님들의 멋진 댄스 라이프를 항상 응원합니다. 화이팅! 💪</p>
+                    </div>
+
+                    {!greetingOpen && (
+                        <p className="greeting-preview">안녕하세요, 스텝바이스텝 라인댄스 가족 여러분! 구향희입니다...</p>
+                    )}
+                </div>
+            </section>
 
             {/* 2. 👑 VIP석 : 오늘 배운 안무 (초집중 구역) */}
             <section className="vip-section">

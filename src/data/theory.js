@@ -7,7 +7,8 @@ export const theoryData = [
         shortDesc: '옆으로 이동하며 발을 엇갈리게 딛는 4카운트 기초 스텝',
         content: '1: 오른발 옆으로\n2: 왼발을 오른발 뒤로 교차\n3: 오른발 옆으로\n4: 왼발 터치',
         tips: '무게 중심을 낮추고 상체는 정면 유지. 발끝이 아닌 발바닥 전체로 딛기.',
-        gifUrl: '/assets/gifs/grapevine.gif'
+        gifUrl: '/assets/gifs/grapevine.gif',
+        videoUrl: null
     },
     {
         id: 'step_02',
@@ -16,7 +17,8 @@ export const theoryData = [
         shortDesc: '정사각형 모양으로 발을 딛는 4카운트 스텝',
         content: '1: 오른발 왼발 앞으로 교차\n2: 왼발 뒤로\n3: 오른발 옆으로\n4: 왼발 모아 터치',
         tips: '교차할 때 자연스럽게 무릎을 살짝 구부리면 부드러운 동작이 됩니다.',
-        gifUrl: '/assets/gifs/jazzbox.gif'
+        gifUrl: '/assets/gifs/jazzbox.gif',
+        videoUrl: null
     },
     {
         id: 'step_03',
@@ -25,7 +27,8 @@ export const theoryData = [
         shortDesc: '뒤로 갔다 앞으로 돌아오는 3카운트 스텝',
         content: '1: 오른발 뒤로\n&: 왼발을 오른발 옆에 모아\n2: 오른발 앞으로',
         tips: '빠른 "&" 카운트에서 균형을 잃지 않도록 작은 보폭으로!',
-        gifUrl: '/assets/gifs/coasterstep.gif'
+        gifUrl: '/assets/gifs/coasterstep.gif',
+        videoUrl: 'rVaEk1BEsqQ'
     },
     {
         id: 'step_04',
@@ -34,7 +37,8 @@ export const theoryData = [
         shortDesc: '한 방향으로 빠르게 이동하는 3카운트 스텝',
         content: '1: 오른발 옆으로\n&: 왼발 모아\n2: 오른발 옆으로',
         tips: '바닥을 스치듯 미끄러지는 느낌으로. 발을 높이 들지 마세요.',
-        gifUrl: '/assets/gifs/shuffle.gif'
+        gifUrl: '/assets/gifs/shuffle.gif',
+        videoUrl: null
     },
     {
         id: 'step_05',
@@ -43,7 +47,8 @@ export const theoryData = [
         shortDesc: '앞으로 딛고 몸을 회전하는 2카운트 턴 스텝',
         content: '1: 오른발 앞으로\n2: 왼발 축으로 180도 회전 (왼쪽으로)',
         tips: '축 발(왼발)의 볼에 체중을 실고 회전. 시선을 먼저 돌리면 자연스럽습니다.',
-        gifUrl: '/assets/gifs/pivotturn.gif'
+        gifUrl: '/assets/gifs/pivotturn.gif',
+        videoUrl: null
     },
     {
         id: 'step_06',
@@ -52,7 +57,8 @@ export const theoryData = [
         shortDesc: '앞뒤로 체중을 옮기는 4카운트 스텝',
         content: '1: 오른발 앞으로 (체중 이동)\n2: 왼발로 되돌아오기\n3: 오른발 뒤로 (체중 이동)\n4: 왼발로 되돌아오기',
         tips: '흔들의자처럼 부드럽게 앞뒤로. 상체도 자연스럽게 따라가세요.',
-        gifUrl: '/assets/gifs/rockingchair.gif'
+        gifUrl: '/assets/gifs/rockingchair.gif',
+        videoUrl: null
     },
     {
         id: 'step_07',
@@ -61,7 +67,8 @@ export const theoryData = [
         shortDesc: '킥 후 빠르게 체중을 바꾸는 3카운트 스텝',
         content: '1: 오른발 앞으로 킥\n&: 오른발 볼(앞꿈치)로 착지\n2: 왼발로 체중 이동',
         tips: '킥은 높이보다 정확한 타이밍이 중요! "&" 카운트를 놓치지 마세요.',
-        gifUrl: '/assets/gifs/kickballchange.gif'
+        gifUrl: '/assets/gifs/kickballchange.gif',
+        videoUrl: null
     },
     {
         id: 'step_08',
@@ -70,7 +77,8 @@ export const theoryData = [
         shortDesc: '그레이프바인에 회전을 추가한 4카운트 스텝',
         content: '1: 오른발 옆으로\n2: 왼발 뒤로 교차\n3: 오른발로 1/4 턴 (오른쪽)\n4: 왼발 터치',
         tips: '3카운트에서 턴할 때 오른발 볼(앞꿈치)을 축으로 사용하세요.',
-        gifUrl: '/assets/gifs/vineturn.gif'
+        gifUrl: '/assets/gifs/vineturn.gif',
+        videoUrl: null
     },
 
     // ===== 용어 =====

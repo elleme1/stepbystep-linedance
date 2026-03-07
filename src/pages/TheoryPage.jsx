@@ -209,8 +209,38 @@ export default function TheoryPage() {
                                         </div>
                                     )}
 
-                                    {/* GIF placeholder */}
-                                    {item.gifUrl && (
+                                    {/* 영상 또는 GIF placeholder */}
+                                    {item.videoUrl ? (
+                                        <div
+                                            style={{
+                                                marginTop: 'var(--space-sm)',
+                                                borderRadius: 'var(--radius-md)',
+                                                overflow: 'hidden',
+                                                position: 'relative',
+                                                paddingBottom: '177.78%', /* 9:16 Shorts 비율 */
+                                                height: 0,
+                                                maxWidth: '280px',
+                                                margin: 'var(--space-sm) auto 0'
+                                            }}
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            <iframe
+                                                src={`https://www.youtube.com/embed/${item.videoUrl}?rel=0`}
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: 0,
+                                                    left: 0,
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    border: 'none',
+                                                    borderRadius: 'var(--radius-md)'
+                                                }}
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowFullScreen
+                                                title={item.title}
+                                            />
+                                        </div>
+                                    ) : item.gifUrl && (
                                         <div style={{
                                             marginTop: 'var(--space-sm)',
                                             background: 'rgba(255, 255, 255, 0.03)',

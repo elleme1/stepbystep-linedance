@@ -86,7 +86,7 @@ export default function SearchPage() {
                             <div className="result-details">
                                 <span className="badge">초급</span>
                                 <h4 className="result-title">텍사스 타임 (Texas Time)</h4>
-                                <p className="result-desc">구향희 원장 · 3개월 전</p>
+                                <p className="result-desc">구향회 원장 · 3개월 전</p>
                             </div>
                         </div>
                         {/* 데모용 가짜 영상 카드 2 */}
@@ -97,7 +97,7 @@ export default function SearchPage() {
                             <div className="result-details">
                                 <span className="badge">입문</span>
                                 <h4 className="result-title">기초 스텝 모음</h4>
-                                <p className="result-desc">구향희 원장 · 5개월 전</p>
+                                <p className="result-desc">구향회 원장 · 5개월 전</p>
                             </div>
                         </div>
                     </div>

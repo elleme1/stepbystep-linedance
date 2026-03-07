@@ -27,19 +27,19 @@ export default function HomePage() {
                     오늘도 신나게<br />스텝 밟아볼까요? 💃
                 </h1>
 
-                {/* ✨ 구향희 원장님 인사말 카드 */}
+                {/* ✨ 구향회 원장님 인사말 카드 */}
                 <div className="greeting-card" onClick={() => setGreetingOpen(!greetingOpen)}>
                     <div className="greeting-card-header">
                         <div className="greeting-avatar">💖</div>
                         <div className="greeting-meta">
-                            <h3 className="greeting-author">구향희 원장님의 인사말</h3>
+                            <h3 className="greeting-author">구향회 원장님의 인사말</h3>
                             <span className="greeting-date">스텝바이스텝 라인댄스</span>
                         </div>
                         <span className={`greeting-toggle ${greetingOpen ? 'open' : ''}`}>▼</span>
                     </div>
 
                     <div className={`greeting-body ${greetingOpen ? 'expanded' : ''}`}>
-                        <p>안녕하세요, 스텝바이스텝 라인댄스 가족 여러분! 구향희입니다. 💖</p>
+                        <p>안녕하세요, 스텝바이스텝 라인댄스 가족 여러분! 구향회입니다. 💖</p>
                         <p>📱 회원님들이 원하실 때 언제 어디서든 연습하실 수 있도록 전용 앱을 드디어 오픈했어요! ✨</p>
                         <p>💃 평소 헷갈렸던 스텝이나 다시 보고 싶은 안무 영상이 있다면, 이제 앱을 통해 편하게 복습해 보세요. 🎶</p>
                         <p>🙋‍♀️ 앱 설치가 어렵거나 사용 방법이 궁금하시다면 다음 수업 시간에 제가 직접 친절하게 안내해 드릴 테니 걱정 마세요. 😊</p>
@@ -47,7 +47,7 @@ export default function HomePage() {
                     </div>
 
                     {!greetingOpen && (
-                        <p className="greeting-preview">안녕하세요, 스텝바이스텝 라인댄스 가족 여러분! 구향희입니다...</p>
+                        <p className="greeting-preview">안녕하세요, 스텝바이스텝 라인댄스 가족 여러분! 구향회입니다...</p>
                     )}
                 </div>
 

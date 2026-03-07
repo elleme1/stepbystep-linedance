@@ -44,7 +44,7 @@ export default function SchedulePage() {
             {/* 1. 상단 안내 헤더 */}
             <div className="schedule-header">
                 <h1 className="schedule-title">📅 수업 일정</h1>
-                <p className="schedule-subtitle">구향희 원장님의 라인댄스 수업 시간표입니다.</p>
+                <p className="schedule-subtitle">구향회 원장님의 라인댄스 수업 시간표입니다.</p>
 
                 {/* 센스 있는 원장님의 한마디 박스 */}
                 <div className="info-box">

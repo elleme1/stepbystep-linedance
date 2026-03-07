@@ -26,7 +26,7 @@ export default function CommunityPage() {
         }
         return [
             {
-                id: 1, category: '📢 공지사항', author: '구향희 원장', isDirector: true, time: '2시간 전',
+                id: 1, category: '📢 공지사항', author: '구향회 원장', isDirector: true, time: '2시간 전',
                 content: '회원님들~ 오늘 수업 때 배운 안무 영상이 [영상 보관함]에 업로드 되었습니다! 주말 동안 집에서 영상 보시면서 복습 꼭 해오세요~ 사랑합니다 ❤️',
                 image: null, likes: 45, comments: 12, isLiked: false
             },

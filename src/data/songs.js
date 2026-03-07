@@ -1,6 +1,27 @@
 // 라인댄스 안무곡 데이터
 const songs = [
   {
+    id: 11,
+    title: "Samba Do Brasil",
+    artist: "Bellini",
+    choreographer: "Ling Suli & Emilia Lie",
+    level: 2,
+    bpm: 130,
+    walls: 4,
+    counts: 32,
+    genre: "라틴",
+    youtubeId: "Hn7_zmxPCOU",
+    tutorialId: "",
+    thumbnail: "https://img.youtube.com/vi/Hn7_zmxPCOU/hqdefault.jpg",
+    isThisWeek: true,
+    steps: [
+      { count: "1-8", move: "셔플 & 턴 (Shuffle & Turn)", desc: "오른쪽 셔플 → 1/4 턴 → 왼쪽 셔플" },
+      { count: "9-16", move: "삼바 스텝 & 힙 범프 (Samba Step & Hip Bump)", desc: "삼바 리듬 스텝 → 힙 범프 좌우" },
+      { count: "17-24", move: "바인 & 크로스 (Vine & Cross)", desc: "오른쪽 그레이프바인 → 크로스 터치" },
+      { count: "25-32", move: "록 스텝 & 턴 (Rock Step & Turn)", desc: "앞 록 → 리커버 → 1/2 피봇 턴" }
+    ]
+  },
+  {
     id: 10,
     title: "Everyone Needs a Hero",
     artist: "Adam Lambert",
@@ -13,7 +34,7 @@ const songs = [
     youtubeId: "ooJ8nB37RnE",
     tutorialId: "4U53yRYtIUY",
     thumbnail: "https://img.youtube.com/vi/ooJ8nB37RnE/hqdefault.jpg",
-    isThisWeek: true,
+    isThisWeek: false,
     steps: [
       { count: "1-16", move: "워크 & 턴 (Walk & Turn)", desc: "앞으로 워크 → 1/4 턴 → 사이드 스텝" },
       { count: "17-32", move: "셔플 & 록 스텝 (Shuffle & Rock Step)", desc: "오른쪽 셔플 → 앞 록 → 리커버" },

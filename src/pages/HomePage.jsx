@@ -54,7 +54,7 @@ export default function HomePage() {
                 {/* 공지 배너 (누르면 커뮤니티로 이동) */}
                 <div className="notice-banner" onClick={() => navigate('/community')}>
                     <span className="notice-badge">공지</span>
-                    <p className="notice-text">이번 주 금요일 오전반은 <b>휴강</b>입니다.</p>
+                    <p className="notice-text">오늘 배운 안무 영상이 <b>영상 보관함</b>에 업로드 되었습니다! 🎶</p>
                 </div>
             </header>
 

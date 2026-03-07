@@ -27,7 +27,7 @@ export default function CommunityPage() {
         return [
             {
                 id: 1, category: '📢 공지사항', author: '구향희 원장', isDirector: true, time: '2시간 전',
-                content: '회원님들~ 이번 주 금요일 오전반은 휴강입니다! 다음 주에 더 신나게 만나요~ 사랑합니다 ❤️',
+                content: '회원님들~ 오늘 수업 때 배운 안무 영상이 [영상 보관함]에 업로드 되었습니다! 주말 동안 집에서 영상 보시면서 복습 꼭 해오세요~ 사랑합니다 ❤️',
                 image: null, likes: 45, comments: 12, isLiked: false
             },
             {

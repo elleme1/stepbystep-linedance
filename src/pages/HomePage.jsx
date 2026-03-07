@@ -27,15 +27,7 @@ export default function HomePage() {
                     오늘도 신나게<br />스텝 밟아볼까요? 💃
                 </h1>
 
-                {/* 공지 배너 (누르면 커뮤니티로 1초 만에 이동합니다) */}
-                <div className="notice-banner" onClick={() => navigate('/community')}>
-                    <span className="notice-badge">공지</span>
-                    <p className="notice-text">이번 주 금요일 오전반은 <b>휴강</b>입니다.</p>
-                </div>
-            </header>
-
-            {/* ✨ 구향희 선생님 인사말 카드 */}
-            <section className="greeting-card-section">
+                {/* ✨ 구향희 선생님 인사말 카드 */}
                 <div className="greeting-card" onClick={() => setGreetingOpen(!greetingOpen)}>
                     <div className="greeting-card-header">
                         <div className="greeting-avatar">💖</div>
@@ -58,7 +50,7 @@ export default function HomePage() {
                         <p className="greeting-preview">안녕하세요, 스텝바이스텝 라인댄스 가족 여러분! 구향희입니다...</p>
                     )}
                 </div>
-            </section>
+            </header>
 
             {/* 2. 👑 VIP석 : 오늘 배운 안무 (초집중 구역) */}
             <section className="vip-section">

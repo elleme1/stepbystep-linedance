@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import songs from '../data/songs';
 import { levelText } from '../data/constants';
+import { matchSteps } from '../utils/stepMatcher';
 
 export default function VideoDetail() {
     const { id } = useParams();
@@ -16,6 +17,9 @@ export default function VideoDetail() {
     const [duration, setDuration] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
     const [videoEnded, setVideoEnded] = useState(false);
+
+    // 👟 스텝 튜토리얼 팝업 상태
+    const [stepPopup, setStepPopup] = useState(null);
 
     const playerRef = useRef(null);
     const containerRef = useRef(null);
@@ -419,34 +423,187 @@ export default function VideoDetail() {
                 {/* 📝 스텝시트 */}
                 <div style={{ padding: '20px', backgroundColor: '#1a1a24', borderRadius: '12px', border: '1px solid #2a2a35' }}>
                     <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', color: '#ff2d55' }}>📝 스텝시트</h3>
-                    {song.steps.map((step, idx) => (
-                        <div key={idx} style={{
-                            display: 'flex', gap: '12px', marginBottom: idx < song.steps.length - 1 ? '14px' : 0,
-                            paddingBottom: idx < song.steps.length - 1 ? '14px' : 0,
-                            borderBottom: idx < song.steps.length - 1 ? '1px solid #2a2a35' : 'none'
-                        }}>
-                            <span style={{
-                                flexShrink: 0, background: '#ff2d55', color: '#fff',
-                                padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold',
-                                height: 'fit-content'
+                    {song.steps.map((step, idx) => {
+                        const matchedSteps = matchSteps(step.move);
+                        return (
+                            <div key={idx} style={{
+                                display: 'flex', gap: '12px', marginBottom: idx < song.steps.length - 1 ? '14px' : 0,
+                                paddingBottom: idx < song.steps.length - 1 ? '14px' : 0,
+                                borderBottom: idx < song.steps.length - 1 ? '1px solid #2a2a35' : 'none'
                             }}>
-                                {step.count}
-                            </span>
-                            <div>
-                                <p style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: '700', color: '#fff' }}>{step.move}</p>
-                                <p style={{ margin: 0, fontSize: '14px', color: '#aaa', lineHeight: '1.5' }}>{step.desc}</p>
+                                <span style={{
+                                    flexShrink: 0, background: '#ff2d55', color: '#fff',
+                                    padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold',
+                                    height: 'fit-content'
+                                }}>
+                                    {step.count}
+                                </span>
+                                <div style={{ flex: 1 }}>
+                                    <p style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: '700', color: '#fff' }}>{step.move}</p>
+                                    {/* 👟 매칭된 기초 스텝 칩 */}
+                                    {matchedSteps.length > 0 && (
+                                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '6px' }}>
+                                            {matchedSteps.map(ms => (
+                                                <button
+                                                    key={ms.id}
+                                                    onClick={(e) => { e.stopPropagation(); setStepPopup(ms); }}
+                                                    style={{
+                                                        display: 'inline-flex', alignItems: 'center', gap: '4px',
+                                                        padding: '3px 10px', borderRadius: '20px', border: 'none',
+                                                        fontSize: '12px', fontWeight: '600', cursor: 'pointer',
+                                                        background: ms.videoUrl
+                                                            ? 'linear-gradient(135deg, rgba(255,45,85,0.2), rgba(255,102,153,0.15))'
+                                                            : 'rgba(255,255,255,0.08)',
+                                                        color: ms.videoUrl ? '#ff6699' : '#888',
+                                                        border: ms.videoUrl ? '1px solid rgba(255,45,85,0.3)' : '1px solid rgba(255,255,255,0.1)',
+                                                        transition: 'all 0.2s'
+                                                    }}
+                                                >
+                                                    {ms.videoUrl ? '🎬' : '👟'} {ms.title.split(' (')[0]}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                    <p style={{ margin: 0, fontSize: '14px', color: '#aaa', lineHeight: '1.5' }}>{step.desc}</p>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
 
             </div>
+
+            {/* 👟 스텝 튜토리얼 팝업 오버레이 */}
+            {stepPopup && (
+                <div
+                    onClick={() => setStepPopup(null)}
+                    style={{
+                        position: 'fixed', inset: 0, zIndex: 1000,
+                        background: 'rgba(0,0,0,0.85)',
+                        display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+                        animation: 'fadeIn 0.2s ease'
+                    }}
+                >
+                    <div
+                        onClick={(e) => e.stopPropagation()}
+                        style={{
+                            width: '100%', maxWidth: '500px', maxHeight: '85vh',
+                            background: '#1a1a24', borderRadius: '20px 20px 0 0',
+                            overflow: 'auto', animation: 'slideUp 0.3s ease',
+                            paddingBottom: 'calc(24px + env(safe-area-inset-bottom))'
+                        }}
+                    >
+                        {/* 드래그 핸들 */}
+                        <div style={{ display: 'flex', justifyContent: 'center', padding: '12px' }}>
+                            <div style={{ width: '40px', height: '4px', borderRadius: '2px', background: '#444' }} />
+                        </div>
+
+                        {/* 영상 */}
+                        {stepPopup.videoUrl && (
+                            <div style={{ width: '100%', aspectRatio: '16/9', background: '#000' }}>
+                                <iframe
+                                    src={`https://www.youtube.com/embed/${stepPopup.videoUrl}?rel=0&modestbranding=1`}
+                                    style={{ width: '100%', height: '100%', border: 'none' }}
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                    title={stepPopup.title}
+                                />
+                            </div>
+                        )}
+
+                        <div style={{ padding: '20px' }}>
+                            {/* 헤더 */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                                <span style={{
+                                    background: 'rgba(255,45,85,0.15)', color: '#ff2d55',
+                                    padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold'
+                                }}>
+                                    👟 기초 스텝
+                                </span>
+                            </div>
+
+                            <h2 style={{ fontSize: '20px', fontWeight: '800', color: '#fff', margin: '0 0 6px 0' }}>
+                                {stepPopup.title}
+                            </h2>
+                            <p style={{ fontSize: '14px', color: '#888', margin: '0 0 16px 0' }}>
+                                {stepPopup.shortDesc}
+                            </p>
+
+                            {/* 상세 설명 */}
+                            <div style={{
+                                background: 'rgba(255,255,255,0.04)', borderRadius: '12px',
+                                padding: '16px', marginBottom: '12px'
+                            }}>
+                                <h4 style={{ fontSize: '14px', fontWeight: '700', color: '#ff6699', margin: '0 0 10px 0' }}>
+                                    📋 동작 순서
+                                </h4>
+                                {stepPopup.content.split('\n').map((line, i) => (
+                                    <div key={i} style={{
+                                        display: 'flex', gap: '8px', marginBottom: '6px',
+                                        fontSize: '14px', lineHeight: '1.6'
+                                    }}>
+                                        {line.match(/^\d|^&/) ? (
+                                            <>
+                                                <span style={{ color: '#ff2d55', fontWeight: '700', flexShrink: 0, minWidth: '20px' }}>
+                                                    {line.split(':')[0]}
+                                                </span>
+                                                <span style={{ color: '#ccc' }}>
+                                                    {line.split(':').slice(1).join(':').trim()}
+                                                </span>
+                                            </>
+                                        ) : (
+                                            <span style={{ color: '#aaa' }}>{line}</span>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* 팁 */}
+                            {stepPopup.tips && (
+                                <div style={{
+                                    background: 'rgba(255,204,0,0.06)',
+                                    border: '1px solid rgba(255,204,0,0.15)',
+                                    borderRadius: '12px', padding: '14px'
+                                }}>
+                                    <span style={{ fontSize: '13px', fontWeight: '700', color: '#ffcc00' }}>
+                                        💡 팁
+                                    </span>
+                                    <p style={{ fontSize: '13px', color: '#aaa', lineHeight: '1.6', margin: '6px 0 0 0' }}>
+                                        {stepPopup.tips}
+                                    </p>
+                                </div>
+                            )}
+
+                            {/* 닫기 버튼 */}
+                            <button
+                                onClick={() => setStepPopup(null)}
+                                style={{
+                                    width: '100%', marginTop: '20px', padding: '14px',
+                                    background: 'rgba(255,255,255,0.08)', border: '1px solid #333',
+                                    borderRadius: '12px', color: '#aaa', fontSize: '15px',
+                                    fontWeight: '700', cursor: 'pointer'
+                                }}
+                            >
+                                닫기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* CSS 애니메이션 */}
             <style>{`
                 @keyframes pulse {
                     0%, 100% { opacity: 1; }
                     50% { opacity: 0.4; }
+                }
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                @keyframes slideUp {
+                    from { transform: translateY(100%); }
+                    to { transform: translateY(0); }
                 }
             `}</style>
         </div>

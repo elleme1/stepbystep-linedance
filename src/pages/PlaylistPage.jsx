@@ -33,7 +33,9 @@ export default function PlaylistPage() {
     const speeds = [0.5, 0.75, 1, 1.25];
     const playlistSongs = useMemo(() => {
         if (mode === 'archive') return songs.filter(s => !s.isThisWeek);
-        return songs.filter(s => s.isThisWeek);
+        const thisWeekSongs = songs.filter(s => s.isThisWeek);
+        // isThisWeek 곡이 없으면 첫 번째 곡을 fallback으로 사용 (HomePage과 동일)
+        return thisWeekSongs.length > 0 ? thisWeekSongs : [songs[0]];
     }, [mode]);
     const totalSongs = playlistSongs.length;
 

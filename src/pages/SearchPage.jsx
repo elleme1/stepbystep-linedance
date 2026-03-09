@@ -1,116 +1,158 @@
 import React, { useState } from 'react';
-import './SearchPage.css'; // ✨ 검색방 전용 디자인 연결
+import { useNavigate } from 'react-router-dom';
+// 🚨 [핵심!] 가짜 마네킹을 버리고, 원장님의 40곡 진짜 보물창고(songs.js)를 드디어 연결합니다!
+import songs from '../data/songs';
+import { levelStars } from '../data/constants';
 
 export default function SearchPage() {
+    const navigate = useNavigate();
     const [keyword, setKeyword] = useState('');
-    const [isSearching, setIsSearching] = useState(false);
 
-    // 💡 어르신들이 가장 많이 찾는 추천 해시태그 (터치 한 번으로 검색 끝!)
-    const popularTags = ['#초급', '#텍사스타임', '#팝송', '#다이어트', '#스트레칭', '#차차차'];
+    // 💡 [똑똑한 검색 마법] 원장님이 입력한 글자가 '제목, 안무가, 장르, 레벨'에 있는지 실시간으로 뒤져서 가져옵니다!
+    const searchResults = !keyword.trim()
+        ? [] // 검색어가 없으면 아무것도 안 띄움
+        : songs.filter(song => {
+            const term = keyword.toLowerCase();
+            // 제목, 아티스트, 안무가, 장르 중 하나라도 검색어가 포함되면 정답(true) 처리!
+            const matchTitle = song.title?.toLowerCase().includes(term);
+            const matchArtist = song.artist?.toLowerCase().includes(term);
+            const matchChoreographer = song.choreographer?.toLowerCase().includes(term);
+            const matchGenre = song.genre?.toLowerCase().includes(term);
+            // 레벨 매칭 (입문, 초급, 중급 등)
+            const levelText = levelStars[song.level]?.text?.toLowerCase() || '';
+            const matchLevel = levelText.includes(term);
 
-    // 검색 실행 함수 (돋보기 누르거나 해시태그 누를 때 작동)
-    const handleSearch = (term) => {
-        if (!term) return;
-        // '#' 기호가 있으면 떼고 깔끔하게 검색어에 넣기
-        const cleanTerm = term.replace('#', '');
-
-        setKeyword(cleanTerm);
-        setIsSearching(true);
-
-        // 진짜 앱처럼 0.8초 동안 검색하는 척(로딩) 하다가 결과를 짠! 보여줍니다
-        setTimeout(() => {
-            setIsSearching(false);
-        }, 800);
-    };
+            return matchTitle || matchArtist || matchChoreographer || matchGenre || matchLevel;
+        });
 
     return (
-        <div className="search-container">
+        <div style={{ backgroundColor: '#0a0a0f', minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
 
-            {/* 1. 큼직한 검색창 영역 */}
-            <div className="search-header">
-                <div className="search-input-box">
-                    <span className="search-icon">🔍</span>
+            {/* 1. 상단 고정 검색바 영역 */}
+            <div style={{
+                padding: 'max(16px, env(safe-area-inset-top)) 16px 16px',
+                borderBottom: '1px solid #1a1a24',
+                position: 'sticky', top: 0,
+                backgroundColor: 'rgba(10, 10, 15, 0.95)', backdropFilter: 'blur(10px)', zIndex: 50
+            }}>
+                <div style={{ position: 'relative' }}>
+                    <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', fontSize: '18px' }}>🔍</span>
                     <input
                         type="text"
-                        className="search-input"
-                        placeholder="안무 제목이나 장르를 검색하세요"
+                        placeholder="곡명, 안무가, 장르(초급, 팝) 검색..."
                         value={keyword}
                         onChange={(e) => setKeyword(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && handleSearch(keyword)}
+                        style={{
+                            width: '100%', padding: '14px 40px 14px 44px', borderRadius: '12px',
+                            border: '1px solid #2a2a35', backgroundColor: '#1c1c26', color: '#fff',
+                            fontSize: '15px', boxSizing: 'border-box', outline: 'none'
+                        }}
+                        autoFocus
                     />
-                    {/* 글씨가 있을 때만 엑스(X) 버튼이 생겨서 한 번에 지울 수 있게 해줍니다 */}
+                    {/* X 버튼 (누르면 검색어 싹 지워짐) */}
                     {keyword && (
-                        <button className="clear-btn" onClick={() => setKeyword('')}>✕</button>
+                        <button
+                            onClick={() => setKeyword('')}
+                            style={{
+                                position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)',
+                                background: 'none', border: 'none', color: '#888', fontSize: '18px', cursor: 'pointer', padding: '4px'
+                            }}
+                        >
+                            ✕
+                        </button>
                     )}
                 </div>
             </div>
 
-            {/* 2. 어르신 맞춤형 원터치 해시태그 버튼들 (검색 안 했을 때만 보임) */}
-            {!keyword && !isSearching && (
-                <div className="recommend-section">
-                    <h3 className="section-title">🔥 인기 검색어 (터치해보세요!)</h3>
-                    <p className="section-subtitle">자판을 칠 필요 없이 톡! 누르기만 하세요.</p>
-                    <div className="tag-cloud">
-                        {popularTags.map(tag => (
-                            <button
-                                key={tag}
-                                className="hashtag-btn"
-                                onClick={() => handleSearch(tag)}
+            {/* 2. 하단 결과 영역 */}
+            <div style={{ padding: '20px', flex: 1, paddingBottom: 'calc(80px + env(safe-area-inset-bottom))' }}>
+
+                {!keyword.trim() ? (
+                    // 검색어 입력 전 (추천 해시태그 띄워주기)
+                    <div style={{ textAlign: 'center', marginTop: '60px', color: '#666' }}>
+                        <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎧</div>
+                        <p style={{ margin: 0, fontSize: '15px', lineHeight: '1.5' }}>
+                            찾으시는 곡명이나 안무가,<br />장르를 검색해 보세요.
+                        </p>
+                        <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                            {['Why', '입문', '초급', '팝', '발라드'].map(tag => (
+                                <button
+                                    key={tag} onClick={() => setKeyword(tag)}
+                                    style={{ background: '#1c1c26', border: '1px solid #2a2a35', padding: '8px 16px', borderRadius: '20px', fontSize: '14px', color: '#ddd', cursor: 'pointer' }}
+                                >
+                                    #{tag}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                ) : searchResults.length > 0 ? (
+                    // 진짜 검색 결과가 있을 때 (원장님의 40곡 창고에서 꺼내온 카드들!)
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                        <p style={{ margin: '0 0 4px 0', fontSize: '14px', color: '#aaa' }}>
+                            총 <span style={{ color: '#ff2d55', fontWeight: 'bold' }}>{searchResults.length}</span>개의 곡을 찾았습니다.
+                        </p>
+
+                        {searchResults.map(song => (
+                            <div
+                                key={song.id}
+                                onClick={() => navigate(`/video/${song.id}`)}
+                                style={{ display: 'flex', gap: '16px', backgroundColor: '#14141d', padding: '12px', borderRadius: '12px', cursor: 'pointer', border: '1px solid #1a1a24' }}
                             >
-                                {tag}
-                            </button>
+                                {/* 썸네일 자동 추출 */}
+                                <div style={{ width: '120px', height: '68px', borderRadius: '8px', backgroundColor: '#000', flexShrink: 0, position: 'relative', overflow: 'hidden' }}>
+                                    {song.youtubeId ? (
+                                        <img
+                                            src={`https://img.youtube.com/vi/${song.youtubeId}/mqdefault.jpg`}
+                                            alt={song.title}
+                                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                        />
+                                    ) : (
+                                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#444', fontSize: '12px' }}>
+                                            No Image
+                                        </div>
+                                    )}
+                                    {/* 작은 핑크색 재생 아이콘 */}
+                                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.2)' }}>
+                                        <div style={{ width: '24px', height: '24px', backgroundColor: 'rgba(255,45,85,0.9)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingLeft: '2px', boxSizing: 'border-box' }}>
+                                            <span style={{ color: '#fff', fontSize: '10px' }}>▶</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* 오른쪽 곡 글씨 정보 */}
+                                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', minWidth: 0 }}>
+                                    <div style={{ display: 'flex', gap: '4px', marginBottom: '6px', flexWrap: 'wrap' }}>
+                                        {song.genre && (
+                                            <span style={{ fontSize: '10px', color: '#ff2d55', backgroundColor: 'rgba(255,45,85,0.15)', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold' }}>
+                                                {song.genre}
+                                            </span>
+                                        )}
+                                        {levelStars[song.level] && (
+                                            <span style={{ fontSize: '10px', color: '#60a5fa', backgroundColor: 'rgba(96,165,250,0.15)', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold' }}>
+                                                {levelStars[song.level].text}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <h3 style={{ margin: 0, fontSize: '15px', color: '#fff', fontWeight: '600', lineHeight: '1.3', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                        {song.title}
+                                    </h3>
+                                    <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#888', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                        {song.choreographer || '안무가 미상'}
+                                    </p>
+                                </div>
+                            </div>
                         ))}
                     </div>
-                </div>
-            )}
-
-            {/* 3. 검색 결과 영역 */}
-            <div className="result-section">
-                {isSearching ? (
-                    // 검색 중일 때 빙글빙글 도는 핑크색 로딩 애니메이션
-                    <div className="loading-spinner">
-                        <div className="spinner"></div>
-                        <p>열심히 안무를 찾고 있습니다... 💃</p>
-                    </div>
-                ) : keyword ? (
-                    // 검색이 끝났을 때 보여주는 결과 화면
-                    <div className="search-result">
-                        <p className="result-info">
-                            <strong className="highlight">'{keyword}'</strong> 검색 결과입니다.
-                        </p>
-                        {/* 데모용 가짜 영상 카드 1 */}
-                        <div className="result-card">
-                            <div className="result-thumbnail">
-                                <span className="play-icon">▶</span>
-                            </div>
-                            <div className="result-details">
-                                <span className="badge">초급</span>
-                                <h4 className="result-title">텍사스 타임 (Texas Time)</h4>
-                                <p className="result-desc">구향회 원장 · 3개월 전</p>
-                            </div>
-                        </div>
-                        {/* 데모용 가짜 영상 카드 2 */}
-                        <div className="result-card">
-                            <div className="result-thumbnail" style={{ backgroundColor: '#2a2a35' }}>
-                                <span className="play-icon">▶</span>
-                            </div>
-                            <div className="result-details">
-                                <span className="badge">입문</span>
-                                <h4 className="result-title">기초 스텝 모음</h4>
-                                <p className="result-desc">구향회 원장 · 5개월 전</p>
-                            </div>
-                        </div>
-                    </div>
                 ) : (
-                    // 아무것도 검색 안 했을 때 (초기 화면) 하단 안내
-                    <div className="empty-state">
-                        <div className="empty-icon">🎧</div>
-                        <p>예전에 배웠던 안무가 기억 안 나시나요?</p>
-                        <p className="sub-text">위의 핑크색 버튼을 터치해보세요!</p>
+                    // 검색 결과가 0개일 때
+                    <div style={{ textAlign: 'center', marginTop: '60px', color: '#666' }}>
+                        <div style={{ fontSize: '48px', marginBottom: '16px' }}>🥲</div>
+                        <p style={{ margin: 0, fontSize: '15px', lineHeight: '1.5' }}>
+                            '<strong style={{ color: '#fff' }}>{keyword}</strong>'에 대한<br />검색 결과가 없습니다.
+                        </p>
                     </div>
                 )}
             </div>
-
         </div>
     );
 }

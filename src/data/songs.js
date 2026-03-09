@@ -1,5 +1,5 @@
 // 라인댄스 안무곡 데이터
-const songs = [
+const rawSongs = [
   {
     id: 10,
     title: "Everyone Needs a Hero",
@@ -890,7 +890,7 @@ const songDates = {
 // 🔄 자동 계산: 가장 최근 등록된 곡 = 이번주 수업곡
 const latestDate = Object.values(songDates).sort().reverse()[0];
 
-const processedSongs = songs.map(s => ({
+const processedSongs = rawSongs.map(s => ({
   ...s,
   addedDate: songDates[s.id] || '2025-01-01',
   isThisWeek: songDates[s.id] === latestDate,

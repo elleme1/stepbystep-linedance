@@ -1,6 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
+// 🎨 테마
+import { ThemeProvider } from './context/ThemeContext';
+
 // 🎬 스플래시 화면
 import SplashScreen from './components/SplashScreen';
 
@@ -24,7 +27,7 @@ export default function App() {
   const handleSplashFinish = useCallback(() => setShowSplash(false), []);
 
   return (
-    <>
+    <ThemeProvider>
       {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
       <BrowserRouter>
         <Routes>
@@ -45,6 +48,6 @@ export default function App() {
           </Route>
         </Routes>
       </BrowserRouter>
-    </>
+    </ThemeProvider>
   );
 }

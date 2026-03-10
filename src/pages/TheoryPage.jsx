@@ -8,7 +8,15 @@ export default function TheoryPage() {
     const [search, setSearch] = useState('');
     const [expandedCategories, setExpandedCategories] = useState({});
     const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+    const [selectedLevel, setSelectedLevel] = useState('all');
     const { toggleFavorite, isFavorite } = useFavorites();
+
+    const levelFilters = [
+        { key: 'all', label: '전체', emoji: '📋' },
+        { key: 'beginner', label: '초급', emoji: '🟢' },
+        { key: 'silver', label: 'Silver', emoji: '🔵' },
+        { key: 'gold', label: 'Gold', emoji: '🟡' },
+    ];
 
     const ITEMS_PER_CATEGORY = 3;
 
@@ -18,7 +26,8 @@ export default function TheoryPage() {
             item.title.toLowerCase().includes(search.toLowerCase()) ||
             item.shortDesc.toLowerCase().includes(search.toLowerCase());
         const matchFav = !showFavoritesOnly || isFavorite(item.id);
-        return matchCategory && matchSearch && matchFav;
+        const matchLevel = selectedLevel === 'all' || !item.level || item.level === selectedLevel;
+        return matchCategory && matchSearch && matchFav && matchLevel;
     });
 
     const toggleItem = (id) => {
@@ -88,6 +97,28 @@ export default function TheoryPage() {
                     ⭐ 즐겨찾기
                 </button>
             </div>
+
+            {/* 난이도 서브 필터 (자이브 카테고리 선택 시 또는 전체 보기 시) */}
+            {(selectedCategory === 'jive' || selectedCategory === 'all') && (
+                <div style={{
+                    display: 'flex',
+                    gap: 'var(--space-xs)',
+                    marginBottom: 'var(--space-md)',
+                    overflowX: 'auto',
+                    scrollbarWidth: 'none',
+                }}>
+                    {levelFilters.map(lf => (
+                        <button
+                            key={lf.key}
+                            className={`filter-btn ${selectedLevel === lf.key ? 'active' : ''}`}
+                            onClick={() => setSelectedLevel(lf.key)}
+                            style={{ fontSize: 'var(--font-size-xs)', padding: '4px 12px' }}
+                        >
+                            {lf.emoji} {lf.label}
+                        </button>
+                    ))}
+                </div>
+            )}
 
             {/* Theory Cards - 카테고리별 그룹 렌더링 */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>

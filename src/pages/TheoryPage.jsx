@@ -253,12 +253,13 @@ export default function TheoryPage() {
                                                                 overflow: 'hidden',
                                                                 width: '100%',
                                                                 aspectRatio: '16 / 9',
-                                                                background: '#000'
+                                                                background: '#000',
+                                                                position: 'relative'
                                                             }}
                                                             onClick={(e) => e.stopPropagation()}
                                                         >
                                                             <iframe
-                                                                src={`https://www.youtube.com/embed/${item.videoUrl}?rel=0`}
+                                                                src={`https://www.youtube-nocookie.com/embed/${item.videoUrl}?rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&disablekb=0`}
                                                                 style={{
                                                                     width: '100%',
                                                                     height: '100%',
@@ -268,6 +269,28 @@ export default function TheoryPage() {
                                                                 allowFullScreen
                                                                 title={item.title}
                                                             />
+                                                            {/* 상단 제목/YouTube 링크 차단 오버레이 */}
+                                                            <div style={{
+                                                                position: 'absolute',
+                                                                top: 0,
+                                                                left: 0,
+                                                                right: 0,
+                                                                height: '40px',
+                                                                pointerEvents: 'auto',
+                                                                zIndex: 2,
+                                                                cursor: 'default'
+                                                            }} onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} />
+                                                            {/* 하단 우측 YouTube 워터마크 차단 */}
+                                                            <div style={{
+                                                                position: 'absolute',
+                                                                bottom: '40px',
+                                                                right: 0,
+                                                                width: '120px',
+                                                                height: '30px',
+                                                                pointerEvents: 'auto',
+                                                                zIndex: 2,
+                                                                cursor: 'default'
+                                                            }} onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} />
                                                         </div>
                                                     ) : item.gifUrl && (
                                                         <div style={{

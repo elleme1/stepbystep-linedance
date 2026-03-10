@@ -231,6 +231,17 @@ export const theoryData = [
         tips: '영어 방향 용어에 익숙해지면 스텝시트를 읽기가 훨씬 쉬워집니다!',
         keywords: [],
         gifUrl: null
+    },
+    {
+        id: 'dir_02',
+        category: 'direction',
+        title: '자이브 베이직 인 플레이스 (Jive Basic In Place)',
+        shortDesc: '제자리에서 추는 자이브의 가장 기본적인 6카운트 스텝',
+        content: '자이브 베이직 인 플레이스는 제자리에서 체중 이동만으로 추는 자이브의 핵심 기초 스텝입니다.\n\n■ 카운트 구성: 1-2, 3&4, 5&6 (총 6카운트)\n\n1: 왼발 뒤로 록 (Rock Back) — 체중을 왼발로 이동\n2: 오른발 제자리 리커버 (Recover) — 체중을 오른발로 되돌림\n3: 왼발 옆으로 작게 (Chasse Left)\n&: 오른발 모아\n4: 왼발 옆으로\n5: 오른발 옆으로 작게 (Chasse Right)\n&: 왼발 모아\n6: 오른발 옆으로\n\n■ 리듬 패턴: Slow - Slow - Quick-Quick-Slow - Quick-Quick-Slow\n■ 음악 박자: 4/4박자 기준, 1소절에 6카운트가 배분됨',
+        tips: '록 스텝(1-2)에서 뒤꿈치를 들고 볼(앞꿈치)로 딛으면 바운스감이 살아납니다. 샤세(3&4, 5&6)는 작고 가볍게! 무릎을 살짝 구부리고 탄력 있게 바운스하는 것이 자이브의 핵심입니다. 처음에는 0.75배속으로 천천히 연습한 뒤 원래 속도(약 140~176 BPM)로 올려보세요.',
+        keywords: ['자이브', 'jive', '베이직 인 플레이스', 'basic in place', '자이브 베이직', 'jive basic'],
+        gifUrl: null,
+        videoUrl: 'jlY_nxpQJIQ'
     }
 ];
 

@@ -83,12 +83,16 @@ export default function TheoryPage() {
                                                 ? 'rgba(212, 168, 83, 0.15)'
                                                 : item.category === 'term'
                                                     ? 'rgba(91, 141, 217, 0.15)'
-                                                    : 'rgba(16, 185, 129, 0.15)',
+                                                    : item.category === 'jive'
+                                                        ? 'rgba(255, 82, 82, 0.15)'
+                                                        : 'rgba(16, 185, 129, 0.15)',
                                             color: item.category === 'step'
                                                 ? 'var(--accent-purple)'
                                                 : item.category === 'term'
                                                     ? 'var(--accent-blue)'
-                                                    : 'var(--accent-green)'
+                                                    : item.category === 'jive'
+                                                        ? '#ff5252'
+                                                        : 'var(--accent-green)'
                                         }}>
                                             {getCategoryEmoji(item.category)} {getCategoryLabel(item.category)}
                                         </span>

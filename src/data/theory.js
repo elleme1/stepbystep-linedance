@@ -233,8 +233,8 @@ export const theoryData = [
         gifUrl: null
     },
     {
-        id: 'dir_02',
-        category: 'direction',
+        id: 'jive_01',
+        category: 'jive',
         title: '자이브 베이직 인 플레이스 (Jive Basic In Place)',
         shortDesc: '제자리에서 추는 자이브의 가장 기본적인 6카운트 스텝',
         content: '자이브 베이직 인 플레이스는 제자리에서 체중 이동만으로 추는 자이브의 핵심 기초 스텝입니다.\n\n■ 카운트 구성: 1-2, 3&4, 5&6 (총 6카운트)\n\n1: 왼발 뒤로 록 (Rock Back) — 체중을 왼발로 이동\n2: 오른발 제자리 리커버 (Recover) — 체중을 오른발로 되돌림\n3: 왼발 옆으로 작게 (Chasse Left)\n&: 오른발 모아\n4: 왼발 옆으로\n5: 오른발 옆으로 작게 (Chasse Right)\n&: 왼발 모아\n6: 오른발 옆으로\n\n■ 리듬 패턴: Slow - Slow - Quick-Quick-Slow - Quick-Quick-Slow\n■ 음악 박자: 4/4박자 기준, 1소절에 6카운트가 배분됨',
@@ -249,5 +249,6 @@ export const categories = [
     { key: 'all', label: '전체', emoji: '📚' },
     { key: 'step', label: '기초 스텝', emoji: '👟' },
     { key: 'term', label: '용어', emoji: '📖' },
-    { key: 'direction', label: '방향', emoji: '🧭' }
+    { key: 'direction', label: '방향', emoji: '🧭' },
+    { key: 'jive', label: '자이브', emoji: '🕺' }
 ];

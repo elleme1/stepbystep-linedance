@@ -99,7 +99,7 @@ export const theoryData = [
         tips: '가장 기본적인 스텝! 리듬에 맞춰 자연스럽게 무게 이동하세요.',
         keywords: ['사이드 터치', 'side touch', '사이드 스텝', 'side step'],
         gifUrl: null,
-        videoUrl: null
+        videoUrl: '36AxDAxyOGA'
     },
     {
         id: 'step_10',
@@ -110,7 +110,7 @@ export const theoryData = [
         tips: '워크할 때 보폭을 일정하게 유지하고, 턴 시 축 발의 볼을 활용하세요.',
         keywords: ['워크', 'walk', '앞 워크', 'forward walk'],
         gifUrl: null,
-        videoUrl: null
+        videoUrl: 'F0AoFke-Dj0'
     },
     {
         id: 'step_11',
@@ -121,7 +121,7 @@ export const theoryData = [
         tips: '무릎을 살짝 구부리고 상체는 최대한 고정. 엉덩이만 움직이세요!',
         keywords: ['힙 범프', 'hip bump', '힙범프'],
         gifUrl: null,
-        videoUrl: null
+        videoUrl: 'KY6WiqREjAI'
     },
     {
         id: 'step_12',
@@ -132,7 +132,7 @@ export const theoryData = [
         tips: '교차 시 무릎이 서로 살짝 스치는 느낌으로. 엉덩이가 자연스럽게 회전합니다.',
         keywords: ['크로스', 'cross', '크로스 스텝'],
         gifUrl: null,
-        videoUrl: null
+        videoUrl: '_9vBDIU-uaQ'
     },
     {
         id: 'step_13',
@@ -143,7 +143,7 @@ export const theoryData = [
         tips: '상체도 함께 자연스럽게 기울이면 더 우아한 동작이 됩니다.',
         keywords: ['스웨이', 'sway', '힙 스웨이', 'hip sway'],
         gifUrl: null,
-        videoUrl: null
+        videoUrl: 'pZvjCgA8vlY'
     },
     {
         id: 'step_14',
@@ -154,7 +154,7 @@ export const theoryData = [
         tips: '발끝이 벌어지며 V자를 그리는 느낌. 리듬감 있게!',
         keywords: ['v 스텝', 'v step'],
         gifUrl: null,
-        videoUrl: null
+        videoUrl: 'G5dmC6xRQhA'
     },
     {
         id: 'step_15',
@@ -165,7 +165,7 @@ export const theoryData = [
         tips: '힙 모션을 넣으면 더 라틴 느낌! 무릎에서 힙으로 움직임이 전달되게.',
         keywords: ['쿠카라차', 'cucaracha'],
         gifUrl: null,
-        videoUrl: null
+        videoUrl: 'tgPXN6ABHp8'
     },
     {
         id: 'step_16',
@@ -176,7 +176,7 @@ export const theoryData = [
         tips: '그레이프바인의 확장 버전. 교차할 때 상체 방향을 유지하세요.',
         keywords: ['위빙', 'weave', 'weaving'],
         gifUrl: null,
-        videoUrl: null
+        videoUrl: 'RAJKB9tgEN0'
     },
 
     // ===== 용어 =====

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { theoryData, categories } from '../data/theory';
 import { useFavorites } from '../context/FavoritesContext';
+import { usePractice } from '../context/PracticeContext';
 
 export default function TheoryPage() {
     const [selectedCategory, setSelectedCategory] = useState('all');
@@ -10,6 +11,7 @@ export default function TheoryPage() {
     const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
     const [selectedLevel, setSelectedLevel] = useState('all');
     const { toggleFavorite, isFavorite } = useFavorites();
+    const { togglePracticed, isPracticed, practiceCount } = usePractice();
 
     const levelFilters = [
         { key: 'all', label: '전체', emoji: '📋' },
@@ -65,6 +67,29 @@ export default function TheoryPage() {
 
     return (
         <div>
+            {/* 오늘의 연습 진행률 */}
+            {practiceCount > 0 && (
+                <div style={{
+                    background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05))',
+                    border: '1px solid rgba(16, 185, 129, 0.2)',
+                    borderRadius: 'var(--radius-md)',
+                    padding: 'var(--space-sm) var(--space-md)',
+                    marginBottom: 'var(--space-md)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 'var(--space-sm)',
+                }}>
+                    <span style={{ fontSize: '1.2rem' }}>🏃</span>
+                    <span style={{
+                        fontSize: 'var(--font-size-sm)',
+                        fontWeight: 700,
+                        color: 'var(--accent-green)',
+                    }}>
+                        오늘 {practiceCount}개 스텝 연습 완료! 🎉
+                    </span>
+                </div>
+            )}
+
             {/* Search */}
             <div className="library-search">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -166,7 +191,11 @@ export default function TheoryPage() {
                                         <div
                                             key={item.id}
                                             className="glass-card"
-                                            style={{ cursor: 'pointer', transition: 'all 0.3s ease' }}
+                                            style={{
+                                                cursor: 'pointer',
+                                                transition: 'all 0.3s ease',
+                                                borderLeft: isPracticed(item.id) ? '3px solid var(--accent-green)' : 'none',
+                                            }}
                                             onClick={() => toggleItem(item.id)}
                                         >
                                             {/* Header */}
@@ -179,23 +208,38 @@ export default function TheoryPage() {
                                                         {item.shortDesc}
                                                     </p>
                                                 </div>
-                                                {/* 즐겨찾기 버튼 */}
-                                                <button
-                                                    onClick={(e) => { e.stopPropagation(); toggleFavorite(item.id); }}
-                                                    style={{
-                                                        background: 'none',
-                                                        border: 'none',
-                                                        fontSize: '18px',
-                                                        cursor: 'pointer',
-                                                        flexShrink: 0,
-                                                        padding: '2px',
-                                                        transition: 'transform 0.2s ease',
-                                                        transform: isFavorite(item.id) ? 'scale(1.2)' : 'scale(1)',
-                                                    }}
-                                                    title={isFavorite(item.id) ? '즐겨찾기 해제' : '즐겨찾기'}
-                                                >
-                                                    {isFavorite(item.id) ? '⭐' : '☆'}
-                                                </button>
+                                                {/* 연습 체크 + 즐겨찾기 */}
+                                                <div style={{ display: 'flex', gap: '2px', flexShrink: 0, alignItems: 'center' }}>
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); togglePracticed(item.id); }}
+                                                        style={{
+                                                            background: 'none', border: 'none',
+                                                            fontSize: '16px', cursor: 'pointer', padding: '2px',
+                                                            transition: 'transform 0.2s ease',
+                                                            transform: isPracticed(item.id) ? 'scale(1.15)' : 'scale(1)',
+                                                        }}
+                                                        title={isPracticed(item.id) ? '연습 취소' : '연습 완료'}
+                                                    >
+                                                        {isPracticed(item.id) ? '✅' : '⬜'}
+                                                    </button>
+                                                    {/* 즐겨찾기 버튼 */}
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); toggleFavorite(item.id); }}
+                                                        style={{
+                                                            background: 'none',
+                                                            border: 'none',
+                                                            fontSize: '18px',
+                                                            cursor: 'pointer',
+                                                            flexShrink: 0,
+                                                            padding: '2px',
+                                                            transition: 'transform 0.2s ease',
+                                                            transform: isFavorite(item.id) ? 'scale(1.2)' : 'scale(1)',
+                                                        }}
+                                                        title={isFavorite(item.id) ? '즐겨찾기 해제' : '즐겨찾기'}
+                                                    >
+                                                        {isFavorite(item.id) ? '⭐' : '☆'}
+                                                    </button>
+                                                </div>
                                                 <svg
                                                     viewBox="0 0 24 24"
                                                     fill="none"
@@ -380,41 +424,45 @@ export default function TheoryPage() {
                             </div>
 
                             {/* 더보기 / 접기 버튼 */}
-                            {hasMore && (
-                                <button
-                                    onClick={() => toggleCategoryExpand(cat.key)}
-                                    style={{
-                                        width: '100%',
-                                        marginTop: 'var(--space-sm)',
-                                        padding: '10px',
-                                        background: 'rgba(255, 255, 255, 0.04)',
-                                        border: '1px solid var(--border-color)',
-                                        borderRadius: 'var(--radius-md)',
-                                        color: 'var(--accent-purple)',
-                                        fontSize: 'var(--font-size-sm)',
-                                        fontWeight: 600,
-                                        cursor: 'pointer',
-                                        transition: 'all 0.2s ease'
-                                    }}
-                                >
-                                    {isExpCat
-                                        ? `접기 ▲`
-                                        : `더보기 (+${items.length - ITEMS_PER_CATEGORY}개) ▼`
-                                    }
-                                </button>
-                            )}
+                            {
+                                hasMore && (
+                                    <button
+                                        onClick={() => toggleCategoryExpand(cat.key)}
+                                        style={{
+                                            width: '100%',
+                                            marginTop: 'var(--space-sm)',
+                                            padding: '10px',
+                                            background: 'rgba(255, 255, 255, 0.04)',
+                                            border: '1px solid var(--border-color)',
+                                            borderRadius: 'var(--radius-md)',
+                                            color: 'var(--accent-purple)',
+                                            fontSize: 'var(--font-size-sm)',
+                                            fontWeight: 600,
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s ease'
+                                        }}
+                                    >
+                                        {isExpCat
+                                            ? `접기 ▲`
+                                            : `더보기 (+${items.length - ITEMS_PER_CATEGORY}개) ▼`
+                                        }
+                                    </button>
+                                )
+                            }
                         </div>
                     );
                 })}
             </div>
 
             {/* Empty State */}
-            {filtered.length === 0 && (
-                <div className="empty-state">
-                    <div className="empty-emoji">🔍</div>
-                    <p>검색 결과가 없습니다</p>
-                </div>
-            )}
+            {
+                filtered.length === 0 && (
+                    <div className="empty-state">
+                        <div className="empty-emoji">🔍</div>
+                        <p>검색 결과가 없습니다</p>
+                    </div>
+                )
+            }
 
             {/* Stats */}
             <div style={{

@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+// 🎬 스플래시 화면
+import SplashScreen from './components/SplashScreen';
 
 // 🪟 공통 레이아웃 (상단 타이틀 + 하단 메뉴바를 묶어주는 틀)
 import Layout from './components/Layout';
@@ -17,25 +20,31 @@ import VideoDetail from './pages/VideoDetail';
 import PlaylistPage from './pages/PlaylistPage';
 
 export default function App() {
+  const [showSplash, setShowSplash] = useState(true);
+  const handleSplashFinish = useCallback(() => setShowSplash(false), []);
+
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<Layout />}>
+    <>
+      {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
+      <BrowserRouter>
+        <Routes>
+          <Route element={<Layout />}>
 
-          {/* 메인 4-Tab 경로 */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/schedule" element={<SchedulePage />} />
-          <Route path="/video" element={<VideoPage />} />
-          <Route path="/theory" element={<TheoryPage />} />
+            {/* 메인 4-Tab 경로 */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/schedule" element={<SchedulePage />} />
+            <Route path="/video" element={<VideoPage />} />
+            <Route path="/theory" element={<TheoryPage />} />
 
-          {/* 서브 경로 */}
-          <Route path="/community" element={<CommunityPage />} />
-          <Route path="/search" element={<SearchPage />} />
-          <Route path="/video/:id" element={<VideoDetail />} />
-          <Route path="/playlist" element={<PlaylistPage />} />
+            {/* 서브 경로 */}
+            <Route path="/community" element={<CommunityPage />} />
+            <Route path="/search" element={<SearchPage />} />
+            <Route path="/video/:id" element={<VideoDetail />} />
+            <Route path="/playlist" element={<PlaylistPage />} />
 
-        </Route>
-      </Routes>
-    </BrowserRouter>
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </>
   );
 }

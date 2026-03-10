@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import songs from '../data/songs';
 import { levelText } from '../data/constants';
@@ -23,8 +23,10 @@ export default function VideoDetail() {
 
     const playerRef = useRef(null);
     const containerRef = useRef(null);
+    const videoWrapperRef = useRef(null);
     const progressInterval = useRef(null);
     const [playerReady, setPlayerReady] = useState(false);
+    const [isFullscreen, setIsFullscreen] = useState(false);
 
     const song = songs.find(s => s.id === Number(id)) || songs[0];
     const hasTutorial = !!song.tutorialId;
@@ -199,7 +201,7 @@ export default function VideoDetail() {
             </div>
 
             {/* 📺 유튜브 영상 플레이어 */}
-            <div style={{ width: '100%', aspectRatio: '16/9', backgroundColor: '#000', position: 'relative' }}>
+            <div ref={videoWrapperRef} style={{ width: '100%', aspectRatio: '16/9', backgroundColor: '#000', position: 'relative' }}>
                 {currentVideoId ? (
                     <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
                 ) : (
@@ -246,6 +248,36 @@ export default function VideoDetail() {
                     </div>
                 )}
             </div>
+
+            {/* 📱 풀스크린 연습 모드 버튼 */}
+            {currentVideoId && (
+                <div style={{ display: 'flex', justifyContent: 'center', padding: '8px 16px' }}>
+                    <button
+                        onClick={() => {
+                            const el = videoWrapperRef.current;
+                            if (!el) return;
+                            if (!document.fullscreenElement) {
+                                (el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen).call(el);
+                                setIsFullscreen(true);
+                                try { screen.orientation?.lock?.('landscape'); } catch (e) { }
+                            } else {
+                                (document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen).call(document);
+                                setIsFullscreen(false);
+                            }
+                        }}
+                        style={{
+                            display: 'flex', alignItems: 'center', gap: '6px',
+                            padding: '10px 20px', borderRadius: '10px', border: 'none',
+                            fontSize: '14px', fontWeight: '700', cursor: 'pointer',
+                            background: isFullscreen ? 'rgba(255, 45, 85, 0.2)' : '#1c1c28',
+                            color: isFullscreen ? '#ff6699' : '#aaa',
+                            transition: 'all 0.2s'
+                        }}
+                    >
+                        {isFullscreen ? '🔲 전체화면 해제' : '📱 전체화면 연습'}
+                    </button>
+                </div>
+            )}
 
             {/* 🎬 구간 반복(클립) 패널 */}
             {currentVideoId && (

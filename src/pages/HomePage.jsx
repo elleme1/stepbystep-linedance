@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HomePage.css';
 import songs from '../data/songs';
+import InstallBanner from '../components/InstallBanner';
 
 export default function HomePage() {
     const navigate = useNavigate();
@@ -58,6 +59,10 @@ export default function HomePage() {
                     Step by Step 🎶
                 </p>
             </div>
+
+            {/* 📲 PWA 설치 유도 배너 */}
+            <InstallBanner />
+
             {/* 1. 상단 환영 인사 및 공지 배너 */}
             <header className="home-header">
                 <h1 className="greeting-title">

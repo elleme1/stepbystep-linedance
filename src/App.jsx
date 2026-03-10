@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 // 🎨 테마
 import { ThemeProvider } from './context/ThemeContext';
+import { FavoritesProvider } from './context/FavoritesContext';
 
 // 🎬 스플래시 화면
 import SplashScreen from './components/SplashScreen';
@@ -28,26 +29,28 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
-      <BrowserRouter>
-        <Routes>
-          <Route element={<Layout />}>
+      <FavoritesProvider>
+        {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
+        <BrowserRouter>
+          <Routes>
+            <Route element={<Layout />}>
 
-            {/* 메인 4-Tab 경로 */}
-            <Route path="/" element={<HomePage />} />
-            <Route path="/schedule" element={<SchedulePage />} />
-            <Route path="/video" element={<VideoPage />} />
-            <Route path="/theory" element={<TheoryPage />} />
+              {/* 메인 4-Tab 경로 */}
+              <Route path="/" element={<HomePage />} />
+              <Route path="/schedule" element={<SchedulePage />} />
+              <Route path="/video" element={<VideoPage />} />
+              <Route path="/theory" element={<TheoryPage />} />
 
-            {/* 서브 경로 */}
-            <Route path="/community" element={<CommunityPage />} />
-            <Route path="/search" element={<SearchPage />} />
-            <Route path="/video/:id" element={<VideoDetail />} />
-            <Route path="/playlist" element={<PlaylistPage />} />
+              {/* 서브 경로 */}
+              <Route path="/community" element={<CommunityPage />} />
+              <Route path="/search" element={<SearchPage />} />
+              <Route path="/video/:id" element={<VideoDetail />} />
+              <Route path="/playlist" element={<PlaylistPage />} />
 
-          </Route>
-        </Routes>
-      </BrowserRouter>
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </FavoritesProvider>
     </ThemeProvider>
   );
 }

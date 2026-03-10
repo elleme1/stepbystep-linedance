@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import { theoryData, categories } from '../data/theory';
+import { useFavorites } from '../context/FavoritesContext';
 
 export default function TheoryPage() {
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [expandedId, setExpandedId] = useState(null);
     const [search, setSearch] = useState('');
     const [expandedCategories, setExpandedCategories] = useState({});
+    const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+    const { toggleFavorite, isFavorite } = useFavorites();
 
     const ITEMS_PER_CATEGORY = 3;
 
@@ -14,7 +17,8 @@ export default function TheoryPage() {
         const matchSearch = search === '' ||
             item.title.toLowerCase().includes(search.toLowerCase()) ||
             item.shortDesc.toLowerCase().includes(search.toLowerCase());
-        return matchCategory && matchSearch;
+        const matchFav = !showFavoritesOnly || isFavorite(item.id);
+        return matchCategory && matchSearch && matchFav;
     });
 
     const toggleItem = (id) => {
@@ -77,6 +81,12 @@ export default function TheoryPage() {
                         {cat.emoji} {cat.label}
                     </button>
                 ))}
+                <button
+                    className={`filter-btn ${showFavoritesOnly ? 'active' : ''}`}
+                    onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                >
+                    ⭐ 즐겨찾기
+                </button>
             </div>
 
             {/* Theory Cards - 카테고리별 그룹 렌더링 */}
@@ -138,6 +148,23 @@ export default function TheoryPage() {
                                                         {item.shortDesc}
                                                     </p>
                                                 </div>
+                                                {/* 즐겨찾기 버튼 */}
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); toggleFavorite(item.id); }}
+                                                    style={{
+                                                        background: 'none',
+                                                        border: 'none',
+                                                        fontSize: '18px',
+                                                        cursor: 'pointer',
+                                                        flexShrink: 0,
+                                                        padding: '2px',
+                                                        transition: 'transform 0.2s ease',
+                                                        transform: isFavorite(item.id) ? 'scale(1.2)' : 'scale(1)',
+                                                    }}
+                                                    title={isFavorite(item.id) ? '즐겨찾기 해제' : '즐겨찾기'}
+                                                >
+                                                    {isFavorite(item.id) ? '⭐' : '☆'}
+                                                </button>
                                                 <svg
                                                     viewBox="0 0 24 24"
                                                     fill="none"

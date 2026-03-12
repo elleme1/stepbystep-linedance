@@ -1,6 +1,27 @@
 // 라인댄스 안무곡 데이터
 const rawSongs = [
   {
+    id: 41,
+    title: "Wild West & Wicked (와일드 웨스트 앤 위키드)",
+    artist: "DJTEXX",
+    choreographer: "Rob Fowler",
+    level: 2,
+    bpm: 128,
+    walls: 2,
+    counts: 64,
+    genre: "팝",
+    youtubeId: "exKKMmWIEZM",
+    tutorialId: "ku6dH33Sbe8",
+    thumbnail: "https://img.youtube.com/vi/exKKMmWIEZM/hqdefault.jpg",
+
+    steps: [
+      { count: "1-16", move: "워크 & 턴 (Walk & Turn)", desc: "앞으로 워크 → 1/4 턴 → 사이드 스텝 → 터치" },
+      { count: "17-32", move: "셔플 & 록 스텝 (Shuffle & Rock Step)", desc: "오른쪽 셔플 → 앞 록 → 리커버 → 왼쪽 셔플" },
+      { count: "33-48", move: "바인 & 크로스 (Vine & Cross)", desc: "오른쪽 그레이프바인 → 크로스 터치 → 왼쪽 바인" },
+      { count: "49-64", move: "스웨이 & 피봇 턴 (Sway & Pivot Turn)", desc: "힙 스웨이 좌우 → 1/2 피봇 턴 → 터치" }
+    ]
+  },
+  {
     id: 10,
     title: "Everyone Needs a Hero",
     artist: "Adam Lambert",
@@ -845,6 +866,7 @@ const rawSongs = [
 // 가장 최근 날짜의 곡이 자동으로 "이번주 수업곡"이 됩니다.
 // ============================================================
 const songDates = {
+  41: '2026-03-12',  // Wild West & Wicked
   10: '2026-03-10',  // Everyone Needs a Hero
   1: '2026-03-03',  // Why
   2: '2026-02-24',  // 정말 잘해왔어

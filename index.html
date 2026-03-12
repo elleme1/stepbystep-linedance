@@ -57,21 +57,16 @@
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js').then((reg) => {
 
-          // 배터리와 데이터 절약을 위해 업데이트 확인 주기를 1시간으로 완화
-          setInterval(() => reg.update(), 1000 * 60 * 60);
+          // 앱 열 때마다 + 30분마다 업데이트 확인
+          setInterval(() => reg.update(), 1000 * 60 * 30);
 
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
             newWorker.addEventListener('statechange', () => {
 
-              if (newWorker.state === 'activated') {
-                if (navigator.serviceWorker.controller) {
-
-                  if (confirm('✨ 새로운 안무 영상이나 공지가 업데이트되었습니다!\n지금 새로고침하여 최신 버전을 확인하시겠습니까?\n(취소 시 다음 번 접속 때 자연스럽게 적용됩니다)')) {
-                    window.location.reload();
-                  }
-
-                }
+              if (newWorker.state === 'activated' && navigator.serviceWorker.controller) {
+                // 예쁜 업데이트 토스트 배너 표시
+                showUpdateBanner();
               }
 
             });
@@ -80,6 +75,51 @@
           console.error('Service Worker 등록 실패:', error);
         });
       });
+    }
+
+    function showUpdateBanner() {
+      // 이미 배너가 떠있으면 무시
+      if (document.getElementById('sw-update-banner')) return;
+
+      const banner = document.createElement('div');
+      banner.id = 'sw-update-banner';
+      banner.innerHTML = `
+        <div style="
+          position: fixed; bottom: 80px; left: 16px; right: 16px;
+          background: linear-gradient(135deg, #ff3366 0%, #ff6699 100%);
+          color: white; padding: 16px 20px; border-radius: 16px;
+          box-shadow: 0 8px 32px rgba(255,51,102,0.4);
+          z-index: 99999; cursor: pointer;
+          display: flex; align-items: center; gap: 12px;
+          animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+          font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        " onclick="window.location.reload()">
+          <span style="font-size: 28px;">✨</span>
+          <div style="flex: 1;">
+            <div style="font-size: 15px; font-weight: 700; margin-bottom: 2px;">
+              새로운 업데이트가 있어요!
+            </div>
+            <div style="font-size: 13px; opacity: 0.9;">
+              여기를 탭하면 최신 버전으로 새로고침됩니다
+            </div>
+          </div>
+          <span style="font-size: 20px;">→</span>
+        </div>
+      `;
+      document.body.appendChild(banner);
+
+      // 슬라이드업 애니메이션
+      if (!document.getElementById('sw-update-style')) {
+        const style = document.createElement('style');
+        style.id = 'sw-update-style';
+        style.textContent = `
+          @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+          }
+        `;
+        document.head.appendChild(style);
+      }
     }
   </script>
 </body>

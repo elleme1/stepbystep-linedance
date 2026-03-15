@@ -242,7 +242,7 @@ const rawSongs = [
     counts: 32,
     genre: "라틴",
     youtubeId: "Hn7_zmxPCOU",
-    tutorialId: "",
+    tutorialId: "vO9WPd40PtU",
     thumbnail: "https://img.youtube.com/vi/Hn7_zmxPCOU/hqdefault.jpg",
 
     steps: [
@@ -263,7 +263,7 @@ const rawSongs = [
     counts: 32,
     genre: "팝",
     youtubeId: "Qf2GKKZgeqQ",
-    tutorialId: "",
+    tutorialId: "re_lgW4CSNs",
     thumbnail: "https://img.youtube.com/vi/Qf2GKKZgeqQ/hqdefault.jpg",
 
     steps: [
@@ -284,7 +284,7 @@ const rawSongs = [
     counts: 32,
     genre: "팝",
     youtubeId: "lrMLT6oi2KY",
-    tutorialId: "",
+    tutorialId: "7t8qe1b01LE",
     thumbnail: "https://img.youtube.com/vi/lrMLT6oi2KY/hqdefault.jpg",
 
     steps: [
@@ -305,7 +305,7 @@ const rawSongs = [
     counts: 32,
     genre: "가요",
     youtubeId: "G8Utlws4LME",
-    tutorialId: "",
+    tutorialId: "e5oSrMXFdE0",
     thumbnail: "https://img.youtube.com/vi/G8Utlws4LME/hqdefault.jpg",
 
     steps: [
@@ -326,7 +326,7 @@ const rawSongs = [
     counts: 32,
     genre: "팝",
     youtubeId: "fNha3NJ5oG8",
-    tutorialId: "",
+    tutorialId: "W908j4tvkEI",
     thumbnail: "https://img.youtube.com/vi/fNha3NJ5oG8/hqdefault.jpg",
 
     steps: [
@@ -347,7 +347,7 @@ const rawSongs = [
     counts: 48,
     genre: "팝",
     youtubeId: "Xry9UgpcRQ4",
-    tutorialId: "",
+    tutorialId: "zLgXSQdHDrk",
     thumbnail: "https://img.youtube.com/vi/Xry9UgpcRQ4/hqdefault.jpg",
 
     steps: [
@@ -367,7 +367,7 @@ const rawSongs = [
     counts: 32,
     genre: "가요",
     youtubeId: "NOLUMWYgYzE",
-    tutorialId: "",
+    tutorialId: "5k4bA9q7siY",
     thumbnail: "https://img.youtube.com/vi/NOLUMWYgYzE/hqdefault.jpg",
 
     steps: [
@@ -388,7 +388,7 @@ const rawSongs = [
     counts: 32,
     genre: "팝",
     youtubeId: "Xf3w_drsXro",
-    tutorialId: "",
+    tutorialId: "kVYaRg6F4zY",
     thumbnail: "https://img.youtube.com/vi/Xf3w_drsXro/hqdefault.jpg",
 
     steps: [
@@ -409,7 +409,7 @@ const rawSongs = [
     counts: 40,
     genre: "라틴",
     youtubeId: "brWH2NTUYOQ",
-    tutorialId: "",
+    tutorialId: "PGHjivYsjXY",
     thumbnail: "https://img.youtube.com/vi/brWH2NTUYOQ/hqdefault.jpg",
 
     steps: [
@@ -452,7 +452,7 @@ const rawSongs = [
     counts: 32,
     genre: "라틴",
     youtubeId: "FIqkmGALYvA",
-    tutorialId: "",
+    tutorialId: "BhTZodwkgtk",
     thumbnail: "https://img.youtube.com/vi/FIqkmGALYvA/hqdefault.jpg",
 
     steps: [
@@ -473,7 +473,7 @@ const rawSongs = [
     counts: 32,
     genre: "라틴",
     youtubeId: "gxMFVESV0W0",
-    tutorialId: "",
+    tutorialId: "5YI_TIcQPiY",
     thumbnail: "https://img.youtube.com/vi/gxMFVESV0W0/hqdefault.jpg",
 
     steps: [
@@ -494,7 +494,7 @@ const rawSongs = [
     counts: 32,
     genre: "라틴",
     youtubeId: "BNJbWP_zL0c",
-    tutorialId: "",
+    tutorialId: "SOKBumxA4HA",
     thumbnail: "https://img.youtube.com/vi/BNJbWP_zL0c/hqdefault.jpg",
 
     steps: [
@@ -515,7 +515,7 @@ const rawSongs = [
     counts: 32,
     genre: "가요",
     youtubeId: "Jng8rwjnY24",
-    tutorialId: "",
+    tutorialId: "lr-cVXCTLv0",
     thumbnail: "https://img.youtube.com/vi/Jng8rwjnY24/hqdefault.jpg",
 
     steps: [
@@ -536,7 +536,7 @@ const rawSongs = [
     counts: 32,
     genre: "가요",
     youtubeId: "vMZq-Ia1Crw",
-    tutorialId: "",
+    tutorialId: "KUmv0UTBDCs",
     thumbnail: "https://img.youtube.com/vi/vMZq-Ia1Crw/hqdefault.jpg",
 
     steps: [
@@ -557,7 +557,7 @@ const rawSongs = [
     counts: 32,
     genre: "가요",
     youtubeId: "dhoVoR7PbZ8",
-    tutorialId: "",
+    tutorialId: "Kjsw0GICbjs",
     thumbnail: "https://img.youtube.com/vi/dhoVoR7PbZ8/hqdefault.jpg",
 
     steps: [
@@ -578,7 +578,7 @@ const rawSongs = [
     counts: 32,
     genre: "라틴",
     youtubeId: "fmpl-GbrX4k",
-    tutorialId: "",
+    tutorialId: "UnAz5RlO8mk",
     thumbnail: "https://img.youtube.com/vi/fmpl-GbrX4k/hqdefault.jpg",
 
     steps: [
@@ -620,7 +620,7 @@ const rawSongs = [
     counts: 32,
     genre: "가요",
     youtubeId: "FlKoo2oVjwk",
-    tutorialId: "",
+    tutorialId: "WcRHocnjpj0",
     thumbnail: "https://img.youtube.com/vi/FlKoo2oVjwk/hqdefault.jpg",
 
     steps: [
@@ -641,7 +641,7 @@ const rawSongs = [
     counts: 32,
     genre: "팝",
     youtubeId: "6_Ee-xh0KNk",
-    tutorialId: "",
+    tutorialId: "1ABEA6IDdp0",
     thumbnail: "https://img.youtube.com/vi/6_Ee-xh0KNk/hqdefault.jpg",
 
     steps: [
@@ -662,7 +662,7 @@ const rawSongs = [
     counts: 32,
     genre: "팝",
     youtubeId: "n1ITcteZ2Ac",
-    tutorialId: "",
+    tutorialId: "mOfxU8C0E7Q",
     thumbnail: "https://img.youtube.com/vi/n1ITcteZ2Ac/hqdefault.jpg",
 
     steps: [
@@ -683,7 +683,7 @@ const rawSongs = [
     counts: 64,
     genre: "가요",
     youtubeId: "fkAXbdAfUfE",
-    tutorialId: "",
+    tutorialId: "eeM4yYceUAI",
     thumbnail: "https://img.youtube.com/vi/fkAXbdAfUfE/hqdefault.jpg",
 
     steps: [
@@ -704,7 +704,7 @@ const rawSongs = [
     counts: 32,
     genre: "가요",
     youtubeId: "nde5MdZQZdM",
-    tutorialId: "",
+    tutorialId: "wmZ86mefHPY",
     thumbnail: "https://img.youtube.com/vi/nde5MdZQZdM/hqdefault.jpg",
 
     steps: [
@@ -746,7 +746,7 @@ const rawSongs = [
     counts: 32,
     genre: "라틴팝",
     youtubeId: "HMUNZGWs8nw",
-    tutorialId: "",
+    tutorialId: "f1fkdOUzKxg",
     thumbnail: "https://img.youtube.com/vi/HMUNZGWs8nw/hqdefault.jpg",
 
     steps: [
@@ -767,7 +767,7 @@ const rawSongs = [
     counts: 32,
     genre: "가요",
     youtubeId: "pHP5ezqVJPc",
-    tutorialId: "",
+    tutorialId: "zFksgxdFXrw",
     thumbnail: "https://img.youtube.com/vi/pHP5ezqVJPc/hqdefault.jpg",
 
     steps: [
@@ -808,7 +808,7 @@ const rawSongs = [
     counts: 32,
     genre: "팝",
     youtubeId: "5R7kYj3sKbs",
-    tutorialId: "",
+    tutorialId: "mm2KpMXEzFg",
     thumbnail: "https://img.youtube.com/vi/5R7kYj3sKbs/hqdefault.jpg",
 
     steps: [
@@ -829,7 +829,7 @@ const rawSongs = [
     counts: 24,
     genre: "가요",
     youtubeId: "GyNwEy7S6u4",
-    tutorialId: "",
+    tutorialId: "8jgnB06dPgY",
     thumbnail: "https://img.youtube.com/vi/GyNwEy7S6u4/hqdefault.jpg",
 
     steps: [
@@ -849,7 +849,7 @@ const rawSongs = [
     counts: 32,
     genre: "가요",
     youtubeId: "0eKiC6aTjAA",
-    tutorialId: "",
+    tutorialId: "rN1ZRLwdyWE",
     thumbnail: "https://img.youtube.com/vi/0eKiC6aTjAA/hqdefault.jpg",
 
     steps: [

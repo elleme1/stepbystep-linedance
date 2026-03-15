@@ -1,10 +1,17 @@
-// 구양희 STEP-BY-STEP Service Worker - 자동 업데이트 + SPA 라우팅 지원
-const CACHE_NAME = 'stepbystep-v9';
+// 구양희 STEP-BY-STEP Service Worker - Graceful 업데이트 + SPA 라우팅 지원
+const CACHE_NAME = 'stepbystep-v16';
 const OFFLINE_URL = '/';
 
-// Install: 즉시 활성화
+// Install: 사용자가 '업데이트' 버튼을 누를 때까지 대기
 self.addEventListener('install', (event) => {
-    self.skipWaiting();
+    // skipWaiting()을 여기서 호출하지 않음 → 토스트에서 사용자 선택 후 교대
+});
+
+// Message: 토스트에서 '업데이트' 버튼 클릭 시 교대 명령 수신
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
 });
 
 // Activate: 이전 캐시 모두 삭제 후 즉시 제어
@@ -26,7 +33,14 @@ self.addEventListener('fetch', (event) => {
     }
 
     // SPA 네비게이션 요청: /library, /schedule 등 → /index.html로 처리
+    // 단, 독립 HTML 파일(jive-guide.html 등)은 직접 서빙
     if (event.request.mode === 'navigate') {
+        const url = new URL(event.request.url);
+        if (url.pathname.endsWith('.html') && url.pathname !== '/' && url.pathname !== '/index.html') {
+            // 독립 HTML 파일은 네트워크에서 직접 가져옴
+            event.respondWith(fetch(event.request));
+            return;
+        }
         event.respondWith(
             fetch('/index.html')
                 .then((response) => {

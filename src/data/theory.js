@@ -8,7 +8,7 @@ export const theoryData = [
         content: '1: 오른발 옆으로\n2: 왼발을 오른발 뒤로 교차\n3: 오른발 옆으로\n4: 왼발 터치',
         tips: '무게 중심을 낮추고 상체는 정면 유지. 발끝이 아닌 발바닥 전체로 딛기.',
         keywords: ['그레이프바인', 'grapevine', '바인', 'vine'],
-        gifUrl: '/assets/gifs/grapevine.gif',
+        gifUrl: '/assets/gifs/grapevine.png',
         videoUrl: 'F0AoFke-Dj0'
     },
     {
@@ -19,7 +19,7 @@ export const theoryData = [
         content: '1: 오른발 왼발 앞으로 교차\n2: 왼발 뒤로\n3: 오른발 옆으로\n4: 왼발 모아 터치',
         tips: '교차할 때 자연스럽게 무릎을 살짝 구부리면 부드러운 동작이 됩니다.',
         keywords: ['재즈 박스', 'jazz box', '재즈박스'],
-        gifUrl: '/assets/gifs/jazzbox.gif',
+        gifUrl: '/assets/gifs/jazzbox.png',
         videoUrl: 'dLPxdftFI3Q'
     },
     {
@@ -30,7 +30,7 @@ export const theoryData = [
         content: '1: 오른발 뒤로\n&: 왼발을 오른발 옆에 모아\n2: 오른발 앞으로',
         tips: '빠른 "&" 카운트에서 균형을 잃지 않도록 작은 보폭으로!',
         keywords: ['코스터 스텝', 'coaster step', '코스터'],
-        gifUrl: '/assets/gifs/coasterstep.gif',
+        gifUrl: '/assets/gifs/coasterstep.png',
         videoUrl: 'rVaEk1BEsqQ'
     },
     {
@@ -41,8 +41,8 @@ export const theoryData = [
         content: '1: 오른발 옆으로\n&: 왼발 모아\n2: 오른발 옆으로',
         tips: '바닥을 스치듯 미끄러지는 느낌으로. 발을 높이 들지 마세요.',
         keywords: ['셔플', 'shuffle'],
-        gifUrl: '/assets/gifs/shuffle.gif',
-        videoUrl: 'F0AoFke-Dj0'
+        gifUrl: '/assets/gifs/shuffle.png',
+        videoUrl: 'JHECavueoZc'
     },
     {
         id: 'step_05',
@@ -52,7 +52,7 @@ export const theoryData = [
         content: '1: 오른발 앞으로\n2: 왼발 축으로 180도 회전 (왼쪽으로)',
         tips: '축 발(왼발)의 볼에 체중을 실고 회전. 시선을 먼저 돌리면 자연스럽습니다.',
         keywords: ['피봇 턴', 'pivot turn', '피봇'],
-        gifUrl: '/assets/gifs/pivotturn.gif',
+        gifUrl: '/assets/gifs/pivotturn.png',
         videoUrl: 'aC1Sj83qO08'
     },
     {
@@ -63,7 +63,7 @@ export const theoryData = [
         content: '1: 오른발 앞으로 (체중 이동)\n2: 왼발로 되돌아오기\n3: 오른발 뒤로 (체중 이동)\n4: 왼발로 되돌아오기',
         tips: '흔들의자처럼 부드럽게 앞뒤로. 상체도 자연스럽게 따라가세요.',
         keywords: ['록킹 체어', 'rocking chair', '록 스텝', 'rock step', '록'],
-        gifUrl: '/assets/gifs/rockingchair.gif',
+        gifUrl: '/assets/gifs/rockingchair.png',
         videoUrl: 'Jvw0-OkNRog'
     },
     {
@@ -74,7 +74,7 @@ export const theoryData = [
         content: '1: 오른발 앞으로 킥\n&: 오른발 볼(앞꿈치)로 착지\n2: 왼발로 체중 이동',
         tips: '킥은 높이보다 정확한 타이밍이 중요! "&" 카운트를 놓치지 마세요.',
         keywords: ['킥 볼 체인지', 'kick ball change', '킥볼체인지'],
-        gifUrl: '/assets/gifs/kickballchange.gif',
+        gifUrl: '/assets/gifs/kickballchange.png',
         videoUrl: 'zr54EyYKmzU'
     },
     {
@@ -85,7 +85,7 @@ export const theoryData = [
         content: '1: 오른발 옆으로\n2: 왼발 뒤로 교차\n3: 오른발로 1/4 턴 (오른쪽)\n4: 왼발 터치',
         tips: '3카운트에서 턴할 때 오른발 볼(앞꿈치)을 축으로 사용하세요.',
         keywords: ['바인 턴', 'vine turn', '바인턴'],
-        gifUrl: '/assets/gifs/vineturn.gif',
+        gifUrl: '/assets/gifs/vineturn.png',
         videoUrl: 'jL9VbBlSn0k'
     },
 
@@ -110,7 +110,7 @@ export const theoryData = [
         tips: '워크할 때 보폭을 일정하게 유지하고, 턴 시 축 발의 볼을 활용하세요.',
         keywords: ['워크', 'walk', '앞 워크', 'forward walk'],
         gifUrl: null,
-        videoUrl: 'F0AoFke-Dj0'
+        videoUrl: 'xDzhJ_H10hg'
     },
     {
         id: 'step_11',
@@ -473,7 +473,7 @@ export const theoryData = [
         tips: '팔을 넘길 때 여성 머리와 충분한 간격을 유지하세요.',
         keywords: ['마이애미 스페셜', 'miami special'],
         gifUrl: null,
-        videoUrl: '_lnirSps148'
+        videoUrl: '3SMk-fG8y8o'
     },
 
     // ===== 자이브 고급 (Gold) =====
@@ -499,7 +499,7 @@ export const theoryData = [
         tips: '어깨를 밀 때 손바닥을 펴고 가볍게, 세게 밀지 마세요.',
         keywords: ['숄더 스핀', 'shoulder spin'],
         gifUrl: null,
-        videoUrl: 'r-S_vkAF6tg'
+        videoUrl: 'Nz4f7oH3Cx0'
     },
     {
         id: 'jive_23',
@@ -547,7 +547,7 @@ export const theoryData = [
         tips: '당기는 힘을 점진적으로 축적한 뒤 폭발적으로 해제하세요.',
         keywords: ['캐터펄트', 'catapult'],
         gifUrl: null,
-        videoUrl: 'P-1MuwF7m6s'
+        videoUrl: 'IBmiQBHVx9M'
     },
     {
         id: 'jive_27',

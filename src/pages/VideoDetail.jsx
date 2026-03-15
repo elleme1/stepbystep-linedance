@@ -481,7 +481,7 @@ export default function VideoDetail() {
                                                     onClick={(e) => { e.stopPropagation(); setStepPopup(ms); }}
                                                     style={{
                                                         display: 'inline-flex', alignItems: 'center', gap: '4px',
-                                                        padding: '3px 10px', borderRadius: '20px', border: 'none',
+                                                        padding: '3px 10px', borderRadius: '20px',
                                                         fontSize: '12px', fontWeight: '600', cursor: 'pointer',
                                                         background: ms.videoUrl
                                                             ? 'linear-gradient(135deg, rgba(255,45,85,0.2), rgba(255,102,153,0.15))'

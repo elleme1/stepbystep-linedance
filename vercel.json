@@ -1,7 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/((?!assets/).*)",
+      "source": "/((?!assets/|jive-guide\\.html).*)",
       "destination": "/index.html"
     }
   ],

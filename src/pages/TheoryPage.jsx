@@ -1,486 +1,373 @@
-import { useState } from 'react';
-import { theoryData, categories } from '../data/theory';
-import { useFavorites } from '../context/FavoritesContext';
-import { usePractice } from '../context/PracticeContext';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+// 📚 자이브 57개 동작 데이터 + 유튜브 영상 매칭
+const jiveData = [
+  // ===== 초급 (크루즈) =====
+  {n:1,t:"팔러웨이 락",e:"Fallaway Rock",d:"파트너와 V자로 물러나며 락 스텝",lv:"beginner",feel:"파트너와 함께 V자로 살짝 벌어지며 뒤로 물러나는 동작",count:"QQ QaQ QaQ",steps:["1-2: 왼발 뒤로 락 → 오른발 리커버","3&4: 샤세 (왼쪽)","5&6: 샤세 (오른쪽)"],tip:"뒤로 물러날 때 파트너와의 텐션(연결감)을 유지하세요"},
+  {n:2,t:"팔러웨이 쓰로우웨이",e:"Fallaway Throwaway",d:"여성을 밖으로 밀어 오픈 포지션 전환",lv:"beginner",feel:"여성을 '툭 던지듯' 밖으로 밀어내어 오픈을 만드는 동작",count:"QQ QaQ QaQ",steps:["1-2: 폴어웨이 락 스텝","3&4: 남성 샤세 + 여성을 밖으로","5&6: 오픈 포지션 샤세"],tip:"팔이 아닌 몸 전체의 리드를 사용하세요"},
+  {n:3,t:"링크 & 링크 락",e:"Link",d:"오픈→클로즈드 포지션으로 다시 연결",lv:"beginner",feel:"떨어져 있던 두 사람이 서로 당기며 다시 연결",count:"QQ QaQ QaQ",steps:["1-2: 오픈 포지션 락 스텝","3&4: 샤세하며 서로 당겨옴","5&6: 클로즈드 포지션 완성"],tip:"락 스텝의 탄력을 이용해 자연스럽게 당기세요"},
+  {n:4,t:"체인지 오브 플레이스 R to L",e:"Change of Places R→L",d:"우→좌 언더암 턴 자리바꿈",lv:"beginner",feel:"남성이 왼손을 올려 여성을 팔 아래로 통과시키는 자리바꿈",count:"QQ QaQ QaQ",steps:["1-2: 락 스텝","3&4: 왼손 올려 여성 팔 아래 통과","5&6: 샤세로 자리바꿈 완성"],tip:"여성의 턴 경로를 방해하지 마세요"},
+  {n:5,t:"체인지 오브 플레이스 L to R",e:"Change of Places L→R",d:"좌→우 리드 턴 자리바꿈",lv:"beginner",feel:"4번의 반대 방향 — 좌→우로 턴",count:"QQ QaQ QaQ",steps:["1-2: 락 스텝","3&4: 여성을 좌에서 우로 리드","5&6: 샤세로 자리바꿈 완성"],tip:"4번→5번 연속 연습하면 감각이 빨리 잡힙니다"},
+  {n:6,t:"아메리칸 스핀 ×2",e:"American Spin",d:"여성 제자리 스핀 2회",lv:"beginner",feel:"여성이 팽이처럼 제자리 스핀을 2회 도는 화려한 동작",count:"QQ QaQ QaQ (×2)",steps:["1-2: 락 스텝","3&4: 여성 우회전 스핀 리드","5&6: 샤세로 안정","위를 2회 반복"],tip:"스핀 시 머리(스팟팅)를 먼저 돌리면 어지럽지 않습니다"},
+  {n:7,t:"비하인드 백",e:"Change of Hands Behind Back",d:"등 뒤로 손 바꿔 잡으며 자리 교차",lv:"beginner",feel:"등 뒤로 손을 바꿔 잡으며 세련되게 자리를 교차",count:"QQ QaQ QaQ",steps:["1-2: 락 스텝","3&4: 등 뒤에서 손 바꿔 잡기","5&6: 샤세로 자리바꿈"],tip:"허리를 살짝 틀면 더 자연스럽습니다"},
+  {n:8,t:"워크",e:"The Walks",d:"나란히 바운스하며 경쾌하게 걷기",lv:"beginner",feel:"나란히 서서 무릎 바운스를 주며 경쾌하게 걷기",count:"S S S S",steps:["1~4: 오→왼→오→왼 차례로 앞으로"],tip:"무릎을 살짝 구부려 바운스감을 주세요"},
+  // ===== 중급 (매니아파티) =====
+  {n:9,t:"휩",e:"Whip",d:"채찍처럼 여성을 당겨 1회전",lv:"silver",feel:"여성을 깊게 당겨 채찍처럼 빠르게 1회전 우회전",count:"QQ QaQ QaQ",steps:["1-2: 락 스텝","3&4: 여성 1회전 우회전","5&6: 샤세 마무리"],tip:"중심을 낮추고 프레임을 단단하게!",memo:"(2번) 반복"},
+  {n:10,t:"휩 쓰로우웨이",e:"Whip Throwaway",d:"휩 후 여성을 밖으로 밀어냄",lv:"silver",feel:"휩 1바퀴 후 여성을 밖으로 밀어보내기",count:"QQ QaQ QaQ",steps:["1-2: 락 스텝","3&4: 휩 회전","5&6: 밖으로 밀어냄"],tip:"회전 모멘텀을 이용해 자연스럽게 밀어내세요"},
+  {n:11,t:"스탑 & 고",e:"Stop and Go",d:"보냈다 멈추고 다시 당기는 밀당",lv:"silver",feel:"여성을 보냈다 멈춰 세운 후, 다시 당기는 밀당",count:"QQ QaQ QaQ × 2",steps:["Stop: 여성을 앞으로 보내 멈춤","Go: 다시 당겨서 원래 자리로"],tip:"프레임을 단단하게 유지해야 정확히 멈춥니다"},
+  {n:12,t:"윈드밀",e:"Windmill",d:"풍차처럼 양팔 펴고 회전",lv:"silver",feel:"풍차처럼 양팔을 팽팽하게 펴고 마주 보며 회전",count:"QQ QaQ QaQ",steps:["1-2: 락 스텝","3&4: 양팔 펴고 풍차 회전","5&6: 회전 완료 및 샤세"],tip:"양팔의 텐션을 일정하게 유지하세요"},
+  {n:13,t:"스페니쉬 암",e:"Spanish Arms",d:"투우사처럼 팔 감싸며 회전",lv:"silver",feel:"투우사처럼 팔을 둥글게 감싸 안았다가 풀며 회전",count:"QQ QaQ QaQ",steps:["1-2: 락 스텝","3&4: 팔을 머리 위로 감싸기","5&6: 풀며 여성 회전"],tip:"어깨를 내리고 우아하게 표현하세요"},
+  {n:14,t:"롤링 오프 디 암",e:"Rolling off the Arm",d:"여성이 팔에 감기듯 스핀",lv:"silver",feel:"여성이 남성 팔에 감기듯 돌았다가 풀려나오며 스핀",count:"QQ QaQ QaQ",steps:["1-2: 락 스텝","3&4: 팔에 감기며 회전","5&6: 풀려나오며 스핀"],tip:"무리하게 힘을 주지 마세요"},
+  {n:15,t:"심플 스핀",e:"Simple Spin",d:"손 놓고 여성 프리 스핀",lv:"silver",feel:"두 손을 놓고 빠르게 제자리 프리 스핀",count:"QQ QaQ QaQ",steps:["1-2: 락 스텝","3&4: 손 놓고 프리 스핀","5&6: 다시 연결"],tip:"축 발을 확실하게 세우세요"},
+  {n:16,t:"컬리 휩",e:"Curly Whip",d:"나선형 턴 후 휩 연결",lv:"silver",feel:"나선형(Curly)으로 턴 후 휩으로 연결",count:"QQ QaQ QaQ",steps:["1-2: 락 스텝","3&4: 컬리 턴","5&6: 휩으로 연결"],tip:"끊기지 않게 매끄럽게 연결하세요"},
+  {n:17,t:"치킨 워크",e:"Chicken Walks",d:"닭처럼 톡톡 튀며 걷기",lv:"silver",feel:"닭처럼 무릎을 굽히고 발끝으로 톡톡 튀며 걷기",count:"S S S S",steps:["1~4: 오→왼→오→왼 닭 걸음"],tip:"발끝으로 톡톡 찍듯이!"},
+  {n:18,t:"토 힐 스위블",e:"Toe Heel Swivels",d:"발끝·뒤꿈치 번갈아 비틀기",lv:"silver",feel:"발끝과 뒤꿈치를 번갈아 비틀어 추는 리드미컬한 발동작",count:"Q Q Q Q",steps:["1: 오른발 토","2: 오른발 힐","3: 왼발 토","4: 왼발 힐"],tip:"골반이 자연스럽게 따라가게!"},
+  {n:19,t:"플릭 인투 브레이크",e:"Flicks into Break",d:"발차기 후 급정지",lv:"silver",feel:"맹수처럼 걷다가 강한 발차기 후 급정지",count:"S S S S + QQ",steps:["1-2: 스토킹 워크","3: 플릭 (발차기)","4: 브레이크 (급정지)"],tip:"스토킹은 느리게, 플릭은 폭발적으로!"},
+  {n:20,t:"스윗하트",e:"Sweetheart",d:"나란히 감싸 안은 포지션에서 추는 스텝",lv:"silver",feel:"남녀가 같은 방향으로 나란히 서서 하트 모양으로 감싸 안는 포지션",count:"QQ QaQ QaQ",steps:["1-2: 락 스텝","3&4: 스윗하트 포지션 진입","5&6: 포지션 유지하며 샤세"],tip:"팔이 꼬이지 않게 자연스럽게 포지션 전환하세요"},
+  {n:"20'",t:"쉐도우 스토킹 워크",e:"Shadow Stalking Walk",d:"그림자처럼 앞뒤로 나란히 걷기",lv:"silver",feel:"파트너의 그림자처럼 같은 방향으로 살금살금 걷기",count:"S S S S",steps:["1~4: 파트너와 같은 방향으로 스토킹 워크"],tip:"파트너와 보폭을 맞추세요"},
+  {n:21,t:"무치",e:"Mooch",d:"발을 뻗거나 차며 지그재그 이동",lv:"silver",feel:"마주 보고 발을 뻗거나 차며 지그재그로 움직이기",count:"QQ QaQ QaQ",steps:["1-2: 락 스텝","3&4: 샤세 + 플릭","5&6: 반대쪽 샤세 + 플릭"],tip:"플릭은 무릎 아래에서 가볍게!"},
+  // ===== 상급 A =====
+  {n:22,t:"플리아 홉스",e:"Flea Hops",d:"벼룩처럼 가볍게 뛰어오르는 스텝",lv:"goldA",feel:"벼룩이 뛰듯 가볍고 빠르게 양발을 번갈아 뛰어오르기",count:"QaQ QaQ",steps:["1&2: 오른발 홉","3&4: 왼발 홉"],tip:"높이 뛰지 말고 가볍게! 볼(앞꿈치)로 착지하세요"},
+  {n:23,t:"엔딩 투 스탑 & 고",e:"Ending to Stop & Go",d:"스탑 앤 고의 마무리 변형",lv:"goldA",feel:"스탑 앤 고를 끝내며 포지션 전환하는 마무리 동작",count:"QQ QaQ QaQ",steps:["1-2: 락 스텝","3&4: 스탑 앤 고 피니시","5&6: 포지션 전환"],tip:"자연스러운 마무리를 위해 타이밍에 집중"},
+  {n:24,t:"카타풀트",e:"Catapult",d:"투석기처럼 텐션으로 강하게 튕겨 스핀",lv:"goldA",feel:"여성을 당겼다가 투석기처럼 강하게 튕겨내어 스핀",count:"QQ QaQ QaQ",steps:["1-2: 락 (텐션 축적)","3&4: 텐션 해제, 강하게 튕겨냄","5&6: 여성 스핀 및 샤세"],tip:"당기는 힘을 점진적으로 축적 후 폭발적으로 해제"},
+  {n:25,t:"숄더 스핀",e:"Shoulder Spin",d:"어깨를 밀어 연속 스핀",lv:"goldA",feel:"여성의 어깨를 살짝 밀어 연속 스핀하게 하는 고난도 동작",count:"QQ QaQ QaQ",steps:["1-2: 락 스텝","3&4: 어깨 밀어 스핀","5&6: 샤세로 안정"],tip:"손바닥을 펴고 가볍게, 세게 밀지 마세요"},
+  {n:26,t:"처깅",e:"Chugging",d:"기차처럼 발 끌며 뒤로 물러남",lv:"goldA",feel:"기차가 움직이듯 발을 끌며 뒤로 물러나는 코믹한 스텝",count:"QaQ QaQ",steps:["1&2: 오른발 처깅 (뒤로 끌며)","3&4: 왼발 처깅"],tip:"무릎 충분히 구부리고 기차 흉내를 내듯!"},
+  {n:27,t:"로타리 지그재그",e:"Rotary Zigzag",d:"지그재그로 회전하며 이동",lv:"goldA",feel:"지그재그 패턴으로 회전하며 이동하는 역동적 스텝",count:"QQ QaQ QaQ",steps:["1-2: 락 스텝","3&4: 지그재그 방향으로 회전","5&6: 반대 방향 회전"],tip:"방향 전환 시 코어를 활용하세요"},
+  {n:28,t:"휩 스핀 보타포고스",e:"Whip Spin Botafogos",d:"휩과 보타포고를 결합한 스텝",lv:"goldA",feel:"삼바의 보타포고 스텝을 자이브 휩에 접목시킨 동작",count:"QQ QaQ QaQ",steps:["1-2: 휩 스핀","3&4: 보타포고 스텝","5&6: 연결 샤세"],tip:"보타포고의 힙 모션을 살려주세요"},
+  {n:29,t:"플릭 크로스",e:"Flick Cross",d:"발차기 후 교차하는 스텝",lv:"goldA",feel:"강하게 플릭(발차기) 후 발을 교차시키는 동작",count:"Q Q Q Q",steps:["1: 플릭 (강한 발차기)","2: 크로스 (교차)","3: 플릭","4: 크로스"],tip:"플릭의 높이를 일정하게 유지하세요",memo:"(1번) 표시"},
+  {n:30,t:"뉴욕 스프링",e:"New York Spring",d:"뉴욕 포즈에서 스프링하듯 튕기기",lv:"goldA",feel:"뉴욕 체크 포지션에서 스프링처럼 탄력 있게 튕기기",count:"QQ QaQ QaQ",steps:["1-2: 뉴욕 체크","3&4: 스프링 리커버","5&6: 샤세"],tip:"체크 포지션에서 프리한 팔 라인을 살리세요"},
+  // ===== 상급 B =====
+  {n:31,t:"코카콜라 1",e:"Coca Cola 1",d:"코카콜라 시리즈 첫번째 패턴",lv:"goldB",feel:"자이브의 대표적 응용 루틴 '코카콜라'의 첫 번째 패턴",count:"QQ QaQ QaQ",steps:["1-2: 락 스텝","3~6: 코카콜라 패턴 1번"],tip:"코카콜라 시리즈는 순서대로 마스터하세요"},
+  {n:32,t:"스위블 킥 & 브레이크",e:"Swivel Kick & Break",d:"스위블 후 킥하고 급정지",lv:"goldB",feel:"스위블로 비틀며 킥 후 브레이크(급정지)하는 강렬한 동작",count:"Q Q QQ",steps:["1: 스위블","2: 킥","3-4: 브레이크"],tip:"브레이크 시 무게를 확실히 멈추세요",memo:"(1번) 표시"},
+  {n:"32'",t:"크로스 오버 백 투 킥",e:"Cross Over Back to Kick",d:"교차 후 뒤로 갔다 킥",lv:"goldB",feel:"앞으로 교차한 후 뒤로 물러나 킥하는 복합 동작",count:"QQ QaQ QaQ",steps:["1-2: 크로스 오버","3&4: 백 스텝","5&6: 킥"],tip:"교차와 킥의 연결을 부드럽게"},
+  {n:33,t:"커들 워크 & 스핀",e:"Cuddle Walk & Spin",d:"안아 감고 걸으며 스핀",lv:"goldB",feel:"커들(안아 감은) 포지션에서 함께 걸은 후 스핀으로 풀기",count:"S S QQ QaQ",steps:["1-2: 커들 포지션 워크","3-4: 스핀으로 풀기"],tip:"커들 포지션에서 팔이 꼬이지 않게 주의"},
+  {n:34,t:"스프링 포인트 킥 & 스위블",e:"Spring Point Kick & Swivel",d:"스프링 후 포인트, 킥, 스위블 연결",lv:"goldB",feel:"탄력 있는 스프링 동작 후 포인트→킥→스위블 연속 기술",count:"Q Q Q Q",steps:["1: 스프링 포인트","2: 킥","3-4: 스위블"],tip:"각 동작의 포인트를 명확하게 표현하세요"},
+  {n:35,t:"코카콜라 2",e:"Coca Cola 2",d:"코카콜라 시리즈 두번째 패턴",lv:"goldB",feel:"코카콜라 시리즈의 두 번째 패턴 — 더 복잡한 변형",count:"QQ QaQ QaQ",steps:["1-2: 락 스텝","3~6: 코카콜라 패턴 2번"],tip:"1번 패턴을 완전히 익힌 뒤 도전하세요",memo:"콕콕 1번 표시"},
+  {n:36,t:"서클링 샤세",e:"Circling Chasse",d:"원을 그리며 샤세",lv:"goldB",feel:"직선이 아닌 원형 궤적으로 샤세를 돌며 추기",count:"QaQ QaQ",steps:["1&2: 원형 궤적 샤세 (우)","3&4: 원형 궤적 샤세 (좌)"],tip:"원의 크기를 일정하게 유지하세요"},
+  {n:37,t:"포킥 바레이션",e:"Fork Kick Variation",d:"포크 킥의 변형 동작",lv:"goldB",feel:"양발을 포크(갈래)처럼 벌리며 차는 변형 킥 동작",count:"Q Q Q Q",steps:["1: 포크 킥 (벌리며 차기)","2: 리커버","3-4: 바레이션 동작"],tip:"킥의 각도와 높이를 맞추세요"},
+  {n:"37'",t:"백 투 킥 무치 바리에이션",e:"Back to Kick Mooch Variation",d:"뒤로 갔다 킥하는 무치 변형",lv:"goldB",feel:"뒤로 물러났다 킥하며 무치의 변형 패턴을 추기",count:"QQ QaQ QaQ",steps:["1-2: 백 스텝","3&4: 킥","5&6: 무치 바레이션"],tip:"무치의 플릭과 킥을 구분하세요"},
+  {n:38,t:"사이드 패스",e:"Side Pass",d:"옆으로 스쳐 지나가는 스텝",lv:"goldB",feel:"파트너 옆을 스쳐 지나가며 자리를 바꾸는 동작",count:"QQ QaQ QaQ",steps:["1-2: 락 스텝","3&4: 옆으로 패스","5&6: 새 위치에서 샤세"],tip:"스쳐 지나갈 때 리드의 텐션을 유지하세요"},
+  {n:39,t:"리프 넛",e:"Rif Nut",d:"리프 넛 동작",lv:"goldB",feel:"경쾌하고 장난스러운 리프 넛 동작",count:"QQ QaQ QaQ",steps:["1-2: 락 스텝","3~6: 리프 넛 패턴"],tip:"장난스러운 느낌을 살려 표현하세요",memo:"(+1번)"},
+  // ===== 상급 C =====
+  {n:40,t:"코카콜라 3",e:"Coca Cola 3",d:"코카콜라 시리즈 세번째 패턴",lv:"goldC",feel:"코카콜라 시리즈의 세 번째 패턴 — 고급 변형",count:"QQ QaQ QaQ",steps:["1-2: 락 스텝","3~6: 코카콜라 패턴 3번"],tip:"1, 2번 패턴과의 차이점에 집중하세요",memo:"(+1번)"},
+  {n:41,t:"스톡 워크 인 P.P & C.P.P",e:"Stalk Walk in PP & CPP",d:"프롬나드/카운터 포지션에서 스토킹 워크",lv:"goldC",feel:"프롬나드(PP)와 카운터 프롬나드(CPP) 포지션에서 스토킹 워크",count:"S S S S",steps:["1-2: PP 포지션 스토킹 워크","3-4: CPP 포지션 스토킹 워크"],tip:"포지션 전환 시 상체의 방향을 확실히!"},
+  {n:"41'",t:"팔러웨이 드롭 포인트 메랭게 워크",e:"Fallaway Drop Point Merengue Walk",d:"폴어웨이 드롭 후 메랭게 워크",lv:"goldC",feel:"폴어웨이로 떨어지며 포인트 후 메랭게 스타일로 걷기",count:"QQ S S S S",steps:["1-2: 폴어웨이 드롭 + 포인트","3~6: 메랭게 워크"],tip:"메랭게 워크의 힙 모션을 살려주세요",memo:"(+1번)"},
+  {n:42,t:"서클 워크 스톰프",e:"Circle Walk Stomp",d:"원을 그리며 걷다 발 구르기",lv:"goldC",feel:"원형으로 힘차게 걸으며 발을 쿵 구르는 동작",count:"S S S QQ",steps:["1-3: 서클 워크","4: 스톰프 (발 구르기)"],tip:"스톰프는 힘차게! 바닥을 '쿵'",memo:"(+1번)"},
+  {n:43,t:"스페니쉬 암스 변형",e:"Spanish Arms Variation",d:"스페니쉬 암의 고급 변형",lv:"goldC",feel:"기본 스페니쉬 암에 추가 동작을 넣은 심화 변형",count:"QQ QaQ QaQ",steps:["1-2: 락 스텝","3&4: 스페니쉬 암 변형","5&6: 마무리 샤세"],tip:"원본 스페니쉬 암을 완벽히 익힌 뒤 도전",memo:"(+1번)"},
+  {n:44,t:"암링크 마이애미 스페셜",e:"Armlink Miami Special",d:"팔 걸기 후 마이애미 스페셜",lv:"goldC",feel:"팔을 걸어 연결한 후 마이애미 스페셜로 화려하게 전환",count:"QQ QaQ QaQ",steps:["1-2: 암링크 연결","3&4: 마이애미 스페셜 동작","5&6: 자리바꿈 완성"],tip:"팔을 넘길 때 여성 머리와 충분한 간격을"},
+  {n:45,t:"쿼턴 스위블 & 브레이크",e:"Quarter Swivel & Break",d:"1/4 스위블 후 급정지",lv:"goldC",feel:"1/4 회전으로 스위블 후 브레이크(급정지)하는 동작",count:"Q Q QQ",steps:["1: 1/4 스위블","2: 브레이크"],tip:"스위블에서 브레이크로 즉각 전환하세요"},
+  {n:46,t:"코카콜라 4",e:"Coca Cola 4",d:"코카콜라 시리즈 네번째 (동서남북)",lv:"goldC",feel:"동서남북 4방향으로 전개하는 코카콜라 시리즈의 최고봉",count:"QQ QaQ QaQ",steps:["1-2: 락 스텝","3~6: 코카콜라 4방향 패턴"],tip:"방향 감각이 중요! 월(Wall) 개념을 확실히"},
+  {n:47,t:"찰스톤 플릭",e:"Charleston Flick",d:"찰스톤 스타일의 레트로 발차기",lv:"goldC",feel:"1920년대 찰스톤 댄스의 레트로한 플릭 동작",count:"Q Q Q Q",steps:["1: 킥 포워드","2: 스텝 백","3: 킥 백","4: 스텝 포워드"],tip:"레트로 느낌을 살려 경쾌하게!"},
+  // ===== 상급 D =====
+  {n:48,t:"더블 치킨 워크",e:"Double Chicken Walk",d:"치킨 워크의 2배속 변형",lv:"goldD",feel:"기본 치킨 워크를 2배 빠르게 추는 고속 변형",count:"Q Q Q Q Q Q Q Q",steps:["1~8: 빠른 치킨 워크 연속"],tip:"빠르지만 동작은 선명하게 유지하세요"},
+  {n:49,t:"자이브 워크 바레이션",e:"Jive Walk Variation",d:"자이브 워크의 고급 응용",lv:"goldD",feel:"기본 워크에 다양한 변형(턴, 플릭 등)을 추가한 응용",count:"S S S S",steps:["1~4: 워크 + 바레이션 동작"],tip:"기본 워크를 완벽히 한 뒤 변형을 추가하세요"},
+  {n:50,t:"암 펌프",e:"Arm Pump",d:"팔을 위아래로 펌핑하는 동작",lv:"goldD",feel:"팔을 위아래로 힘차게 펌핑하며 에너지를 표현",count:"Q Q Q Q",steps:["1-2: 팔 펌프 업","3-4: 팔 펌프 다운"],tip:"팔과 다리가 함께 움직이도록 코디네이션!"},
+  {n:51,t:"토 힐 스위블 바레이션",e:"Toe Heel Swivel Variation",d:"토 힐 스위블의 고급 변형",lv:"goldD",feel:"기본 토 힐 스위블에 회전이나 이동을 추가한 심화",count:"Q Q Q Q",steps:["1~4: 토힐 스위블 + 추가 동작"],tip:"기본 스위블의 무릎 유연성을 유지하면서 변형 추가"},
+  {n:52,t:"인사이드 리듬 브레이크",e:"Inside Rhythm Break",d:"안쪽으로 리듬을 타며 급정지",lv:"goldD",feel:"파트너 안쪽으로 리듬을 타다 갑자기 브레이크",count:"QQ QaQ QQ",steps:["1-2: 인사이드 리듬","3&4: 샤세","5-6: 브레이크"],tip:"브레이크 전 리듬의 흐름을 충분히 살리세요"},
+  {n:53,t:"코카콜라 5",e:"Coca Cola 5",d:"코카콜라 시리즈 최종 완결편",lv:"goldD",feel:"코카콜라 시리즈의 최종 완결편 — 모든 패턴의 집대성",count:"QQ QaQ QaQ",steps:["1~6: 코카콜라 최종 패턴"],tip:"1~4번 코카콜라를 모두 마스터한 뒤 도전!"},
+  {n:54,t:"행글라이더",e:"Hang Glider",d:"행글라이더처럼 팔 벌려 활공하는 피니시",lv:"goldD",feel:"행글라이더가 하늘을 나는 듯 팔을 활짝 벌려 활공하는 피니시",count:"QQ QaQ QaQ",steps:["1-2: 락 스텝 + 도움닫기","3~6: 행글라이더 포즈"],tip:"피니시 포즈를 확실하게! 자신감 있는 표정으로 마무리"}
+];
+
+// 🎬 유튜브 영상 매핑 (와이트리댄스스쿨 한국어 영상)
+const YT = {
+  beginner_detail: 'NEJ_4j6nMk8',
+  beginner_explain: '4HBAcjqElSQ',
+  range_1_30: 'H8yWHnGuIYw',
+  range_1_60: 'ZtuX-WU8Bog',
+  range_31_60: 'Rpgc6xgYSoY',
+  range_31_60_cont: 'ZvaJBL1x4Vw',
+  slow_11_30: 'Gcs0qUsC2CI',
+  full_73: 'boddIegv5wE',
+  full_73_slow: 'FVKnAdqoMjo',
+};
+
+// 📥 Google Drive 다운로드 매핑 (원장님이 업로드한 영상)
+const DRIVE_FILES = [
+  { id: '19nDeGg96U3Q_qPo3A7sALr9HiNb7kBwV', label: '초급 시범영상', range: [1, 8] },
+  // 추후 추가: { id: 'XXXXXX', label: '1~30번 배우기', range: [1, 30] },
+  // 추후 추가: { id: 'XXXXXX', label: '31~60번 배우기', range: [31, 60] },
+];
+
+function getDriveDownload(n) {
+  const num = typeof n === 'string' ? parseInt(n) : n;
+  return DRIVE_FILES.find(f => num >= f.range[0] && num <= f.range[1]);
+}
+
+function driveDownloadUrl(fileId) {
+  return `https://drive.google.com/uc?export=download&id=${fileId}`;
+}
+
+function getVideos(n) {
+  const num = typeof n === 'string' ? parseInt(n) : n;
+  if (num <= 8) return {
+    main: { id: YT.beginner_detail, label: '▶ 초급 시범' },
+    detail: { id: YT.beginner_explain, label: '📖 상세설명' },
+    range: { id: YT.range_1_30, label: '📋 1~30번' }
+  };
+  if (num <= 21) return {
+    main: { id: YT.range_1_30, label: '▶ 1~30번' },
+    detail: { id: YT.slow_11_30, label: '🐢 슬로모션' },
+    range: { id: YT.range_1_60, label: '📋 1~60번' }
+  };
+  if (num <= 30) return {
+    main: { id: YT.range_1_30, label: '▶ 1~30번' },
+    detail: { id: YT.full_73_slow, label: '🐢 슬로모션' },
+    range: { id: YT.range_1_60, label: '📋 1~60번' }
+  };
+  if (num <= 47) return {
+    main: { id: YT.range_31_60, label: '▶ 31~60번' },
+    detail: { id: YT.range_31_60_cont, label: '🔄 연속동작' },
+    range: { id: YT.range_1_60, label: '📋 1~60번' }
+  };
+  return {
+    main: { id: YT.range_31_60, label: '▶ 31~60번' },
+    detail: { id: YT.full_73_slow, label: '🐢 슬로모션' },
+    range: { id: YT.full_73, label: '📋 전체 연속' }
+  };
+}
+
+// 레벨 카테고리 정보
+const levelSections = [
+  { id: 'beginner', title: '초급 (크루즈과정)', emoji: '🟢', count: 8, cls: 'lv-beginner' },
+  { id: 'silver', title: '중급 (매니아파티 과정)', emoji: '🔵', count: 13, cls: 'lv-silver' },
+  { id: 'goldA', title: '상급 A', emoji: '🟡', count: 9, cls: 'lv-goldA' },
+  { id: 'goldB', title: '상급 B', emoji: '🟠', count: 11, cls: 'lv-goldB' },
+  { id: 'goldC', title: '상급 C', emoji: '🟣', count: 9, cls: 'lv-goldC' },
+  { id: 'goldD', title: '상급 D', emoji: '💎', count: 7, cls: 'lv-goldD' }
+];
 
 export default function TheoryPage() {
-    const [selectedCategory, setSelectedCategory] = useState('all');
-    const [expandedId, setExpandedId] = useState(null);
-    const [search, setSearch] = useState('');
-    const [expandedCategories, setExpandedCategories] = useState({});
-    const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
-    const [selectedLevel, setSelectedLevel] = useState('all');
-    const { toggleFavorite, isFavorite } = useFavorites();
-    const { togglePracticed, isPracticed, practiceCount } = usePractice();
+  const navigate = useNavigate();
+  const [openCardId, setOpenCardId] = useState(null);
+  const [activeVideo, setActiveVideo] = useState(null);
+  const [expandedSections, setExpandedSections] = useState({});
 
-    const levelFilters = [
-        { key: 'all', label: '전체', emoji: '📋' },
-        { key: 'beginner', label: '초급', emoji: '🟢' },
-        { key: 'silver', label: 'Silver', emoji: '🔵' },
-        { key: 'gold', label: 'Gold', emoji: '🟡' },
-    ];
+  const toggleCard = (n) => {
+    setOpenCardId(openCardId === n ? null : n);
+    setActiveVideo(null);
+  };
 
-    const ITEMS_PER_CATEGORY = 3;
+  const playVideo = (cardN, videoId, e) => {
+    e.stopPropagation();
+    if (activeVideo && activeVideo.cardN === cardN && activeVideo.videoId === videoId) {
+      setActiveVideo(null);
+    } else {
+      setActiveVideo({ cardN, videoId });
+    }
+  };
 
-    const filtered = theoryData.filter(item => {
-        const matchCategory = selectedCategory === 'all' || item.category === selectedCategory;
-        const matchSearch = search === '' ||
-            item.title.toLowerCase().includes(search.toLowerCase()) ||
-            item.shortDesc.toLowerCase().includes(search.toLowerCase());
-        const matchFav = !showFavoritesOnly || isFavorite(item.id);
-        const matchLevel = selectedLevel === 'all' || !item.level || item.level === selectedLevel;
-        return matchCategory && matchSearch && matchFav && matchLevel;
-    });
+  const toggleSection = (sectionId) => {
+    setExpandedSections(prev => ({ ...prev, [sectionId]: !prev[sectionId] }));
+  };
 
-    const toggleItem = (id) => {
-        setExpandedId(expandedId === id ? null : id);
-    };
+  return (
+    <div className="jive-container">
+      <style>{`
+        .jive-container { font-family: 'Noto Sans KR', sans-serif; color: #e8e8f0; padding-bottom: calc(80px + env(safe-area-inset-bottom)); box-sizing: border-box; position: relative; z-index: 0; isolation: isolate; }
+        .jive-container * { box-sizing: border-box; }
+        /* 🔙 상단 고정 네비바 */
+        .jive-topnav { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: rgba(10,10,15,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,.08); margin: -16px -16px 16px -16px; }
+        .jive-topnav-btn { display: inline-flex; align-items: center; gap: 4px; padding: 8px 14px; border-radius: 10px; font-size: .82rem; font-weight: 700; border: 1px solid rgba(255,255,255,.12); cursor: pointer; transition: all .2s; background: rgba(255,255,255,.06); color: #e8e8f0; -webkit-tap-highlight-color: transparent; }
+        .jive-topnav-btn:active { transform: scale(.93); background: rgba(255,255,255,.12); }
+        .jive-topnav-title { flex: 1; text-align: center; font-size: .85rem; font-weight: 700; color: #a0a0c0; }
+        /* 🎬 플로팅 영상 닫기 버튼 */
+        .jive-float-close { position: fixed; bottom: calc(80px + env(safe-area-inset-bottom)); right: 16px; z-index: 200; width: 56px; height: 56px; border-radius: 50%; background: rgba(239,68,68,0.9); color: #fff; border: 2px solid rgba(255,255,255,.3); font-size: 1.4rem; font-weight: 900; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 20px rgba(239,68,68,0.4); -webkit-tap-highlight-color: transparent; animation: jive-pulse 2s infinite; }
+        .jive-float-close:active { transform: scale(.9); }
+        @keyframes jive-pulse { 0%,100% { box-shadow: 0 4px 20px rgba(239,68,68,0.4); } 50% { box-shadow: 0 4px 30px rgba(239,68,68,0.7); } }
+        .jive-header { text-align: center; padding: 32px 16px; background: linear-gradient(135deg, #1a1a2e, #16213e); border-radius: 20px; margin-bottom: 24px; border: 1px solid rgba(255,255,255,.08); }
+        .jive-header h1 { font-size: 1.6rem; font-weight: 900; background: linear-gradient(135deg, #f7d794, #f19066); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; margin-top: 0; }
+        .jive-subtitle { font-size: .85rem; color: #a0a0c0; line-height: 1.6; }
+        .jive-count-badge { display: inline-block; background: rgba(247,215,148,.15); color: #f7d794; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 600; margin-top: 10px; }
+        .jive-global-btns { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 16px; }
+        .jive-global-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 12px; font-size: .78rem; font-weight: 600; border: 1px solid rgba(255,255,255,.1); cursor: pointer; transition: all .3s; background: none; }
+        .jive-global-btn:active { transform: scale(.95); }
+        .jive-global-btn.red { background: rgba(239,68,68,.12); color: #f87171; border-color: rgba(239,68,68,.2); }
+        .jive-global-btn.blue { background: rgba(99,102,241,.12); color: #818cf8; border-color: rgba(99,102,241,.2); }
+        .jive-global-btn.green { background: rgba(16,185,129,.12); color: #6ee7b7; border-color: rgba(16,185,129,.2); }
+        .jive-section { margin-bottom: 28px; }
+        .jive-section-title { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 14px; margin-bottom: 14px; border: 1px solid rgba(255,255,255,.1); }
+        .jive-emoji { font-size: 1.3rem; }
+        .jive-section-title h2 { font-size: 1.1rem; font-weight: 700; color: #e8e8f0; margin: 0; }
+        .jive-badge { font-size: .75rem; color: #a0a0c0; background: rgba(255,255,255,.06); padding: 2px 10px; border-radius: 20px; margin-left: auto; }
+        .lv-beginner { background: linear-gradient(135deg, rgba(16,185,129,.1), rgba(16,185,129,.03)); border-color: rgba(16,185,129,.15) !important; }
+        .lv-silver { background: linear-gradient(135deg, rgba(99,102,241,.1), rgba(99,102,241,.03)); border-color: rgba(99,102,241,.15) !important; }
+        .lv-goldA { background: linear-gradient(135deg, rgba(245,158,11,.1), rgba(245,158,11,.03)); border-color: rgba(245,158,11,.15) !important; }
+        .lv-goldB { background: linear-gradient(135deg, rgba(239,68,68,.08), rgba(239,68,68,.02)); border-color: rgba(239,68,68,.12) !important; }
+        .lv-goldC { background: linear-gradient(135deg, rgba(168,85,247,.08), rgba(168,85,247,.02)); border-color: rgba(168,85,247,.12) !important; }
+        .lv-goldD { background: linear-gradient(135deg, rgba(236,72,153,.08), rgba(236,72,153,.02)); border-color: rgba(236,72,153,.12) !important; }
+        .jive-card { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 16px; margin-bottom: 10px; overflow: hidden; transition: all .3s; position: relative; z-index: 0; }
+        .jive-card-header { padding: 14px 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; }
+        .jive-card-num { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 700; flex-shrink: 0; }
+        .beginner .jive-card-num { background: rgba(16,185,129,.15); color: #10b981; }
+        .silver .jive-card-num { background: rgba(99,102,241,.15); color: #818cf8; }
+        .goldA .jive-card-num { background: rgba(245,158,11,.15); color: #f59e0b; }
+        .goldB .jive-card-num { background: rgba(239,68,68,.12); color: #f87171; }
+        .goldC .jive-card-num { background: rgba(168,85,247,.12); color: #a855f7; }
+        .goldD .jive-card-num { background: rgba(236,72,153,.12); color: #ec4899; }
+        .jive-card-info { flex: 1; min-width: 0; }
+        .jive-card-info h3 { font-size: .95rem; font-weight: 700; margin: 0 0 2px 0; color: #fff; }
+        .jive-card-info p { font-size: .76rem; color: #a0a0c0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0; }
+        .jive-arrow { width: 20px; height: 20px; color: #666; transition: transform .3s; flex-shrink: 0; }
+        .jive-card.open .jive-arrow { transform: rotate(180deg); color: #fff; }
+        .jive-card-body { max-height: 0; overflow: hidden; transition: max-height .5s ease; }
+        .jive-card.open .jive-card-body { max-height: 1200px; }
+        .jive-card-body-inner { padding: 0 16px 16px; border-top: 1px solid rgba(255,255,255,.06); }
+        .jive-feel { margin-top: 12px; padding: 10px 14px; background: rgba(247,215,148,.06); border-left: 3px solid #f7d794; border-radius: 0 10px 10px 0; font-size: .83rem; color: #f0e0b0; line-height: 1.6; }
+        .jive-count-info { margin-top: 10px; padding: 8px 12px; background: rgba(255,255,255,.03); border-radius: 10px; font-size: .82rem; color: #c0c0d8; }
+        .jive-count-info strong { color: #818cf8; }
+        .jive-steps { margin-top: 10px; padding: 10px 14px; background: rgba(255,255,255,.03); border-radius: 10px; }
+        .jive-steps div { font-size: .82rem; line-height: 1.9; color: #d0d0e8; }
+        .jive-steps .num { color: #f19066; font-weight: 700; margin-right: 6px; }
+        .jive-tip { margin-top: 10px; padding: 10px 14px; background: rgba(16,185,129,.06); border-radius: 10px; font-size: .82rem; color: #6ee7b7; line-height: 1.6; }
+        .jive-tip::before { content: '💡 '; }
+        .jive-memo { margin-top: 6px; padding: 6px 12px; background: rgba(99,102,241,.08); border-radius: 8px; font-size: .78rem; color: #a5b4fc; }
+        .jive-memo::before { content: '📝 '; }
+        .jive-video-btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+        .jive-vbtn { display: inline-flex; align-items: center; gap: 4px; padding: 7px 12px; border-radius: 10px; font-size: .78rem; font-weight: 600; cursor: pointer; transition: all .3s; border: none; }
+        .jive-vbtn:active { transform: scale(.95); }
+        .jive-vbtn.primary { background: rgba(239,68,68,.15); color: #f87171; }
+        .jive-vbtn.secondary { background: rgba(99,102,241,.12); color: #a5b4fc; }
+        .jive-vbtn.tertiary { background: rgba(16,185,129,.1); color: #6ee7b7; }
+        .jive-video-embed { margin-top: 10px; border-radius: 12px; overflow: hidden; position: relative; z-index: 0; isolation: isolate; width: 100%; padding-bottom: 56.25%; background: #000; }
+        .jive-video-embed iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; z-index: 0; }
+        .jive-video-close-inline { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 8px; padding: 10px 0; background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.25); border-radius: 10px; color: #f87171; font-size: .85rem; font-weight: 700; cursor: pointer; width: 100%; -webkit-tap-highlight-color: transparent; }
+        .jive-video-close-inline:active { background: rgba(239,68,68,.25); transform: scale(.97); }
+        .jive-expand-btn { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 12px 0; margin-top: 6px; border-radius: 12px; background: rgba(255,255,255,.04); border: 1px dashed rgba(255,255,255,.12); color: #a0a0c0; font-size: .82rem; font-weight: 600; cursor: pointer; transition: all .2s; -webkit-tap-highlight-color: transparent; }
+        .jive-expand-btn:active { background: rgba(255,255,255,.08); transform: scale(.98); }
+        .jive-footer { text-align: center; margin-top: 32px; padding: 16px; color: #555; font-size: .75rem; border-top: 1px solid rgba(255,255,255,.05); }
+      `}</style>
 
-    const getCategoryEmoji = (category) => {
-        const cat = categories.find(c => c.key === category);
-        return cat ? cat.emoji : '📚';
-    };
+      {/* 🔙 상단 고정 네비바 */}
+      <div className="jive-topnav">
+        <button className="jive-topnav-btn" onClick={() => navigate(-1)}>← 뒤로</button>
+        <span className="jive-topnav-title">자이브 교본</span>
+        <button className="jive-topnav-btn" onClick={() => navigate('/')}>🏠 홈</button>
+      </div>
 
-    const getCategoryLabel = (category) => {
-        const cat = categories.find(c => c.key === category);
-        return cat ? cat.label : '';
-    };
+      {/* 🎬 영상 재생 중이면 플로팅 닫기 버튼 표시 */}
+      {activeVideo && (
+        <button className="jive-float-close" onClick={() => setActiveVideo(null)} aria-label="영상 닫기">
+          ✕
+        </button>
+      )}
 
-    const toggleCategoryExpand = (catKey) => {
-        setExpandedCategories(prev => ({ ...prev, [catKey]: !prev[catKey] }));
-    };
-
-    // 카테고리별 그룹핑
-    const groupedByCategory = categories.filter(c => c.key !== 'all').reduce((acc, cat) => {
-        acc[cat.key] = filtered.filter(item => item.category === cat.key);
-        return acc;
-    }, {});
-
-    const renderCategoryGroup = (catKey, items) => {
-        if (items.length === 0) return null;
-        const isExpCat = expandedCategories[catKey];
-        const visibleItems = isExpCat ? items : items.slice(0, ITEMS_PER_CATEGORY);
-        const hasMore = items.length > ITEMS_PER_CATEGORY;
-        const cat = categories.find(c => c.key === catKey);
-        return { cat, items, visibleItems, hasMore, isExpCat };
-    };
-
-    return (
-        <div>
-            {/* 오늘의 연습 진행률 */}
-            {practiceCount > 0 && (
-                <div style={{
-                    background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05))',
-                    border: '1px solid rgba(16, 185, 129, 0.2)',
-                    borderRadius: 'var(--radius-md)',
-                    padding: 'var(--space-sm) var(--space-md)',
-                    marginBottom: 'var(--space-md)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 'var(--space-sm)',
-                }}>
-                    <span style={{ fontSize: '1.2rem' }}>🏃</span>
-                    <span style={{
-                        fontSize: 'var(--font-size-sm)',
-                        fontWeight: 700,
-                        color: 'var(--accent-green)',
-                    }}>
-                        오늘 {practiceCount}개 스텝 연습 완료! 🎉
-                    </span>
-                </div>
-            )}
-
-            {/* Search */}
-            <div className="library-search">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="11" cy="11" r="8" />
-                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                </svg>
-                <input
-                    type="text"
-                    placeholder="스텝, 용어 검색..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                />
-            </div>
-
-            {/* Category Filter */}
-            <div className="library-filters" style={{ marginBottom: 'var(--space-md)' }}>
-                {categories.map((cat) => (
-                    <button
-                        key={cat.key}
-                        className={`filter-btn ${selectedCategory === cat.key ? 'active' : ''}`}
-                        onClick={() => setSelectedCategory(cat.key)}
-                    >
-                        {cat.emoji} {cat.label}
-                    </button>
-                ))}
-                <button
-                    className={`filter-btn ${showFavoritesOnly ? 'active' : ''}`}
-                    onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
-                >
-                    ⭐ 즐겨찾기
-                </button>
-            </div>
-
-            {/* 난이도 서브 필터 (자이브 카테고리 선택 시 또는 전체 보기 시) */}
-            {(selectedCategory === 'jive' || selectedCategory === 'all') && (
-                <div style={{
-                    display: 'flex',
-                    gap: 'var(--space-xs)',
-                    marginBottom: 'var(--space-md)',
-                    overflowX: 'auto',
-                    scrollbarWidth: 'none',
-                }}>
-                    {levelFilters.map(lf => (
-                        <button
-                            key={lf.key}
-                            className={`filter-btn ${selectedLevel === lf.key ? 'active' : ''}`}
-                            onClick={() => setSelectedLevel(lf.key)}
-                            style={{ fontSize: 'var(--font-size-xs)', padding: '4px 12px' }}
-                        >
-                            {lf.emoji} {lf.label}
-                        </button>
-                    ))}
-                </div>
-            )}
-
-            {/* Theory Cards - 카테고리별 그룹 렌더링 */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
-                {(selectedCategory === 'all'
-                    ? categories.filter(c => c.key !== 'all')
-                    : categories.filter(c => c.key === selectedCategory)
-                ).map(cat => {
-                    const items = filtered.filter(item => item.category === cat.key);
-                    if (items.length === 0) return null;
-                    const isExpCat = expandedCategories[cat.key];
-                    const visibleItems = isExpCat ? items : items.slice(0, ITEMS_PER_CATEGORY);
-                    const hasMore = items.length > ITEMS_PER_CATEGORY;
-
-                    return (
-                        <div key={cat.key}>
-                            {/* 카테고리 헤더 */}
-                            <div style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px',
-                                marginBottom: 'var(--space-sm)',
-                                paddingBottom: '8px',
-                                borderBottom: '1px solid var(--border-color)'
-                            }}>
-                                <span style={{ fontSize: '1.2rem' }}>{cat.emoji}</span>
-                                <h3 style={{ fontSize: 'var(--font-size-md)', fontWeight: 700, color: 'var(--text-primary)' }}>
-                                    {cat.label}
-                                </h3>
-                                <span style={{
-                                    fontSize: 'var(--font-size-xs)',
-                                    color: 'var(--text-muted)',
-                                    background: 'rgba(255,255,255,0.06)',
-                                    padding: '2px 8px',
-                                    borderRadius: 'var(--radius-full)'
-                                }}>
-                                    {items.length}개
-                                </span>
-                            </div>
-
-                            {/* 카드 목록 */}
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
-                                {visibleItems.map((item) => {
-                                    const isExpanded = expandedId === item.id;
-                                    return (
-                                        <div
-                                            key={item.id}
-                                            className="glass-card"
-                                            style={{
-                                                cursor: 'pointer',
-                                                transition: 'all 0.3s ease',
-                                                borderLeft: isPracticed(item.id) ? '3px solid var(--accent-green)' : 'none',
-                                            }}
-                                            onClick={() => toggleItem(item.id)}
-                                        >
-                                            {/* Header */}
-                                            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 'var(--space-sm)' }}>
-                                                <div style={{ flex: 1 }}>
-                                                    <h3 style={{ fontSize: 'var(--font-size-md)', fontWeight: 700, marginBottom: '2px' }}>
-                                                        {item.title}
-                                                    </h3>
-                                                    <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
-                                                        {item.shortDesc}
-                                                    </p>
-                                                </div>
-                                                {/* 연습 체크 + 즐겨찾기 */}
-                                                <div style={{ display: 'flex', gap: '2px', flexShrink: 0, alignItems: 'center' }}>
-                                                    <button
-                                                        onClick={(e) => { e.stopPropagation(); togglePracticed(item.id); }}
-                                                        style={{
-                                                            background: 'none', border: 'none',
-                                                            fontSize: '16px', cursor: 'pointer', padding: '2px',
-                                                            transition: 'transform 0.2s ease',
-                                                            transform: isPracticed(item.id) ? 'scale(1.15)' : 'scale(1)',
-                                                        }}
-                                                        title={isPracticed(item.id) ? '연습 취소' : '연습 완료'}
-                                                    >
-                                                        {isPracticed(item.id) ? '✅' : '⬜'}
-                                                    </button>
-                                                    {/* 즐겨찾기 버튼 */}
-                                                    <button
-                                                        onClick={(e) => { e.stopPropagation(); toggleFavorite(item.id); }}
-                                                        style={{
-                                                            background: 'none',
-                                                            border: 'none',
-                                                            fontSize: '18px',
-                                                            cursor: 'pointer',
-                                                            flexShrink: 0,
-                                                            padding: '2px',
-                                                            transition: 'transform 0.2s ease',
-                                                            transform: isFavorite(item.id) ? 'scale(1.2)' : 'scale(1)',
-                                                        }}
-                                                        title={isFavorite(item.id) ? '즐겨찾기 해제' : '즐겨찾기'}
-                                                    >
-                                                        {isFavorite(item.id) ? '⭐' : '☆'}
-                                                    </button>
-                                                </div>
-                                                <svg
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    style={{
-                                                        width: 20,
-                                                        height: 20,
-                                                        color: 'var(--text-muted)',
-                                                        flexShrink: 0,
-                                                        transition: 'transform 0.3s ease',
-                                                        transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                                                        marginTop: 4
-                                                    }}
-                                                >
-                                                    <polyline points="6 9 12 15 18 9" />
-                                                </svg>
-                                            </div>
-
-                                            {/* Expanded Content */}
-                                            <div style={{
-                                                maxHeight: isExpanded ? '1200px' : '0',
-                                                overflow: 'hidden',
-                                                transition: 'max-height 0.4s ease, padding 0.3s ease',
-                                                paddingTop: isExpanded ? 'var(--space-md)' : '0'
-                                            }}>
-                                                <div style={{
-                                                    borderTop: '1px solid var(--border-color)',
-                                                    paddingTop: 'var(--space-md)'
-                                                }}>
-                                                    <h4 style={{
-                                                        fontSize: 'var(--font-size-sm)',
-                                                        fontWeight: 600,
-                                                        color: 'var(--accent-purple)',
-                                                        marginBottom: 'var(--space-sm)',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        gap: '4px'
-                                                    }}>
-                                                        📋 상세 설명
-                                                    </h4>
-                                                    <div style={{
-                                                        background: 'rgba(255, 255, 255, 0.03)',
-                                                        borderRadius: 'var(--radius-md)',
-                                                        padding: 'var(--space-md)',
-                                                        marginBottom: 'var(--space-sm)'
-                                                    }}>
-                                                        {item.content.split('\n').map((line, i) => (
-                                                            <div key={i} style={{
-                                                                fontSize: 'var(--font-size-sm)',
-                                                                color: 'var(--text-primary)',
-                                                                lineHeight: 1.8,
-                                                                display: 'flex',
-                                                                alignItems: 'flex-start',
-                                                                gap: 'var(--space-sm)'
-                                                            }}>
-                                                                {line.match(/^\d|^&|^•/) ? (
-                                                                    <>
-                                                                        <span style={{
-                                                                            color: 'var(--accent-purple)',
-                                                                            fontWeight: 700,
-                                                                            flexShrink: 0,
-                                                                            minWidth: '20px'
-                                                                        }}>
-                                                                            {line.split(':')[0] || line.split(' ')[0]}
-                                                                        </span>
-                                                                        <span style={{ color: 'var(--text-secondary)' }}>
-                                                                            {line.includes(':') ? line.split(':').slice(1).join(':').trim() : line.substring(2)}
-                                                                        </span>
-                                                                    </>
-                                                                ) : (
-                                                                    <span style={{ color: 'var(--text-secondary)' }}>{line}</span>
-                                                                )}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-
-                                                    {item.tips && (
-                                                        <div style={{
-                                                            background: 'rgba(212, 168, 83, 0.08)',
-                                                            border: '1px solid rgba(212, 168, 83, 0.15)',
-                                                            borderRadius: 'var(--radius-md)',
-                                                            padding: 'var(--space-md)',
-                                                        }}>
-                                                            <div style={{
-                                                                fontSize: 'var(--font-size-sm)',
-                                                                fontWeight: 600,
-                                                                color: 'var(--accent-purple)',
-                                                                marginBottom: '4px',
-                                                                display: 'flex',
-                                                                alignItems: 'center',
-                                                                gap: '4px'
-                                                            }}>
-                                                                💡 팁
-                                                            </div>
-                                                            <p style={{
-                                                                fontSize: 'var(--font-size-xs)',
-                                                                color: 'var(--text-secondary)',
-                                                                lineHeight: 1.6
-                                                            }}>
-                                                                {item.tips}
-                                                            </p>
-                                                        </div>
-                                                    )}
-
-                                                    {item.videoUrl ? (
-                                                        <div
-                                                            style={{
-                                                                marginTop: '12px',
-                                                                borderRadius: '12px',
-                                                                overflow: 'hidden',
-                                                                width: '100%',
-                                                                aspectRatio: '16 / 9',
-                                                                background: '#000',
-                                                                position: 'relative'
-                                                            }}
-                                                            onClick={(e) => e.stopPropagation()}
-                                                        >
-                                                            <iframe
-                                                                src={`https://www.youtube-nocookie.com/embed/${item.videoUrl}?rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&disablekb=0`}
-                                                                style={{
-                                                                    width: '100%',
-                                                                    height: '100%',
-                                                                    border: 'none'
-                                                                }}
-                                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                                allowFullScreen
-                                                                title={item.title}
-                                                            />
-                                                            {/* 상단 제목/YouTube 링크 차단 오버레이 */}
-                                                            <div style={{
-                                                                position: 'absolute',
-                                                                top: 0,
-                                                                left: 0,
-                                                                right: 0,
-                                                                height: '40px',
-                                                                pointerEvents: 'auto',
-                                                                zIndex: 2,
-                                                                cursor: 'default'
-                                                            }} onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} />
-                                                            {/* 하단 우측 YouTube 워터마크 차단 */}
-                                                            <div style={{
-                                                                position: 'absolute',
-                                                                bottom: '40px',
-                                                                right: 0,
-                                                                width: '120px',
-                                                                height: '30px',
-                                                                pointerEvents: 'auto',
-                                                                zIndex: 2,
-                                                                cursor: 'default'
-                                                            }} onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} />
-                                                        </div>
-                                                    ) : item.gifUrl && (
-                                                        <div style={{
-                                                            marginTop: 'var(--space-sm)',
-                                                            background: 'rgba(255, 255, 255, 0.03)',
-                                                            borderRadius: 'var(--radius-md)',
-                                                            padding: 'var(--space-lg)',
-                                                            display: 'flex',
-                                                            flexDirection: 'column',
-                                                            alignItems: 'center',
-                                                            gap: 'var(--space-sm)',
-                                                            border: '1px dashed var(--border-color)'
-                                                        }}>
-                                                            <span style={{ fontSize: '2rem' }}>🎬</span>
-                                                            <span style={{
-                                                                fontSize: 'var(--font-size-xs)',
-                                                                color: 'var(--text-muted)',
-                                                                textAlign: 'center'
-                                                            }}>
-                                                                시범 영상 준비 중
-                                                            </span>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-
-                            {/* 더보기 / 접기 버튼 */}
-                            {
-                                hasMore && (
-                                    <button
-                                        onClick={() => toggleCategoryExpand(cat.key)}
-                                        style={{
-                                            width: '100%',
-                                            marginTop: 'var(--space-sm)',
-                                            padding: '10px',
-                                            background: 'rgba(255, 255, 255, 0.04)',
-                                            border: '1px solid var(--border-color)',
-                                            borderRadius: 'var(--radius-md)',
-                                            color: 'var(--accent-purple)',
-                                            fontSize: 'var(--font-size-sm)',
-                                            fontWeight: 600,
-                                            cursor: 'pointer',
-                                            transition: 'all 0.2s ease'
-                                        }}
-                                    >
-                                        {isExpCat
-                                            ? `접기 ▲`
-                                            : `더보기 (+${items.length - ITEMS_PER_CATEGORY}개) ▼`
-                                        }
-                                    </button>
-                                )
-                            }
-                        </div>
-                    );
-                })}
-            </div>
-
-            {/* Empty State */}
-            {
-                filtered.length === 0 && (
-                    <div className="empty-state">
-                        <div className="empty-emoji">🔍</div>
-                        <p>검색 결과가 없습니다</p>
-                    </div>
-                )
-            }
-
-            {/* Stats */}
-            <div style={{
-                marginTop: 'var(--space-lg)',
-                padding: 'var(--space-md)',
-                background: 'var(--bg-card)',
-                borderRadius: 'var(--radius-lg)',
-                border: '1px solid var(--border-color)',
-                textAlign: 'center'
-            }}>
-                <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)' }}>
-                    📚 총 {theoryData.length}개 항목 ·
-                    👟 스텝 {theoryData.filter(t => t.category === 'step').length}개 ·
-                    📖 용어 {theoryData.filter(t => t.category === 'term').length}개 ·
-                    🧭 방향 {theoryData.filter(t => t.category === 'direction').length}개 ·
-                    🕺 자이브 {theoryData.filter(t => t.category === 'jive').length}개
-                </p>
-            </div>
+      {/* 헤더 */}
+      <div className="jive-header">
+        <h1>🕺 자이브 통합루틴 진행교본</h1>
+        <div className="jive-subtitle">기본 카운트: 1-2, QaQ, QaQ<br/>(Slow-Slow, Quick·and·Quick, Quick·and·Quick)</div>
+        <div className="jive-count-badge">총 57개 동작 · 초급 8 · 중급 13 · 상급A~D 36</div>
+        <div className="jive-global-btns">
+          <button className="jive-global-btn red" onClick={() => setActiveVideo({cardN:'global',videoId:YT.full_73})}>▶ 전체 연속동작</button>
+          <button className="jive-global-btn blue" onClick={() => setActiveVideo({cardN:'global',videoId:YT.full_73_slow})}>🐢 전체 슬로모션</button>
+          <button className="jive-global-btn green" onClick={() => setActiveVideo({cardN:'global',videoId:YT.beginner_explain})}>📖 초급 상세설명</button>
         </div>
-    );
+      </div>
+
+      {/* 글로벌 플레이어 */}
+      {activeVideo && activeVideo.cardN === 'global' && (
+        <div style={{marginBottom:24}}>
+          <div className="jive-video-embed">
+            <iframe
+              src={`https://www.youtube-nocookie.com/embed/${activeVideo.videoId}?rel=0&modestbranding=1&playsinline=1&cc_load_policy=1`}
+              allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;fullscreen"
+              allowFullScreen
+              style={{pointerEvents: 'auto'}}
+            />
+          </div>
+          <button className="jive-video-close-inline" onClick={()=>setActiveVideo(null)}>✕ 영상 닫기</button>
+        </div>
+      )}
+
+      {/* 레벨별 섹션 */}
+      {levelSections.map(sec => (
+        <div className="jive-section" key={sec.id}>
+          <div className={`jive-section-title ${sec.cls}`}>
+            <span className="jive-emoji">{sec.emoji}</span>
+            <h2>{sec.title}</h2>
+            <span className="jive-badge">{sec.count}개</span>
+          </div>
+
+          {(() => {
+            const allItems = jiveData.filter(item => item.lv === sec.id);
+            const isExpanded = expandedSections[sec.id];
+            const visibleItems = isExpanded ? allItems : allItems.slice(0, 3);
+            const hiddenCount = allItems.length - 3;
+            return (
+              <>
+              {visibleItems.map(x => {
+            const vids = getVideos(x.n);
+            const isOpen = openCardId === x.n;
+            const showingVideo = activeVideo && activeVideo.cardN === x.n;
+            return (
+              <div key={x.n} className={`jive-card ${x.lv} ${isOpen ? 'open' : ''}`}>
+                <div className="jive-card-header" onClick={() => toggleCard(x.n)}>
+                  <div className="jive-card-num">{x.n}</div>
+                  <div className="jive-card-info">
+                    <h3>{x.t}</h3>
+                    <p>{x.d}</p>
+                  </div>
+                  <svg className="jive-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </div>
+
+                <div className="jive-card-body">
+                  <div className="jive-card-body-inner">
+                    <div className="jive-feel">🎯 <strong>{x.t}</strong> ({x.e})<br/>{x.feel}</div>
+                    <div className="jive-count-info">🎵 카운트: <strong>{x.count}</strong></div>
+                    <div className="jive-steps">
+                      {x.steps.map((s, idx) => {
+                        const match = s.match(/^([^:]+):(.*)/);
+                        return match
+                          ? <div key={idx}><span className="num">{match[1]}:</span>{match[2]}</div>
+                          : <div key={idx}>{s}</div>;
+                      })}
+                    </div>
+                    <div className="jive-tip">{x.tip}</div>
+                    {x.memo && <div className="jive-memo">{x.memo}</div>}
+
+                    {/* 🎬 유튜브 영상 버튼 */}
+                    <div className="jive-video-btns">
+                      <button className="jive-vbtn primary" onClick={(e) => playVideo(x.n, vids.main.id, e)}>{vids.main.label}</button>
+                      {vids.detail && <button className="jive-vbtn secondary" onClick={(e) => playVideo(x.n, vids.detail.id, e)}>{vids.detail.label}</button>}
+                      {vids.range && <button className="jive-vbtn tertiary" onClick={(e) => playVideo(x.n, vids.range.id, e)}>{vids.range.label}</button>}
+                    </div>
+
+                    {/* 인라인 영상 플레이어 */}
+                    {showingVideo && (
+                      <div style={{position:'relative', zIndex: 0}}>
+                        <div className="jive-video-embed" onClick={(e) => e.stopPropagation()}>
+                          <iframe
+                            src={`https://www.youtube-nocookie.com/embed/${activeVideo.videoId}?rel=0&modestbranding=1&playsinline=1&cc_load_policy=1`}
+                            allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;fullscreen"
+                            allowFullScreen
+                            style={{pointerEvents: 'auto'}}
+                          />
+                        </div>
+                        <button className="jive-video-close-inline" onClick={(e) => { e.stopPropagation(); setActiveVideo(null); }}>✕ 영상 닫기</button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+              {hiddenCount > 0 && (
+                <button className="jive-expand-btn" onClick={() => toggleSection(sec.id)}>
+                  {isExpanded ? '▲ 접기' : `▼ ${hiddenCount}개 더보기`}
+                </button>
+              )}
+              </>
+            );
+          })()}
+        </div>
+      ))}
+
+      <div className="jive-footer">
+        구양희 스텝바이스텝 · 자이브 통합루틴 진행교본<br/>
+        영상 출처: 와이트리댄스스쿨 YouTube
+      </div>
+    </div>
+  );
 }

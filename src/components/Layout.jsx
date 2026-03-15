@@ -21,7 +21,7 @@ export default function Layout() {
                 <div style={{ height: 'max(54px, env(safe-area-inset-top))', flexShrink: 0, backgroundColor: 'var(--bg-primary)' }}></div>
 
                 {/* 2. 마법의 투명 유리방! (transform 속성이 '돌아가기 버튼'이 천장을 뚫고 도망가지 못하게 꽉 가둬줍니다!) */}
-                <div style={{ flex: 1, position: 'relative', transform: 'translateZ(0)' }}>
+                <div style={{ flex: 1, position: 'relative', transform: 'translateZ(0)', zIndex: 1, overflow: 'auto' }}>
                     <Outlet />
                 </div>
 
@@ -43,7 +43,7 @@ export default function Layout() {
         <div style={{ backgroundColor: 'var(--bg-primary)', minHeight: '100dvh', display: 'flex', flexDirection: 'column' }}>
 
             <header style={{
-                position: 'sticky', top: 0, zIndex: 50,
+                position: 'sticky', top: 0, zIndex: 9998,
                 backgroundColor: theme === 'dark' ? 'rgba(10, 10, 15, 0.95)' : 'rgba(245, 243, 239, 0.95)', backdropFilter: 'blur(10px)',
                 paddingTop: 'max(54px, env(safe-area-inset-top))',
                 borderBottom: '1px solid var(--border-color)'
@@ -86,6 +86,9 @@ export default function Layout() {
                 maxWidth: '100vw',
                 boxSizing: 'border-box',
                 overflowX: 'hidden',
+                position: 'relative',
+                zIndex: 1,
+                isolation: 'isolate',
                 paddingBottom: isMainTab ? 'calc(120px + env(safe-area-inset-bottom))' : 'env(safe-area-inset-bottom)'
             }}>
                 <Outlet />

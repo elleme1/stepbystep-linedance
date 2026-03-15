@@ -2655,3 +2655,39 @@ select {
   font-weight: 600;
   text-align: center;
 }
+
+/* ===== v15: 글로벌 iframe 격리 — BottomNav/Header 보호 ===== */
+/* main 내부의 모든 iframe이 BottomNav(z-index:9999)를 가리지 못하도록 강제 격리 */
+main iframe {
+  z-index: 0 !important;
+  pointer-events: auto !important;
+}
+
+main [class*="video"] {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+}
+
+/* YouTube embed 컨테이너 격리 */
+main .jive-video-embed,
+main .video-container,
+main .video-player-wrapper {
+  position: relative;
+  z-index: 0 !important;
+  isolation: isolate;
+}
+
+/* 모든 카드 콘텐츠 격리 */
+main .jive-card,
+main .jive-container {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+}
+
+/* BottomNav 터치 이벤트 최종 보호 */
+.bottom-nav,
+.bottom-nav * {
+  pointer-events: auto !important;
+}

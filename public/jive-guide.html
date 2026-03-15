@@ -12,6 +12,13 @@ body{font-family:'Noto Sans KR',sans-serif;background:#0f0f1a;color:#e8e8f0;min-
 .header h1{font-size:1.6rem;font-weight:900;background:linear-gradient(135deg,#f7d794,#f19066);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
 .header .subtitle{font-size:.85rem;color:#a0a0c0;line-height:1.6}
 .count-badge{display:inline-block;background:rgba(247,215,148,.15);color:#f7d794;padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;margin-top:10px}
+/* 전체 영상 바로가기 */
+.global-videos{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}
+.global-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:12px;font-size:.78rem;font-weight:600;text-decoration:none;transition:all .3s;border:1px solid rgba(255,255,255,.1);cursor:pointer}
+.global-btn:active{transform:scale(.95)}
+.global-btn.red{background:rgba(239,68,68,.12);color:#f87171;border-color:rgba(239,68,68,.2)}
+.global-btn.blue{background:rgba(99,102,241,.12);color:#818cf8;border-color:rgba(99,102,241,.2)}
+.global-btn.green{background:rgba(16,185,129,.12);color:#6ee7b7;border-color:rgba(16,185,129,.2)}
 .section{margin-bottom:28px}
 .section-title{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:14px;margin-bottom:14px;border:1px solid rgba(255,255,255,.1)}
 .section-title .emoji{font-size:1.3rem}
@@ -37,8 +44,8 @@ body{font-family:'Noto Sans KR',sans-serif;background:#0f0f1a;color:#e8e8f0;min-
 .card-info p{font-size:.76rem;color:#a0a0c0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .arrow{width:20px;height:20px;color:#666;transition:transform .3s;flex-shrink:0}
 .card.open .arrow{transform:rotate(180deg)}
-.card-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
-.card.open .card-body{max-height:800px}
+.card-body{max-height:0;overflow:hidden;transition:max-height .5s ease}
+.card.open .card-body{max-height:1200px}
 .card-body-inner{padding:0 16px 16px;border-top:1px solid rgba(255,255,255,.06)}
 .feel{margin-top:12px;padding:10px 14px;background:rgba(247,215,148,.06);border-left:3px solid #f7d794;border-radius:0 10px 10px 0;font-size:.83rem;color:#f0e0b0;line-height:1.6}
 .count-info{margin-top:10px;padding:8px 12px;background:rgba(255,255,255,.03);border-radius:10px;font-size:.82rem;color:#c0c0d8}
@@ -50,6 +57,17 @@ body{font-family:'Noto Sans KR',sans-serif;background:#0f0f1a;color:#e8e8f0;min-
 .tip::before{content:'💡 '}
 .memo{margin-top:6px;padding:6px 12px;background:rgba(99,102,241,.08);border-radius:8px;font-size:.78rem;color:#a5b4fc}
 .memo::before{content:'📝 '}
+/* 영상 섹션 */
+.video-section{margin-top:12px}
+.video-wrap{position:relative;width:100%;padding-bottom:56.25%;border-radius:12px;overflow:hidden;background:#000}
+.video-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
+.video-btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.vbtn{display:inline-flex;align-items:center;gap:4px;padding:7px 12px;border-radius:10px;font-size:.78rem;font-weight:600;text-decoration:none;cursor:pointer;transition:all .3s;border:none}
+.vbtn:active{transform:scale(.95)}
+.vbtn.primary{background:rgba(239,68,68,.15);color:#f87171}
+.vbtn.slow{background:rgba(99,102,241,.12);color:#a5b4fc}
+.vbtn.range{background:rgba(16,185,129,.1);color:#6ee7b7}
+.vid-label{font-size:.72rem;color:#a0a0c0;margin-top:8px;text-align:center}
 .footer{text-align:center;margin-top:32px;padding:16px;color:#555;font-size:.75rem;border-top:1px solid rgba(255,255,255,.05)}
 </style>
 </head>
@@ -59,6 +77,17 @@ body{font-family:'Noto Sans KR',sans-serif;background:#0f0f1a;color:#e8e8f0;min-
   <h1>🕺 자이브 통합루틴 진행교본</h1>
   <div class="subtitle">기본 카운트: 1-2, QaQ, QaQ<br>(Slow-Slow, Quick·and·Quick, Quick·and·Quick)</div>
   <div class="count-badge">총 57개 동작 · 초급 8 · 중급 13 · 상급A~D 36</div>
+  <div class="global-videos">
+    <a class="global-btn red" onclick="playGlobal('boddIegv5wE')">▶ 전체 연속동작</a>
+    <a class="global-btn blue" onclick="playGlobal('FVKnAdqoMjo')">🐢 전체 슬로모션</a>
+    <a class="global-btn green" onclick="playGlobal('4HBAcjqElSQ')">📖 초급 상세설명</a>
+  </div>
+</div>
+
+<!-- 글로벌 플레이어 -->
+<div id="gPlayer" style="display:none;margin-bottom:24px">
+  <div class="video-wrap"><iframe id="gIframe" src="" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe></div>
+  <div style="text-align:center;margin-top:8px"><button onclick="closeGlobal()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#e8e8f0;padding:8px 20px;border-radius:10px;font-size:.82rem;cursor:pointer">✕ 닫기</button></div>
 </div>
 
 <div class="section"><div class="section-title lv-beginner"><span class="emoji">🟢</span><h2>초급 (크루즈과정)</h2><span class="badge">8개</span></div><div id="c-beginner"></div></div>
@@ -68,9 +97,65 @@ body{font-family:'Noto Sans KR',sans-serif;background:#0f0f1a;color:#e8e8f0;min-
 <div class="section"><div class="section-title lv-goldC"><span class="emoji">🟣</span><h2>상급 C</h2><span class="badge">9개</span></div><div id="c-goldC"></div></div>
 <div class="section"><div class="section-title lv-goldD"><span class="emoji">💎</span><h2>상급 D</h2><span class="badge">7개</span></div><div id="c-goldD"></div></div>
 
-<div class="footer">Kim Tae Hee Dance Academy · 자이브 통합루틴 진행교본</div>
+<div class="footer">Kim Tae Hee Dance Academy · 자이브 통합루틴 진행교본<br>영상 출처: 와이트리댄스스쿨 YouTube</div>
 
 <script>
+// === 유튜브 영상 매핑 ===
+// 구간별 영상 (와이트리댄스스쿨)
+const YT = {
+  // 개별 구간별 교습 영상
+  beginner_detail: 'NEJ_4j6nMk8',    // 초급 1~11번 상세
+  beginner_explain: '4HBAcjqElSQ',   // 초급 상세설명
+  beginner_male: '5Fu7tY03FuQ',      // 초급 남자기준
+  range_1_30: 'H8yWHnGuIYw',         // 1~30번 배우기
+  range_1_60: 'ZtuX-WU8Bog',         // 1~60번 배우기
+  range_31_60: 'Rpgc6xgYSoY',        // 31~60번 배우기
+  range_31_60_cont: 'ZvaJBL1x4Vw',   // 31~60번 연속동작
+  range_1_60_cont: 'SODiDxmRIyg',    // 1~60번 연속동작
+  slow_11_30: 'Gcs0qUsC2CI',         // 11~30번 슬로모션
+  full_73: 'boddIegv5wE',            // 전체 1~73 연속동작
+  full_73_slow: 'FVKnAdqoMjo',       // 전체 1~73 슬로모션
+};
+
+// 각 동작 → 가장 적합한 영상 매핑 (동작번호 → {main, slow, range})
+function getVideos(n) {
+  const num = typeof n === 'string' ? parseInt(n) : n;
+  if (num <= 8) {
+    return {
+      main: { id: YT.beginner_detail, label: '초급 시범영상' },
+      detail: { id: YT.beginner_explain, label: '상세 설명' },
+      range: { id: YT.range_1_30, label: '1~30번 전체' }
+    };
+  }
+  if (num <= 21) {
+    return {
+      main: { id: YT.range_1_30, label: '1~30번 배우기' },
+      slow: { id: YT.slow_11_30, label: '슬로모션' },
+      range: { id: YT.range_1_60, label: '1~60번 전체' }
+    };
+  }
+  if (num <= 30) {
+    return {
+      main: { id: YT.range_1_30, label: '1~30번 배우기' },
+      slow: { id: YT.full_73_slow, label: '전체 슬로모션' },
+      range: { id: YT.range_1_60, label: '1~60번 전체' }
+    };
+  }
+  if (num <= 47) {
+    return {
+      main: { id: YT.range_31_60, label: '31~60번 배우기' },
+      slow: { id: YT.range_31_60_cont, label: '31~60 연속동작' },
+      range: { id: YT.range_1_60, label: '1~60번 전체' }
+    };
+  }
+  // 48~54 (상급D)
+  return {
+    main: { id: YT.range_31_60, label: '31~60번 배우기' },
+    slow: { id: YT.full_73_slow, label: '전체 슬로모션' },
+    range: { id: YT.full_73, label: '전체 연속동작' }
+  };
+}
+
 const D=[
 // ===== 초급 (크루즈) =====
 {n:1,t:"팔러웨이 락",e:"Fallaway Rock",d:"파트너와 V자로 물러나며 락 스텝",lv:"beginner",feel:"파트너와 함께 V자로 살짝 벌어지며 뒤로 물러나는 동작",count:"QQ QaQ QaQ",steps:["1-2: 왼발 뒤로 락 → 오른발 리커버","3&4: 샤세 (왼쪽)","5&6: 샤세 (오른쪽)"],tip:"뒤로 물러날 때 파트너와의 텐션(연결감)을 유지하세요"},
@@ -138,9 +223,35 @@ const D=[
 {n:54,t:"행글라이더",e:"Hang Glider",d:"행글라이더처럼 팔 벌려 활공하는 피니시",lv:"goldD",feel:"행글라이더가 하늘을 나는 듯 팔을 활짝 벌려 활공하는 피니시",count:"QQ QaQ QaQ",steps:["1-2: 락 스텝 + 도움닫기","3~6: 행글라이더 포즈"],tip:"피니시 포즈를 확실하게! 자신감 있는 표정으로 마무리"}
 ];
 
+// 글로벌 플레이어
+function playGlobal(id){
+  const p=document.getElementById('gPlayer');
+  document.getElementById('gIframe').src=`https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1&playsinline=1`;
+  p.style.display='block';
+  p.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function closeGlobal(){
+  document.getElementById('gPlayer').style.display='none';
+  document.getElementById('gIframe').src='';
+}
+
+// 카드 내 영상 재생
+function playInCard(btn, id){
+  const wrap = btn.closest('.card-body-inner').querySelector('.video-embed');
+  if(wrap.style.display==='block'){
+    wrap.style.display='none';
+    wrap.innerHTML='';
+    return;
+  }
+  wrap.innerHTML=`<div class="video-wrap"><iframe src="https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1&playsinline=1" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe></div>`;
+  wrap.style.display='block';
+  setTimeout(()=>wrap.scrollIntoView({behavior:'smooth',block:'center'}),100);
+}
+
 function renderCards(id, lv){
 const c=document.getElementById(id);
 D.filter(x=>x.lv===lv).forEach(x=>{
+const vids = getVideos(x.n);
 const el=document.createElement('div');
 el.className=`card ${lv}`;
 el.innerHTML=`
@@ -155,6 +266,15 @@ el.innerHTML=`
   <div class="steps">${x.steps.map(s=>{const m=s.match(/^([^:]+):(.*)/);return m?`<div><span class="num">${m[1]}:</span>${m[2]}</div>`:`<div>${s}</div>`;}).join('')}</div>
   <div class="tip">${x.tip}</div>
   ${x.memo?`<div class="memo">${x.memo}</div>`:''}
+  <div class="video-section">
+    <div class="video-btns">
+      <button class="vbtn primary" onclick="event.stopPropagation();playInCard(this,'${vids.main.id}')">▶ ${vids.main.label}</button>
+      ${vids.slow?`<button class="vbtn slow" onclick="event.stopPropagation();playInCard(this,'${vids.slow.id}')">🐢 ${vids.slow.label}</button>`:''}
+      ${vids.detail?`<button class="vbtn slow" onclick="event.stopPropagation();playInCard(this,'${vids.detail.id}')">📖 ${vids.detail.label}</button>`:''}
+      ${vids.range?`<button class="vbtn range" onclick="event.stopPropagation();playInCard(this,'${vids.range.id}')">📋 ${vids.range.label}</button>`:''}
+    </div>
+    <div class="video-embed" style="display:none;margin-top:10px"></div>
+  </div>
 </div></div>`;
 c.appendChild(el);
 });

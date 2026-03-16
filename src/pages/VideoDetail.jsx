@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { songs } from '../data/songs'; // 🚨 40곡 진짜 보물창고 연결! (export 방식에 따라 괄호 유무 조정)
+import songs from '../data/songs';
 
 export default function VideoDetail() {
     const { id } = useParams();

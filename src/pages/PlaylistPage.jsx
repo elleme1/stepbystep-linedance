@@ -178,6 +178,9 @@ export default function PlaylistPage() {
         if (currentSong.youtubeId === loadedVideoId.current) return;
         loadedVideoId.current = currentSong.youtubeId;
 
+        // 🛠️ [버그 수정 1] 곡이 바뀌면 화면을 맨 위(영상 쪽)로 스르륵 자동 스크롤!
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
         try {
             if (stateRef.current.isPlaying) {
                 playerRef.current.loadVideoById(currentSong.youtubeId);
@@ -185,6 +188,20 @@ export default function PlaylistPage() {
                 playerRef.current.cueVideoById(currentSong.youtubeId);
             }
             playerRef.current.setPlaybackRate(speed);
+        } catch (e) { }
+
+        // 🛠️ [버그 수정 2] 모바일 Safari 검은 화면 렌더링 버그 강제 해결!
+        // iframe의 display를 잠깐 토글하여 브라우저가 렌더링을 강제로 갱신하도록 합니다.
+        try {
+            const iframe = containerRef.current?.querySelector('iframe');
+            if (iframe) {
+                iframe.style.display = 'none';
+                // 브라우저가 reflow를 강제로 수행하도록 offsetHeight 읽기
+                void iframe.offsetHeight;
+                requestAnimationFrame(() => {
+                    iframe.style.display = '';
+                });
+            }
         } catch (e) { }
 
         setProgress(0);

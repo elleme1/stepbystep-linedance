@@ -7,25 +7,38 @@ export default function VideoDetail() {
     const navigate = useNavigate();
 
     const [viewMode, setViewMode] = useState('main');
-    const [isCinema, setIsCinema] = useState(false); // 🎬 넷플릭스급 시네마 모드 스위치!
+    const [isCinema, setIsCinema] = useState(false);
 
-    // 💡 [AI가 실패한 미션 1] 다른 곡으로 넘어갈 때마다 화면 윗부분으로 스크롤하고 설정을 깔끔하게 리셋합니다!
     useEffect(() => {
         window.scrollTo(0, 0);
         setViewMode('main');
         setIsCinema(false);
     }, [id]);
 
-    // 현재 곡과 이전/다음 곡 똑똑하게 찾기
     const currentIndex = songs.findIndex(song => String(song.id) === String(id));
     const videoData = currentIndex !== -1 ? songs[currentIndex] : songs[0];
 
     const prevSong = currentIndex > 0 ? songs[currentIndex - 1] : null;
     const nextSong = currentIndex < songs.length - 1 ? songs[currentIndex + 1] : null;
 
-    const currentVideoId = viewMode === 'main' ? videoData.mainVideoId : (videoData.tutorialVideoId || videoData.mainVideoId);
+    // 💡 [기적의 인공지능 번역기] 원장님이 긴 주소를 통째로 넣어도 11자리 암호만 쏙! 뽑아냅니다.
+    const extractVideoId = (url) => {
+        if (!url) return '';
+        const str = String(url).trim();
+        // 이미 11자리 암호만 예쁘게 넣었다면 그대로 통과!
+        if (str.length === 11 && !str.includes('/')) return str;
+        // 긴 주소를 넣었다면 여기서 11자리 암호만 족집게처럼 적출!
+        const match = str.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+        return match ? match[1] : str;
+    };
 
-    // 🎬 시네마 모드 발동 시 화면 전체를 까맣게 덮는 마법의 CSS
+    // mainVideoId나 youtubeId 어떤 이름표를 썼든 다 찾아옵니다.
+    const rawMainId = videoData.mainVideoId || videoData.youtubeId || '';
+    const rawTutorialId = videoData.tutorialVideoId || videoData.tutorialId || rawMainId;
+
+    const currentRawId = viewMode === 'main' ? rawMainId : rawTutorialId;
+    const currentVideoId = extractVideoId(currentRawId); // 번역기 통과!
+
     const cinemaStyle = isCinema ? {
         position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
         zIndex: 99999, backgroundColor: '#000', display: 'flex', flexDirection: 'column'
@@ -36,7 +49,6 @@ export default function VideoDetail() {
     return (
         <div style={isCinema ? cinemaStyle : { backgroundColor: '#0a0a0f', minHeight: '100vh', display: 'flex', flexDirection: 'column', color: '#fff' }}>
 
-            {/* 🔙 돌아가기 버튼 (시네마 모드일 땐 방해 안 되게 숨깁니다!) */}
             {!isCinema && (
                 <div style={{ padding: 'max(16px, env(safe-area-inset-top)) 16px 16px', display: 'flex', alignItems: 'center', zIndex: 10 }}>
                     <button
@@ -50,18 +62,25 @@ export default function VideoDetail() {
 
             {/* 📺 유튜브 영상 플레이어 */}
             <div style={{ flex: isCinema ? 1 : 'none', width: '100%', position: 'relative', backgroundColor: '#000', aspectRatio: isCinema ? 'auto' : '16/9' }}>
-                <iframe
-                    width="100%"
-                    height="100%"
-                    src={`https://www.youtube-nocookie.com/embed/${currentVideoId}?autoplay=${isCinema ? 1 : 0}&rel=0&playsinline=1`}
-                    title="YouTube video player"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    style={{ position: 'absolute', top: 0, left: 0 }}
-                ></iframe>
 
-                {/* 🎬 시네마 끄기 버튼 (오른쪽 위에 짠! 나타납니다) */}
+                {currentVideoId ? (
+                    <iframe
+                        width="100%"
+                        height="100%"
+                        // 🚨 아이폰 먹통 방지를 위해 오리지널 youtube.com 주소 사용!
+                        src={`https://www.youtube.com/embed/${currentVideoId}?autoplay=${isCinema ? 1 : 0}&rel=0&playsinline=1`}
+                        title="YouTube video player"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        style={{ position: 'absolute', top: 0, left: 0 }}
+                    ></iframe>
+                ) : (
+                    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888', fontSize: '14px' }}>
+                        영상을 불러오는 중입니다...
+                    </div>
+                )}
+
                 {isCinema && (
                     <button
                         onClick={() => setIsCinema(false)}
@@ -72,11 +91,9 @@ export default function VideoDetail() {
                 )}
             </div>
 
-            {/* 📝 하단 정보 및 컨트롤러 */}
             {!isCinema && (
                 <div style={{ padding: '24px 20px', flex: 1, paddingBottom: 'calc(24px + env(safe-area-inset-bottom))' }}>
 
-                    {/* 🕹️ [AI가 실패한 미션 2] 이전 곡 / 시네마 모드 / 다음 곡 컨트롤 패널 */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', background: '#1c1c26', padding: '8px', borderRadius: '16px', border: '1px solid #2a2a35' }}>
                         <button
                             onClick={() => prevSong && navigate(`/video/${prevSong.id}`)}
@@ -106,7 +123,6 @@ export default function VideoDetail() {
                         </button>
                     </div>
 
-                    {/* ✨ 기존의 듀얼 스위치 버튼 (실전 vs 스텝 설명) */}
                     <div style={{ display: 'flex', background: '#1c1c26', borderRadius: '12px', padding: '4px', marginBottom: '24px' }}>
                         <button
                             onClick={() => setViewMode('main')}
@@ -122,7 +138,6 @@ export default function VideoDetail() {
                         </button>
                     </div>
 
-                    {/* 🏷️ 하단 글씨 영역 */}
                     <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
                         {videoData.tags && videoData.tags.map((tag, idx) => (
                             <span key={idx} style={{ background: 'rgba(255,45,85,0.15)', color: '#ff2d55', padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold' }}>

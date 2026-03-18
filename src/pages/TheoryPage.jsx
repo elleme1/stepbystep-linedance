@@ -269,10 +269,11 @@ export default function TheoryPage() {
         <div style={{marginBottom:24}}>
           <div className="jive-video-embed">
             <iframe
-              src={`https://www.youtube-nocookie.com/embed/${activeVideo.videoId}?rel=0&modestbranding=1&playsinline=1&cc_load_policy=1`}
-              allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;fullscreen"
+              key={`global-${activeVideo.videoId}`}
+              src={`https://www.youtube.com/embed/${activeVideo.videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
-              style={{pointerEvents: 'auto'}}
+              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
             />
           </div>
           <button className="jive-video-close-inline" onClick={()=>setActiveVideo(null)}>✕ 영상 닫기</button>
@@ -339,10 +340,11 @@ export default function TheoryPage() {
                       <div style={{position:'relative', zIndex: 0}}>
                         <div className="jive-video-embed" onClick={(e) => e.stopPropagation()}>
                           <iframe
-                            src={`https://www.youtube-nocookie.com/embed/${activeVideo.videoId}?rel=0&modestbranding=1&playsinline=1&cc_load_policy=1`}
-                            allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;fullscreen"
+                            key={`inline-${activeVideo.videoId}`}
+                            src={`https://www.youtube.com/embed/${activeVideo.videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowFullScreen
-                            style={{pointerEvents: 'auto'}}
+                            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
                           />
                         </div>
                         <button className="jive-video-close-inline" onClick={(e) => { e.stopPropagation(); setActiveVideo(null); }}>✕ 영상 닫기</button>

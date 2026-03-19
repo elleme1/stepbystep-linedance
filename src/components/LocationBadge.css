@@ -1,0 +1,93 @@
+/* ========================================
+   📍 장소 뱃지 (LocationBadge)
+   ======================================== */
+
+.location-badge-wrapper {
+  position: relative;
+  z-index: 100;
+}
+
+.location-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1.5px solid var(--badge-color);
+  background: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary, #E8E6F0);
+}
+
+.location-badge:hover,
+.location-badge:active {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.02);
+}
+
+.location-badge-emoji {
+  font-size: 1rem;
+}
+
+.location-badge-name {
+  white-space: nowrap;
+}
+
+.location-badge-arrow {
+  font-size: 0.6rem;
+  transition: transform 0.25s ease;
+  opacity: 0.6;
+}
+
+.location-badge-arrow.open {
+  transform: rotate(180deg);
+}
+
+/* 드롭다운 */
+.location-picker-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 160px;
+  background: var(--bg-secondary, #1A1A2E);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 6px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  animation: badgeDropIn 0.2s ease;
+}
+
+@keyframes badgeDropIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.location-picker-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-primary, #E8E6F0);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.location-picker-item:hover,
+.location-picker-item:active {
+  background: rgba(255, 255, 255, 0.08);
+}

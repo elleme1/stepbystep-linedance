@@ -1,0 +1,154 @@
+/* ========================================
+   📍 장소 선택 화면 (LocationSelector)
+   ======================================== */
+
+.location-selector-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--bg-primary, #0F0F1A);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: locFadeIn 0.5s ease;
+}
+
+@keyframes locFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.location-selector-container {
+  width: 100%;
+  max-width: 420px;
+  padding: 40px 24px;
+  text-align: center;
+}
+
+/* 헤더 */
+.location-selector-header {
+  margin-bottom: 36px;
+}
+
+.location-selector-icon {
+  font-size: 3.5rem;
+  margin-bottom: 16px;
+  animation: locBounce 2s ease infinite;
+}
+
+@keyframes locBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.location-selector-title {
+  font-size: 1.7rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #D4A853, #8B5CF6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 10px;
+}
+
+.location-selector-subtitle {
+  font-size: 1.05rem;
+  color: var(--text-secondary, #8B8FA3);
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+/* 장소 카드들 */
+.location-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.location-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 22px 20px;
+  border-radius: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+
+.location-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 100%;
+  background: var(--loc-color);
+  border-radius: 0 4px 4px 0;
+  transition: width 0.25s ease;
+}
+
+.location-card:hover,
+.location-card:active {
+  border-color: var(--loc-color);
+  background: rgba(255, 255, 255, 0.07);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.location-card:active::before {
+  width: 8px;
+}
+
+.location-card-emoji {
+  font-size: 2.4rem;
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+}
+
+.location-card-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary, #E8E6F0);
+  display: block;
+}
+
+.location-card-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary, #8B8FA3);
+  display: block;
+  margin-top: 2px;
+}
+
+.location-card-arrow {
+  margin-left: auto;
+  font-size: 1.3rem;
+  color: var(--loc-color);
+  font-weight: 700;
+  opacity: 0.6;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.location-card:hover .location-card-arrow,
+.location-card:active .location-card-arrow {
+  opacity: 1;
+  transform: translateX(4px);
+}
+
+/* 하단 힌트 */
+.location-selector-hint {
+  font-size: 0.85rem;
+  color: var(--text-tertiary, #5A5E73);
+  font-weight: 500;
+}

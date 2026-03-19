@@ -1,42 +1,91 @@
 import React from 'react';
-import './SchedulePage.css'; // ✨ 일정표 전용 예쁜 디자인 연결
+import './SchedulePage.css';
+import { useLocation } from '../context/LocationContext';
+import LocationBadge from '../components/LocationBadge';
 
 export default function SchedulePage() {
-    // 💡 원장님의 진짜 스케줄로 완벽하게 교체되었습니다!
-    const scheduleData = [
-        {
-            id: 1,
-            date: '이번 주 목요일',
-            isToday: true, // 🔴 예쁜 핑크색 효과를 확인하시라고 '오늘' 불을 켜두었습니다!
-            time: '오전 10:40 ~ 11:50',
-            title: '오전 라인댄스 정규반',
-            location: '코로롱스포렉스'
-        },
-        {
-            id: 2,
-            date: '다음 주 화요일',
-            isToday: false,
-            time: '오전 10:40 ~ 11:50',
-            title: '오전 라인댄스 정규반',
-            location: '코로롱스포렉스'
-        },
-        {
-            id: 3,
-            date: '다음 주 목요일',
-            isToday: false,
-            time: '오전 10:40 ~ 11:50',
-            title: '오전 라인댄스 정규반',
-            location: '코로롱스포렉스'
-        },
-        {
-            id: 4,
-            date: '다다음 주 화요일',
-            isToday: false,
-            time: '오전 10:40 ~ 11:50',
-            title: '오전 라인댄스 정규반',
-            location: '코로롱스포렉스'
+    const { selectedLocation, locationInfo } = useLocation();
+
+    // 📍 장소별 수업 일정 데이터
+    const allScheduleData = {
+        kororong: [
+            {
+                id: 1,
+                date: '이번 주 화요일',
+                isToday: false,
+                time: '오전 10:40 ~ 11:50',
+                title: '오전 라인댄스 정규반',
+                location: '코로롱스포렉스'
+            },
+            {
+                id: 2,
+                date: '이번 주 목요일',
+                isToday: true,
+                time: '오전 10:40 ~ 11:50',
+                title: '오전 라인댄스 정규반',
+                location: '코로롱스포렉스'
+            },
+            {
+                id: 3,
+                date: '다음 주 화요일',
+                isToday: false,
+                time: '오전 10:40 ~ 11:50',
+                title: '오전 라인댄스 정규반',
+                location: '코로롱스포렉스'
+            },
+            {
+                id: 4,
+                date: '다음 주 목요일',
+                isToday: false,
+                time: '오전 10:40 ~ 11:50',
+                title: '오전 라인댄스 정규반',
+                location: '코로롱스포렉스'
+            }
+        ],
+        sindun: [
+            {
+                id: 5,
+                date: '이번 주 월요일',
+                isToday: false,
+                time: '오전 10:00 ~ 11:00',
+                title: '라인댄스 정규반',
+                location: '신둔면 주민자치센터'
+            },
+            {
+                id: 6,
+                date: '이번 주 수요일',
+                isToday: false,
+                time: '오전 10:00 ~ 11:00',
+                title: '라인댄스 정규반',
+                location: '신둔면 주민자치센터'
+            },
+            {
+                id: 7,
+                date: '다음 주 월요일',
+                isToday: false,
+                time: '오전 10:00 ~ 11:00',
+                title: '라인댄스 정규반',
+                location: '신둔면 주민자치센터'
+            },
+            {
+                id: 8,
+                date: '다음 주 수요일',
+                isToday: false,
+                time: '오전 10:00 ~ 11:00',
+                title: '라인댄스 정규반',
+                location: '신둔면 주민자치센터'
+            }
+        ]
+    };
+
+    const scheduleData = allScheduleData[selectedLocation] || allScheduleData.kororong;
+
+    const getMapLink = (loc) => {
+        if (loc.includes('코로롱')) {
+            return 'https://map.naver.com/p/search/%EC%BD%94%EB%A1%9C%EB%A1%B1%EC%8A%A4%ED%8F%AC%EB%A0%89%EC%8A%A4';
         }
-    ];
+        return 'https://map.naver.com/p/search/%EC%8B%A0%EB%91%94%EB%A9%B4%20%EC%A3%BC%EB%AF%BC%EC%9E%90%EC%B9%98%EC%84%BC%ED%84%B0';
+    };
 
     return (
         <div className="schedule-container">
@@ -44,9 +93,16 @@ export default function SchedulePage() {
             {/* 1. 상단 안내 헤더 */}
             <div className="schedule-header">
                 <h1 className="schedule-title">📅 수업 일정</h1>
-                <p className="schedule-subtitle">구양희 원장님의 라인댄스 수업 시간표입니다.</p>
+                <p className="schedule-subtitle">
+                    구향회 선생님의 {locationInfo ? `${locationInfo.emoji} ${locationInfo.name}` : ''} 수업 시간표
+                </p>
 
-                {/* 센스 있는 원장님의 한마디 박스 */}
+                {/* 📍 장소 뱃지 */}
+                <div style={{ marginTop: '12px', display: 'flex', justifyContent: 'center' }}>
+                    <LocationBadge />
+                </div>
+
+                {/* 센스 있는 선생님 한마디 박스 */}
                 <div className="info-box">
                     <span className="info-icon">💡</span>
                     <p>수업 시작 <strong>10분 전</strong>까지 도착해서 가볍게 몸을 풀어주세요!</p>
@@ -61,7 +117,6 @@ export default function SchedulePage() {
                         {/* 왼쪽 연결선과 동그라미 기둥 */}
                         <div className="timeline-indicator">
                             <div className="timeline-dot"></div>
-                            {/* 마지막 항목이 아니면 아래로 내려가는 선을 그어줍니다 */}
                             {index !== scheduleData.length - 1 && <div className="timeline-line"></div>}
                         </div>
 
@@ -83,7 +138,7 @@ export default function SchedulePage() {
                                 <span className="class-location">📍 {item.location}</span>
                                 <button
                                     className="map-btn"
-                                    onClick={() => alert('실제 앱에서는 [코로롱스포렉스] 길찾기 지도가 열립니다! 🗺️')}
+                                    onClick={() => window.open(getMapLink(item.location), '_blank')}
                                 >
                                     지도 보기
                                 </button>

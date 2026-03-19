@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import BottomNav from './BottomNav';
 import { useTheme } from '../context/ThemeContext';
+import { useLocation as useLocationCtx } from '../context/LocationContext';
 
 export default function Layout() {
     const location = useLocation();
@@ -32,8 +33,11 @@ export default function Layout() {
         );
     }
 
+    const { locationInfo } = useLocationCtx();
+    const locName = locationInfo ? locationInfo.name : '';
+
     const getHeaderTitle = () => {
-        if (path === '/') return '구양희 스텝바이스텝 💃';
+        if (path === '/') return '구향회 스텝바이스텝 💃';
         if (path === '/schedule') return '수업 일정';
         if (path === '/video') return '영상 보관함';
         if (path === '/theory') return '마스터 클래스';

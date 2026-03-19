@@ -1,4 +1,4 @@
-// 수업 일정 데이터
+// 수업 일정 데이터 (장소별)
 const schedule = [
     {
         id: 1,
@@ -10,10 +10,10 @@ const schedule = [
                 time: "10:00 - 11:00",
                 title: "입문반",
                 level: 1,
-                location: "문화센터 3층 무용실",
-                instructor: "구양희 원장",
+                location: "kororong",
+                locationName: "코로롱 센터",
+                instructor: "구향회 선생님",
                 description: "라인댄스를 처음 접하는 분을 위한 기초 클래스",
-                song: "Cupid Shuffle",
                 maxStudents: 20,
                 currentStudents: 15
             },
@@ -22,10 +22,10 @@ const schedule = [
                 time: "11:10 - 12:10",
                 title: "초급반",
                 level: 2,
-                location: "문화센터 3층 무용실",
-                instructor: "구양희 원장",
+                location: "kororong",
+                locationName: "코로롱 센터",
+                instructor: "구향회 선생님",
                 description: "기본 스텝을 익힌 분을 위한 초급 클래스",
-                song: "Tush Push",
                 maxStudents: 25,
                 currentStudents: 22
             }
@@ -38,13 +38,25 @@ const schedule = [
         classes: [
             {
                 id: "tue-1",
-                time: "14:00 - 15:00",
-                title: "중급반",
-                level: 3,
-                location: "주민센터 다목적홀",
-                instructor: "구양희 원장",
-                description: "다양한 턴과 스텝 조합을 배우는 중급 클래스",
-                song: "Black Horse",
+                time: "10:00 - 11:00",
+                title: "입문반",
+                level: 1,
+                location: "sindun",
+                locationName: "신둔면",
+                instructor: "구향회 선생님",
+                description: "라인댄스를 처음 접하는 분을 위한 기초 클래스",
+                maxStudents: 20,
+                currentStudents: 15
+            },
+            {
+                id: "tue-2",
+                time: "11:10 - 12:10",
+                title: "초급반",
+                level: 2,
+                location: "sindun",
+                locationName: "신둔면",
+                instructor: "구향회 선생님",
+                description: "기본 스텝을 익힌 분을 위한 초급 클래스",
                 maxStudents: 20,
                 currentStudents: 18
             }
@@ -60,10 +72,10 @@ const schedule = [
                 time: "10:00 - 11:00",
                 title: "입문반",
                 level: 1,
-                location: "문화센터 3층 무용실",
-                instructor: "구양희 원장",
+                location: "kororong",
+                locationName: "코로롱 센터",
+                instructor: "구향회 선생님",
                 description: "라인댄스를 처음 접하는 분을 위한 기초 클래스",
-                song: "Cha Cha Slide",
                 maxStudents: 20,
                 currentStudents: 17
             },
@@ -72,10 +84,10 @@ const schedule = [
                 time: "11:10 - 12:10",
                 title: "초급반",
                 level: 2,
-                location: "문화센터 3층 무용실",
-                instructor: "구양희 원장",
+                location: "kororong",
+                locationName: "코로롱 센터",
+                instructor: "구향회 선생님",
                 description: "기본 스텝을 익힌 분을 위한 초급 클래스",
-                song: "Bomba",
                 maxStudents: 25,
                 currentStudents: 20
             }
@@ -88,15 +100,27 @@ const schedule = [
         classes: [
             {
                 id: "thu-1",
-                time: "14:00 - 15:00",
-                title: "중급반",
-                level: 3,
-                location: "주민센터 다목적홀",
-                instructor: "구양희 원장",
-                description: "다양한 턴과 스텝 조합을 배우는 중급 클래스",
-                song: "Copperhead Road",
+                time: "10:00 - 11:00",
+                title: "입문반",
+                level: 1,
+                location: "sindun",
+                locationName: "신둔면",
+                instructor: "구향회 선생님",
+                description: "라인댄스를 처음 접하는 분을 위한 기초 클래스",
                 maxStudents: 20,
                 currentStudents: 16
+            },
+            {
+                id: "thu-2",
+                time: "11:10 - 12:10",
+                title: "초급반",
+                level: 2,
+                location: "sindun",
+                locationName: "신둔면",
+                instructor: "구향회 선생님",
+                description: "기본 스텝을 익힌 분을 위한 초급 클래스",
+                maxStudents: 20,
+                currentStudents: 14
             }
         ]
     },
@@ -110,10 +134,10 @@ const schedule = [
                 time: "10:00 - 11:30",
                 title: "자유연습반",
                 level: 0,
-                location: "문화센터 3층 무용실",
-                instructor: "구양희 원장",
+                location: "kororong",
+                locationName: "코로롱 센터",
+                instructor: "구향회 선생님",
                 description: "배운 곡들을 자유롭게 연습하는 시간",
-                song: "다양한 곡",
                 maxStudents: 30,
                 currentStudents: 12
             }
@@ -132,5 +156,14 @@ const schedule = [
         classes: []
     }
 ];
+
+// 유틸 함수: 장소별 일정 필터
+export function getScheduleForLocation(locationId) {
+    if (!locationId) return schedule;
+    return schedule.map(day => ({
+        ...day,
+        classes: day.classes.filter(c => c.location === locationId)
+    }));
+}
 
 export default schedule;

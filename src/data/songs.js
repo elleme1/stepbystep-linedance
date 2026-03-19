@@ -883,61 +883,103 @@ const rawSongs = [
 ];
 
 // ============================================================
-// 📅 곡별 등록일 매핑 — 새 곡 추가 시 여기에 한 줄만 추가하면 됩니다!
-// 가장 최근 날짜의 곡이 자동으로 "이번주 수업곡"이 됩니다.
+// 📅 곡별 등록일 & 수업장소 매핑
+// location: 'kororong' = 코로롱 센터, 'sindun' = 신둔면, 'both' = 양쪽 모두
+// 각 장소별로 가장 최근 날짜의 곡이 자동으로 "이번주 수업곡"이 됩니다.
 // ============================================================
-const songDates = {
-  42: '2026-03-19',  // No.9 Line Dance Demo
-  41: '2026-03-12',  // Wild West & Wicked
-  10: '2026-03-10',  // Everyone Needs a Hero
-  1: '2026-03-03',  // Why
-  2: '2026-02-24',  // 정말 잘해왔어
-  3: '2026-02-17',  // This Is My Life
-  4: '2026-02-10',  // 오늘밤에 만나요
-  5: '2026-02-03',  // Dangerous
-  6: '2026-01-27',  // Love Potion 666
-  7: '2026-01-20',  // Havana Cha
-  8: '2026-01-13',  // Rose Garden
-  9: '2026-01-06',  // Just a Kiss
-  11: '2025-12-30',  // Samba Do Brasil
-  12: '2025-12-23',  // Turn It Up
-  13: '2025-12-16',  // Like an Indian Doll
-  14: '2025-12-09',  // 복세편살
-  15: '2025-12-02',  // Save Me
-  16: '2025-11-25',  // News
-  17: '2025-11-18',  // 후회없는 춤
-  18: '2025-11-11',  // Let's Dance With the Music
-  19: '2025-11-04',  // Love Rumba
-  20: '2025-10-28',  // Casablanca 2025
-  21: '2025-10-21',  // Cha Cha Tango
-  22: '2025-10-14',  // Dreams of Rio
-  23: '2025-10-07',  // La Noche Mia
-  24: '2025-09-30',  // 푸른시절
-  25: '2025-09-23',  // 주시고
-  26: '2025-09-16',  // 사랑찾아 인생찾아
-  27: '2025-09-09',  // DA Bomb
-  28: '2025-09-02',  // Woman in Love 2025
-  29: '2025-08-26',  // 보고싶다 내사랑
-  30: '2025-08-19',  // 썸머타임
-  31: '2025-08-12',  // Zumma Dance
-  32: '2025-08-05',  // 아직도 어두운 밤인가봐
-  33: '2025-07-29',  // 편지
-  34: '2025-07-22',  // Womanizer
-  35: '2025-07-15',  // Let's Get Loud
-  36: '2025-07-08',  // 가로세로
-  37: '2025-07-01',  // Pick Me Up
-  38: '2025-06-24',  // Love Disco Remix
-  39: '2025-06-17',  // 송인
-  40: '2025-06-10',  // Dance Jockey Remix
+const songSchedule = {
+  42: { date: '2026-03-19', location: 'kororong' },  // No.9 (코로롱 센터)
+  41: { date: '2026-03-19', location: 'sindun' },     // Wild West & Wicked (신둔면)
+  10: { date: '2026-03-10', location: 'kororong' },   // Everyone Needs a Hero
+  1: { date: '2026-03-03', location: 'both' },        // Why
+  2: { date: '2026-02-24', location: 'both' },        // 정말 잘해왔어
+  3: { date: '2026-02-17', location: 'both' },        // This Is My Life
+  4: { date: '2026-02-10', location: 'both' },        // 오늘밤에 만나요
+  5: { date: '2026-02-03', location: 'both' },        // Dangerous
+  6: { date: '2026-01-27', location: 'both' },        // Love Potion 666
+  7: { date: '2026-01-20', location: 'both' },        // Havana Cha
+  8: { date: '2026-01-13', location: 'both' },        // Rose Garden
+  9: { date: '2026-01-06', location: 'both' },        // Just a Kiss
+  11: { date: '2025-12-30', location: 'both' },       // Samba Do Brasil
+  12: { date: '2025-12-23', location: 'both' },       // Turn It Up
+  13: { date: '2025-12-16', location: 'both' },       // Like an Indian Doll
+  14: { date: '2025-12-09', location: 'both' },       // 복세편살
+  15: { date: '2025-12-02', location: 'both' },       // Save Me
+  16: { date: '2025-11-25', location: 'both' },       // News
+  17: { date: '2025-11-18', location: 'both' },       // 후회없는 춤
+  18: { date: '2025-11-11', location: 'both' },       // Let's Dance With the Music
+  19: { date: '2025-11-04', location: 'both' },       // Love Rumba
+  20: { date: '2025-10-28', location: 'both' },       // Casablanca 2025
+  21: { date: '2025-10-21', location: 'both' },       // Cha Cha Tango
+  22: { date: '2025-10-14', location: 'both' },       // Dreams of Rio
+  23: { date: '2025-10-07', location: 'both' },       // La Noche Mia
+  24: { date: '2025-09-30', location: 'both' },       // 푸른시절
+  25: { date: '2025-09-23', location: 'both' },       // 주시고
+  26: { date: '2025-09-16', location: 'both' },       // 사랑찾아 인생찾아
+  27: { date: '2025-09-09', location: 'both' },       // DA Bomb
+  28: { date: '2025-09-02', location: 'both' },       // Woman in Love 2025
+  29: { date: '2025-08-26', location: 'both' },       // 보고싶다 내사랑
+  30: { date: '2025-08-19', location: 'both' },       // 썸머타임
+  31: { date: '2025-08-12', location: 'both' },       // Zumma Dance
+  32: { date: '2025-08-05', location: 'both' },       // 아직도 어두운 밤인가봐
+  33: { date: '2025-07-29', location: 'both' },       // 편지
+  34: { date: '2025-07-22', location: 'both' },       // Womanizer
+  35: { date: '2025-07-15', location: 'both' },       // Let's Get Loud
+  36: { date: '2025-07-08', location: 'both' },       // 가로세로
+  37: { date: '2025-07-01', location: 'both' },       // Pick Me Up
+  38: { date: '2025-06-24', location: 'both' },       // Love Disco Remix
+  39: { date: '2025-06-17', location: 'both' },       // 송인
+  40: { date: '2025-06-10', location: 'both' },       // Dance Jockey Remix
 };
 
-// 🔄 자동 계산: 가장 최근 등록된 곡 = 이번주 수업곡
-const latestDate = Object.values(songDates).sort().reverse()[0];
+// 🔄 장소별 최신 곡 자동 계산
+function getLatestDateForLocation(loc) {
+  const dates = Object.entries(songSchedule)
+    .filter(([, info]) => info.location === loc || info.location === 'both')
+    .map(([, info]) => info.date);
+  return dates.sort().reverse()[0] || '';
+}
 
-const processedSongs = rawSongs.map(s => ({
-  ...s,
-  addedDate: songDates[s.id] || '2025-01-01',
-  isThisWeek: songDates[s.id] === latestDate,
-}));
+const latestByLocation = {
+  kororong: getLatestDateForLocation('kororong'),
+  sindun: getLatestDateForLocation('sindun'),
+};
+
+const processedSongs = rawSongs.map(s => {
+  const schedule = songSchedule[s.id] || { date: '2025-01-01', location: 'both' };
+  return {
+    ...s,
+    addedDate: schedule.date,
+    location: schedule.location,
+    // 장소별 isThisWeek 플래그
+    isThisWeekKororong: (schedule.location === 'kororong' || schedule.location === 'both')
+      && schedule.date === latestByLocation.kororong,
+    isThisWeekSindun: (schedule.location === 'sindun' || schedule.location === 'both')
+      && schedule.date === latestByLocation.sindun,
+    // 하위 호환: 전체 기준 최신
+    isThisWeek: schedule.date === Math.max(latestByLocation.kororong, latestByLocation.sindun)
+      ? true : false,
+  };
+});
+
+// 유틸 함수: 장소별 이번주 곡 가져오기
+export function getThisWeekSong(locationId) {
+  if (locationId === 'kororong') {
+    return processedSongs.find(s => s.isThisWeekKororong) || processedSongs[0];
+  }
+  if (locationId === 'sindun') {
+    return processedSongs.find(s => s.isThisWeekSindun) || processedSongs[0];
+  }
+  // 기본값: 전체에서 가장 최신
+  return processedSongs.find(s => s.isThisWeek) || processedSongs[0];
+}
+
+// 유틸 함수: 장소별 곡 필터
+export function getSongsForLocation(locationId) {
+  if (!locationId) return processedSongs;
+  return processedSongs.filter(s =>
+    s.location === locationId || s.location === 'both'
+  );
+}
 
 export default processedSongs;

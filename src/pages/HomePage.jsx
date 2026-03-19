@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HomePage.css';
-import songs from '../data/songs';
+import songs, { getThisWeekSong } from '../data/songs';
+import { useLocation } from '../context/LocationContext';
+import LocationBadge from '../components/LocationBadge';
 import InstallBanner from '../components/InstallBanner';
 
 export default function HomePage() {
     const navigate = useNavigate();
     const [greetingOpen, setGreetingOpen] = useState(false);
+    const { selectedLocation, locationInfo } = useLocation();
 
-    // songs.js에서 이번 주 수업곡(isThisWeek: true)을 자동으로 불러옵니다.
-    const thisWeekSong = songs.find(s => s.isThisWeek) || songs[0];
+    // 📍 선택된 장소의 이번 주 수업곡을 자동으로 불러옵니다.
+    const thisWeekSong = getThisWeekSong(selectedLocation);
     const levelLabels = { 1: '입문', 2: '초급', 3: '중급', 4: '고급', 5: '최상급' };
     const todayVideo = {
         titleEng: thisWeekSong.title,
@@ -58,6 +61,11 @@ export default function HomePage() {
                 }}>
                     Step by Step 🎶
                 </p>
+
+                {/* 📍 장소 뱃지 */}
+                <div style={{ marginTop: '12px' }}>
+                    <LocationBadge />
+                </div>
             </div>
 
             {/* 📲 PWA 설치 유도 배너 */}
@@ -69,19 +77,19 @@ export default function HomePage() {
                     오늘도 신나게<br />스텝 밟아볼까요? 💃
                 </h1>
 
-                {/* ✨ 구양희 원장님 인사말 카드 */}
+                {/* ✨ 구향회 선생님 인사말 카드 */}
                 <div className="greeting-card" onClick={() => setGreetingOpen(!greetingOpen)}>
                     <div className="greeting-card-header">
                         <div className="greeting-avatar">💖</div>
                         <div className="greeting-meta">
-                            <h3 className="greeting-author">구양희 원장님의 인사말</h3>
+                            <h3 className="greeting-author">구향회 선생님의 인사말</h3>
                             <span className="greeting-date">스텝바이스텝 라인댄스</span>
                         </div>
                         <span className={`greeting-toggle ${greetingOpen ? 'open' : ''}`}>▼</span>
                     </div>
 
                     <div className={`greeting-body ${greetingOpen ? 'expanded' : ''}`}>
-                        <p>안녕하세요, 스텝바이스텝 라인댄스 가족 여러분! 구양희입니다. 💖</p>
+                        <p>안녕하세요, 스텝바이스텝 라인댄스 가족 여러분! 구향회입니다. 💖</p>
                         <p>📱 회원님들이 원하실 때 언제 어디서든 연습하실 수 있도록 전용 앱을 드디어 오픈했어요! ✨</p>
                         <p>💃 평소 헷갈렸던 스텝이나 다시 보고 싶은 안무 영상이 있다면, 이제 앱을 통해 편하게 복습해 보세요. 🎶</p>
                         <p>🙋‍♀️ 앱 설치가 어렵거나 사용 방법이 궁금하시다면 다음 수업 시간에 제가 직접 친절하게 안내해 드릴 테니 걱정 마세요. 😊</p>
@@ -89,7 +97,7 @@ export default function HomePage() {
                     </div>
 
                     {!greetingOpen && (
-                        <p className="greeting-preview">안녕하세요, 스텝바이스텝 라인댄스 가족 여러분! 구양희입니다...</p>
+                        <p className="greeting-preview">안녕하세요, 스텝바이스텝 라인댄스 가족 여러분! 구향회입니다...</p>
                     )}
                 </div>
 
@@ -103,7 +111,7 @@ export default function HomePage() {
             {/* 2. 👑 VIP석 : 오늘 배운 안무 (초집중 구역) */}
             <section className="vip-section">
                 <div className="vip-header">
-                    <h2 className="vip-title">🔥 오늘 배운 안무</h2>
+                    <h2 className="vip-title">🔥 {locationInfo ? `${locationInfo.emoji} ${locationInfo.name}` : ''} 오늘 배운 안무</h2>
                     <span className="level-badge">{todayVideo.level}</span>
                 </div>
 
@@ -122,11 +130,11 @@ export default function HomePage() {
                         <h3 className="video-title-eng">{todayVideo.titleEng}</h3>
                         <p className="video-title-kor">{todayVideo.titleKor}</p>
 
-                        {/* ✨ 오프라인 수업의 감동을 이어주는 원장님 메모장 */}
+                        {/* ✨ 오프라인 수업의 감동을 이어주는 선생님 메모장 */}
                         <div className="director-tip">
                             <span className="tip-icon">💡</span>
                             <div className="tip-content">
-                                <strong>원장님 꿀팁:</strong>
+                                <strong>선생님 꿀팁:</strong>
                                 <span>{todayVideo.tip}</span>
                             </div>
                         </div>
@@ -134,7 +142,7 @@ export default function HomePage() {
                 </div>
             </section>
 
-            {/* 3. 🚀 하단 퀵 메뉴 (도전/프로필 빈자리를 채우는 큰 네모 버튼 2개) */}
+            {/* 3. 🚀 하단 퀵 메뉴 */}
             <section className="quick-actions">
                 <h2 className="quick-title">무엇을 찾으시나요?</h2>
                 <div className="action-grid">

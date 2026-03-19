@@ -2,39 +2,36 @@ import React from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import BottomNav from './BottomNav';
 import { useTheme } from '../context/ThemeContext';
-import { useLocation as useLocationCtx } from '../context/LocationContext';
+import { useLocation as useLocationCtx, LOCATIONS } from '../context/LocationContext';
 
 export default function Layout() {
     const location = useLocation();
     const navigate = useNavigate();
     const path = location.pathname;
     const { theme, toggleTheme } = useTheme();
+    const { selectedLocation, setSelectedLocation, locationInfo } = useLocationCtx();
 
     const isMainTab = path === '/' || path === '/schedule' || path === '/video' || path === '/theory';
     const isOurSubPage = path.startsWith('/community') || path.startsWith('/search');
 
-    // 🚨 [진짜 찐 최종! 고집 센 유령 버튼 가두기 마법!]
+    // 📍 장소 전환 함수 (코오롱 ↔ 신둔면 토글)
+    const toggleLocation = () => {
+        const next = selectedLocation === 'kororong' ? 'sindun' : 'kororong';
+        setSelectedLocation(next);
+    };
+
+    // 🚨 서브 페이지 레이아웃
     if (!isMainTab && !isOurSubPage) {
         return (
             <div style={{ backgroundColor: 'var(--bg-primary)', height: '100dvh', display: 'flex', flexDirection: 'column' }}>
-
-                {/* 1. 아이폰 다이내믹 아일랜드(카메라 구멍) 공간만큼 위에서 강제로 까만 벽을 밀어냅니다! (최소 54px 확보) */}
                 <div style={{ height: 'max(54px, env(safe-area-inset-top))', flexShrink: 0, backgroundColor: 'var(--bg-primary)' }}></div>
-
-                {/* 2. 마법의 투명 유리방! (transform 속성이 '돌아가기 버튼'이 천장을 뚫고 도망가지 못하게 꽉 가둬줍니다!) */}
                 <div style={{ flex: 1, position: 'relative', transform: 'translateZ(0)', zIndex: 1, overflow: 'auto', paddingBottom: 'calc(80px + env(safe-area-inset-bottom))' }}>
                     <Outlet />
                 </div>
-
-                {/* 🔽 하단 네비게이션 — 서브 페이지에서도 항상 표시 */}
                 <BottomNav />
-
             </div>
         );
     }
-
-    const { locationInfo } = useLocationCtx();
-    const locName = locationInfo ? locationInfo.name : '';
 
     const getHeaderTitle = () => {
         if (path === '/') return '구향회 스텝바이스텝 💃';
@@ -56,15 +53,45 @@ export default function Layout() {
                 borderBottom: '1px solid var(--border-color)'
             }}>
                 <div style={{ position: 'relative', height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {isOurSubPage && (
+                    {isOurSubPage ? (
                         <button
                             onClick={() => navigate(-1)}
                             style={{ position: 'absolute', left: '16px', background: 'none', border: 'none', color: 'var(--text-primary)', fontSize: '24px', cursor: 'pointer', padding: '0 8px' }}
                         >
                             ←
                         </button>
+                    ) : (
+                        /* 📍 장소 전환 토글 버튼 (왼쪽) — 관리자가 한 탭으로 전환 */
+                        <button
+                            onClick={toggleLocation}
+                            style={{
+                                position: 'absolute',
+                                left: '12px',
+                                background: locationInfo
+                                    ? `linear-gradient(135deg, ${locationInfo.color}22, ${locationInfo.color}44)`
+                                    : 'rgba(255,255,255,0.1)',
+                                border: `1px solid ${locationInfo?.color || '#666'}55`,
+                                borderRadius: '20px',
+                                padding: '4px 10px',
+                                fontSize: '13px',
+                                fontWeight: '700',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                color: locationInfo?.color || 'var(--text-primary)',
+                                transition: 'all 0.3s ease',
+                                whiteSpace: 'nowrap',
+                            }}
+                            title="장소 전환"
+                        >
+                            <span style={{ fontSize: '14px' }}>{locationInfo?.emoji || '📍'}</span>
+                            <span>{locationInfo ? (locationInfo.id === 'kororong' ? '코오롱' : '신둔면') : ''}</span>
+                            <span style={{ fontSize: '10px', opacity: 0.6 }}>⇄</span>
+                        </button>
                     )}
-                    {/* 테마 토글 버튼 */}
+
+                    {/* 테마 토글 버튼 (오른쪽) */}
                     <button
                         onClick={toggleTheme}
                         style={{
@@ -81,7 +108,8 @@ export default function Layout() {
                     >
                         {theme === 'dark' ? '☀️' : '🌙'}
                     </button>
-                    <h1 style={{ margin: 0, fontSize: '18px', fontWeight: '800', color: 'var(--text-primary)', padding: '0 40px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+
+                    <h1 style={{ margin: 0, fontSize: '16px', fontWeight: '800', color: 'var(--text-primary)', padding: '0 90px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         {getHeaderTitle()}
                     </h1>
                 </div>
@@ -101,7 +129,6 @@ export default function Layout() {
                 <Outlet />
             </main>
 
-            {/* 🔽 하단 네비게이션 — 모든 페이지에서 항상 표시 */}
             <BottomNav />
 
         </div>

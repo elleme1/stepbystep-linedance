@@ -81,7 +81,7 @@ export default function SchedulePage() {
     const scheduleData = allScheduleData[selectedLocation] || allScheduleData.kororong;
 
     const getMapLink = (loc) => {
-        if (loc.includes('코로롱')) {
+        if (loc.includes('코오롱')) {
             return 'https://map.naver.com/p/search/%EC%BD%94%EB%A1%9C%EB%A1%B1%EC%8A%A4%ED%8F%AC%EB%A0%89%EC%8A%A4';
         }
         return 'https://map.naver.com/p/search/%EC%8B%A0%EB%91%94%EB%A9%B4%20%EC%A3%BC%EB%AF%BC%EC%9E%90%EC%B9%98%EC%84%BC%ED%84%B0';
@@ -94,7 +94,7 @@ export default function SchedulePage() {
             <div className="schedule-header">
                 <h1 className="schedule-title">📅 수업 일정</h1>
                 <p className="schedule-subtitle">
-                    구향회 선생님의 {locationInfo ? `${locationInfo.emoji} ${locationInfo.name}` : ''} 수업 시간표
+                    구양희 선생님의 {locationInfo ? `${locationInfo.emoji} ${locationInfo.name}` : ''} 수업 시간표
                 </p>
 
                 {/* 📍 장소 뱃지 */}

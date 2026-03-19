@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import songs from '../data/songs';
+import songs, { getSongsForLocation } from '../data/songs';
 import { levelStars } from '../data/constants';
+import { useLocation } from '../context/LocationContext';
 
 export default function PlaylistPage() {
     const [searchParams] = useSearchParams();
@@ -33,12 +34,23 @@ export default function PlaylistPage() {
     const stateRef = useRef({});
     stateRef.current = { isAutoPlay, isRepeat, isPlaying, currentIndex, speed, isShuffle, shuffledOrder };
 
+    const { selectedLocation } = useLocation();
+
     const speeds = [0.5, 0.75, 1, 1.25];
+
+    // 📍 장소별 곡 필터링 + isThisWeek 장소별 판단
+    const isThisWeekForLocation = (song) => {
+        if (selectedLocation === 'kororong') return song.isThisWeekKororong;
+        if (selectedLocation === 'sindun') return song.isThisWeekSindun;
+        return song.isThisWeek;
+    };
+
     const playlistSongs = useMemo(() => {
-        if (mode === 'archive') return songs.filter(s => !s.isThisWeek);
-        const thisWeekSongs = songs.filter(s => s.isThisWeek);
-        return thisWeekSongs.length > 0 ? thisWeekSongs : [songs[0]];
-    }, [mode]);
+        const locationSongs = getSongsForLocation(selectedLocation);
+        if (mode === 'archive') return locationSongs.filter(s => !isThisWeekForLocation(s));
+        const thisWeekSongs = locationSongs.filter(s => isThisWeekForLocation(s));
+        return thisWeekSongs.length > 0 ? thisWeekSongs : [locationSongs[0] || songs[0]];
+    }, [mode, selectedLocation]);
     const totalSongs = playlistSongs.length;
 
     const generateShuffleOrder = useCallback(() => {

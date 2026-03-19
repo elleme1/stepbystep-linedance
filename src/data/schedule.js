@@ -11,8 +11,8 @@ const schedule = [
                 title: "입문반",
                 level: 1,
                 location: "kororong",
-                locationName: "코로롱 센터",
-                instructor: "구향회 선생님",
+                locationName: "코오롱 스포렉스",
+                instructor: "구양희 선생님",
                 description: "라인댄스를 처음 접하는 분을 위한 기초 클래스",
                 maxStudents: 20,
                 currentStudents: 15
@@ -23,8 +23,8 @@ const schedule = [
                 title: "초급반",
                 level: 2,
                 location: "kororong",
-                locationName: "코로롱 센터",
-                instructor: "구향회 선생님",
+                locationName: "코오롱 스포렉스",
+                instructor: "구양희 선생님",
                 description: "기본 스텝을 익힌 분을 위한 초급 클래스",
                 maxStudents: 25,
                 currentStudents: 22
@@ -43,7 +43,7 @@ const schedule = [
                 level: 1,
                 location: "sindun",
                 locationName: "신둔면",
-                instructor: "구향회 선생님",
+                instructor: "구양희 선생님",
                 description: "라인댄스를 처음 접하는 분을 위한 기초 클래스",
                 maxStudents: 20,
                 currentStudents: 15
@@ -55,7 +55,7 @@ const schedule = [
                 level: 2,
                 location: "sindun",
                 locationName: "신둔면",
-                instructor: "구향회 선생님",
+                instructor: "구양희 선생님",
                 description: "기본 스텝을 익힌 분을 위한 초급 클래스",
                 maxStudents: 20,
                 currentStudents: 18
@@ -73,8 +73,8 @@ const schedule = [
                 title: "입문반",
                 level: 1,
                 location: "kororong",
-                locationName: "코로롱 센터",
-                instructor: "구향회 선생님",
+                locationName: "코오롱 스포렉스",
+                instructor: "구양희 선생님",
                 description: "라인댄스를 처음 접하는 분을 위한 기초 클래스",
                 maxStudents: 20,
                 currentStudents: 17
@@ -85,8 +85,8 @@ const schedule = [
                 title: "초급반",
                 level: 2,
                 location: "kororong",
-                locationName: "코로롱 센터",
-                instructor: "구향회 선생님",
+                locationName: "코오롱 스포렉스",
+                instructor: "구양희 선생님",
                 description: "기본 스텝을 익힌 분을 위한 초급 클래스",
                 maxStudents: 25,
                 currentStudents: 20
@@ -105,7 +105,7 @@ const schedule = [
                 level: 1,
                 location: "sindun",
                 locationName: "신둔면",
-                instructor: "구향회 선생님",
+                instructor: "구양희 선생님",
                 description: "라인댄스를 처음 접하는 분을 위한 기초 클래스",
                 maxStudents: 20,
                 currentStudents: 16
@@ -117,7 +117,7 @@ const schedule = [
                 level: 2,
                 location: "sindun",
                 locationName: "신둔면",
-                instructor: "구향회 선생님",
+                instructor: "구양희 선생님",
                 description: "기본 스텝을 익힌 분을 위한 초급 클래스",
                 maxStudents: 20,
                 currentStudents: 14
@@ -135,8 +135,8 @@ const schedule = [
                 title: "자유연습반",
                 level: 0,
                 location: "kororong",
-                locationName: "코로롱 센터",
-                instructor: "구향회 선생님",
+                locationName: "코오롱 스포렉스",
+                instructor: "구양희 선생님",
                 description: "배운 곡들을 자유롭게 연습하는 시간",
                 maxStudents: 30,
                 currentStudents: 12

@@ -7,7 +7,7 @@ export default function BottomNav() {
         { path: '/', icon: '🏠', label: '홈' },
         { path: '/schedule', icon: '📅', label: '일정' },
         { path: '/video', icon: '🎬', label: '영상' },
-        { path: '/theory', icon: '📘', label: '이론' },
+                { path: '/theory', icon: '📘', label: '마스터 클래스' },
     ];
 
     return (

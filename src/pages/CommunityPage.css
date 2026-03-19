@@ -11,7 +11,7 @@
 /* --- 1. 상단 탭 --- */
 .community-tabs {
     position: sticky;
-    top: 56px;
+    top: 0;
     /* Layout.jsx의 헤더(타이틀) 높이인 56px만큼 띄워서 그 바로 밑에 착! 고정 */
     z-index: 10;
     background-color: rgba(10, 10, 15, 0.95);
@@ -209,8 +209,8 @@
 .fab-write-btn {
     position: fixed;
     right: 20px;
-    /* 서브 화면이라 하단 메뉴가 없으므로 아이폰 홈 스와이프 바 위로 안전하게 착! */
-    bottom: calc(30px + env(safe-area-inset-bottom));
+    /* BottomNav(약 70px) 위에 위치하도록 bottom 값 조정 */
+    bottom: calc(90px + env(safe-area-inset-bottom));
     background-color: #ff3366;
     color: #ffffff;
     border: none;
@@ -517,4 +517,254 @@
 
 .write-submit-btn:active {
     transform: scale(0.97);
+}
+
+/* --- 7. 💬 댓글 영역 --- */
+.comment-section {
+    border-top: 1px solid #2a2a35;
+    padding-top: 12px;
+    animation: fadeIn 0.2s ease;
+}
+
+.comment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.comment-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    position: relative;
+}
+
+.comment-avatar {
+    width: 32px;
+    height: 32px;
+    background-color: #2a2a35;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.comment-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.comment-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.comment-author {
+    font-size: 14px;
+    font-weight: 700;
+    color: #ddd;
+}
+
+.comment-time {
+    font-size: 12px;
+    color: #666;
+}
+
+.comment-text {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #bbb;
+    word-break: keep-all;
+}
+
+.comment-delete-btn {
+    background: transparent;
+    border: none;
+    color: #555;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.comment-delete-btn:active {
+    color: #ff3366;
+    background: rgba(255, 51, 102, 0.1);
+}
+
+/* 댓글 입력 영역 */
+.comment-input-area {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.comment-nickname-input {
+    background: #2a2a35;
+    border: 1px solid #3a3a45;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 14px;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.comment-nickname-input:focus {
+    border-color: #ff3366;
+}
+
+.comment-nickname-input::placeholder {
+    color: #555;
+}
+
+.comment-input-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.comment-input-avatar {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #ff3366, #ff6699);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.comment-input {
+    flex: 1;
+    background: #2a2a35;
+    border: 1px solid #3a3a45;
+    border-radius: 24px;
+    color: #fff;
+    font-size: 15px;
+    padding: 10px 16px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.comment-input:focus {
+    border-color: #ff3366;
+}
+
+.comment-input::placeholder {
+    color: #555;
+}
+
+.comment-submit-btn {
+    background: linear-gradient(135deg, #ff3366, #ff6699);
+    border: none;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    padding: 10px 18px;
+    border-radius: 24px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.comment-submit-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.comment-submit-btn:not(:disabled):active {
+    transform: scale(0.95);
+}
+
+/* 댓글 버튼 활성 상태 */
+.action-btn.comment-active {
+    color: #ff3366;
+}
+
+/* --- 8. 🎉 신규 회원 환영 팝업 --- */
+.welcome-modal {
+    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 24px;
+    width: 90%;
+    max-width: 420px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: welcomePop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 51, 102, 0.2);
+}
+
+@keyframes welcomePop {
+    from {
+        opacity: 0;
+        transform: scale(0.85) translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.welcome-header {
+    text-align: center;
+    padding: 32px 24px 20px;
+}
+
+.welcome-emoji {
+    font-size: 56px;
+    margin-bottom: 12px;
+    animation: bounce 1s ease infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.welcome-title {
+    margin: 0 0 8px;
+    font-size: 26px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #ff3366, #ff6699, #ffaa55);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.welcome-subtitle {
+    margin: 0;
+    font-size: 15px;
+    color: #a0a0c0;
+    line-height: 1.6;
+}
+
+.welcome-body {
+    padding: 8px 24px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.welcome-footer {
+    display: flex;
+    gap: 12px;
+    padding: 16px 24px 28px;
 }

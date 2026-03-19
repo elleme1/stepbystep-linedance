@@ -21,9 +21,12 @@ export default function Layout() {
                 <div style={{ height: 'max(54px, env(safe-area-inset-top))', flexShrink: 0, backgroundColor: 'var(--bg-primary)' }}></div>
 
                 {/* 2. 마법의 투명 유리방! (transform 속성이 '돌아가기 버튼'이 천장을 뚫고 도망가지 못하게 꽉 가둬줍니다!) */}
-                <div style={{ flex: 1, position: 'relative', transform: 'translateZ(0)', zIndex: 1, overflow: 'auto' }}>
+                <div style={{ flex: 1, position: 'relative', transform: 'translateZ(0)', zIndex: 1, overflow: 'auto', paddingBottom: 'calc(80px + env(safe-area-inset-bottom))' }}>
                     <Outlet />
                 </div>
+
+                {/* 🔽 하단 네비게이션 — 서브 페이지에서도 항상 표시 */}
+                <BottomNav />
 
             </div>
         );
@@ -89,14 +92,13 @@ export default function Layout() {
                 position: 'relative',
                 zIndex: 1,
                 isolation: 'isolate',
-                paddingBottom: isMainTab ? 'calc(120px + env(safe-area-inset-bottom))' : 'env(safe-area-inset-bottom)'
+                paddingBottom: 'calc(120px + env(safe-area-inset-bottom))'
             }}>
                 <Outlet />
             </main>
 
-            {isMainTab && (
-                <BottomNav />
-            )}
+            {/* 🔽 하단 네비게이션 — 모든 페이지에서 항상 표시 */}
+            <BottomNav />
 
         </div>
     );

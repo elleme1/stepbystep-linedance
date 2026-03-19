@@ -270,7 +270,7 @@ export default function TheoryPage() {
           <div className="jive-video-embed">
             <iframe
               key={`global-${activeVideo.videoId}`}
-              src={`https://www.youtube.com/embed/${activeVideo.videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
+              src={`https://www.youtube.com/embed/${activeVideo.videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1&cc_load_policy=3`}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
               style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
@@ -341,7 +341,7 @@ export default function TheoryPage() {
                         <div className="jive-video-embed" onClick={(e) => e.stopPropagation()}>
                           <iframe
                             key={`inline-${activeVideo.videoId}`}
-                            src={`https://www.youtube.com/embed/${activeVideo.videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
+                            src={`https://www.youtube.com/embed/${activeVideo.videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1&cc_load_policy=3`}
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowFullScreen
                             style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}

@@ -888,10 +888,10 @@ const rawSongs = [
 // 각 장소별로 가장 최근 날짜의 곡이 자동으로 "이번주 수업곡"이 됩니다.
 // ============================================================
 const songSchedule = {
-  42: { date: '2026-03-19', location: 'kororong' },  // No.9 (코로롱 센터)
-  41: { date: '2026-03-19', location: 'sindun' },     // Wild West & Wicked (신둔면)
+  42: { date: '2026-03-19', location: 'kororong' },  // No.9 (코오롱 센터)
+  41: { date: '2026-03-12', location: 'both' },       // Wild West & Wicked
   10: { date: '2026-03-10', location: 'kororong' },   // Everyone Needs a Hero
-  1: { date: '2026-03-03', location: 'both' },        // Why
+  1: { date: '2026-03-19', location: 'sindun' },      // Why (신둔면 이번주 곡)
   2: { date: '2026-02-24', location: 'both' },        // 정말 잘해왔어
   3: { date: '2026-02-17', location: 'both' },        // This Is My Life
   4: { date: '2026-02-10', location: 'both' },        // 오늘밤에 만나요

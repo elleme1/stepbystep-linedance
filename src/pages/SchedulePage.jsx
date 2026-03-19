@@ -15,7 +15,7 @@ export default function SchedulePage() {
                 isToday: false,
                 time: '오전 10:40 ~ 11:50',
                 title: '오전 라인댄스 정규반',
-                location: '코로롱스포렉스'
+                location: '코오롱스포렉스'
             },
             {
                 id: 2,
@@ -23,7 +23,7 @@ export default function SchedulePage() {
                 isToday: true,
                 time: '오전 10:40 ~ 11:50',
                 title: '오전 라인댄스 정규반',
-                location: '코로롱스포렉스'
+                location: '코오롱스포렉스'
             },
             {
                 id: 3,
@@ -31,7 +31,7 @@ export default function SchedulePage() {
                 isToday: false,
                 time: '오전 10:40 ~ 11:50',
                 title: '오전 라인댄스 정규반',
-                location: '코로롱스포렉스'
+                location: '코오롱스포렉스'
             },
             {
                 id: 4,
@@ -39,7 +39,7 @@ export default function SchedulePage() {
                 isToday: false,
                 time: '오전 10:40 ~ 11:50',
                 title: '오전 라인댄스 정규반',
-                location: '코로롱스포렉스'
+                location: '코오롱스포렉스'
             }
         ],
         sindun: [
@@ -47,7 +47,7 @@ export default function SchedulePage() {
                 id: 5,
                 date: '이번 주 월요일',
                 isToday: false,
-                time: '오전 10:00 ~ 11:00',
+                time: '오전 10:40 ~ 11:50',
                 title: '라인댄스 정규반',
                 location: '신둔면 주민자치센터'
             },
@@ -55,7 +55,7 @@ export default function SchedulePage() {
                 id: 6,
                 date: '이번 주 수요일',
                 isToday: false,
-                time: '오전 10:00 ~ 11:00',
+                time: '오전 10:40 ~ 11:50',
                 title: '라인댄스 정규반',
                 location: '신둔면 주민자치센터'
             },
@@ -63,7 +63,7 @@ export default function SchedulePage() {
                 id: 7,
                 date: '다음 주 월요일',
                 isToday: false,
-                time: '오전 10:00 ~ 11:00',
+                time: '오전 10:40 ~ 11:50',
                 title: '라인댄스 정규반',
                 location: '신둔면 주민자치센터'
             },
@@ -71,7 +71,7 @@ export default function SchedulePage() {
                 id: 8,
                 date: '다음 주 수요일',
                 isToday: false,
-                time: '오전 10:00 ~ 11:00',
+                time: '오전 10:40 ~ 11:50',
                 title: '라인댄스 정규반',
                 location: '신둔면 주민자치센터'
             }

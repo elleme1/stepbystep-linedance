@@ -1,6 +1,27 @@
 // 라인댄스 안무곡 데이터
 const rawSongs = [
   {
+    id: 42,
+    title: "No.9 Line Dance Demo",
+    artist: "Various",
+    choreographer: "Various",
+    level: 2,
+    bpm: 120,
+    walls: 4,
+    counts: 32,
+    genre: "팝",
+    youtubeId: "4BVmHK_2JKA",
+    tutorialId: "4BVmHK_2JKA",
+    thumbnail: "https://img.youtube.com/vi/4BVmHK_2JKA/hqdefault.jpg",
+
+    steps: [
+      { count: "1-8", move: "사이드 스텝 & 터치 (Side Step & Touch)", desc: "오른발 사이드 → 왼발 터치 → 왼발 사이드 → 오른발 터치" },
+      { count: "9-16", move: "셔플 & 턴 (Shuffle & Turn)", desc: "오른쪽 셔플 → 1/4 턴 → 왼쪽 셔플" },
+      { count: "17-24", move: "록 스텝 & 리커버 (Rock Step & Recover)", desc: "앞 록 → 리커버 → 뒤 록 → 리커버" },
+      { count: "25-32", move: "바인 & 터치 (Vine & Touch)", desc: "오른쪽 그레이프바인 → 터치" }
+    ]
+  },
+  {
     id: 41,
     title: "Wild West & Wicked (와일드 웨스트 앤 위키드)",
     artist: "DJTEXX",
@@ -866,6 +887,7 @@ const rawSongs = [
 // 가장 최근 날짜의 곡이 자동으로 "이번주 수업곡"이 됩니다.
 // ============================================================
 const songDates = {
+  42: '2026-03-19',  // No.9 Line Dance Demo
   41: '2026-03-12',  // Wild West & Wicked
   10: '2026-03-10',  // Everyone Needs a Hero
   1: '2026-03-03',  // Why

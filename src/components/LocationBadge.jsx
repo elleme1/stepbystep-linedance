@@ -28,8 +28,10 @@ export default function LocationBadge() {
               className="location-picker-item"
               style={{ '--item-color': loc.color }}
               onClick={() => {
+                localStorage.setItem('stepbystep-location', loc.id);
                 setSelectedLocation(loc.id);
                 setShowPicker(false);
+                window.location.reload();
               }}
             >
               <span>{loc.emoji}</span>

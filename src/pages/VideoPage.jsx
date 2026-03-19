@@ -1,11 +1,14 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import songs from '../data/songs';
+import songs, { getSongsForLocation } from '../data/songs';
 import { levelText } from '../data/constants';
+import { useLocation } from '../context/LocationContext';
+import LocationBadge from '../components/LocationBadge';
 import './VideoPage.css';
 
 export default function VideoPage() {
     const navigate = useNavigate();
+    const { selectedLocation } = useLocation();
     const [activeTab, setActiveTab] = useState('전체');
     const [likedIds, setLikedIds] = useState([]);
     const [showScrollTop, setShowScrollTop] = useState(false);
@@ -29,16 +32,26 @@ export default function VideoPage() {
     const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
     const scrollToBottom = () => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
 
+    // 장소별 곡 필터링
+    const locationSongs = useMemo(() => getSongsForLocation(selectedLocation), [selectedLocation]);
+
+    // isThisWeek를 장소별로 판단
+    const isThisWeekForLocation = (song) => {
+        if (selectedLocation === 'kororong') return song.isThisWeekKororong;
+        if (selectedLocation === 'sindun') return song.isThisWeekSindun;
+        return song.isThisWeek;
+    };
+
     // 장르와 레벨 목록을 데이터에서 자동 추출
     const genres = useMemo(() => {
-        const g = [...new Set(songs.map(s => s.genre))];
+        const g = [...new Set(locationSongs.map(s => s.genre))];
         return g;
-    }, []);
+    }, [locationSongs]);
 
     const levels = useMemo(() => {
-        const l = [...new Set(songs.map(s => s.level))].sort();
+        const l = [...new Set(locationSongs.map(s => s.level))].sort();
         return l.map(lv => ({ value: lv, label: levelText[lv] }));
-    }, []);
+    }, [locationSongs]);
 
     const tabs = ['전체', '이번주', ...levels.map(l => l.label), ...genres];
 
@@ -52,10 +65,10 @@ export default function VideoPage() {
     };
 
     const displayVideos = useMemo(() => {
-        return songs
+        return locationSongs
             .filter(v => {
                 if (activeTab === '전체') return true;
-                if (activeTab === '이번주') return v.isThisWeek;
+                if (activeTab === '이번주') return isThisWeekForLocation(v);
                 if (v.genre === activeTab) return true;
                 if (levelText[v.level] === activeTab) return true;
                 return false;
@@ -66,11 +79,13 @@ export default function VideoPage() {
                 if (aLiked && !bLiked) return -1;
                 if (!aLiked && bLiked) return 1;
                 // 이번주 곡 우선
-                if (a.isThisWeek && !b.isThisWeek) return -1;
-                if (!a.isThisWeek && b.isThisWeek) return 1;
+                const aThisWeek = isThisWeekForLocation(a);
+                const bThisWeek = isThisWeekForLocation(b);
+                if (aThisWeek && !bThisWeek) return -1;
+                if (!aThisWeek && bThisWeek) return 1;
                 return 0;
             });
-    }, [activeTab, likedIds]);
+    }, [activeTab, likedIds, locationSongs, selectedLocation]);
 
     return (
         <div className="video-container">
@@ -79,6 +94,11 @@ export default function VideoPage() {
             <div className="video-header-wrapper">
                 <h1 className="video-page-title">📚 안무 보관함</h1>
                 <p className="video-page-subtitle">배운 안무들을 복습하고 연속 재생해 보세요.</p>
+
+                {/* 📍 장소 뱃지 */}
+                <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'center' }}>
+                    <LocationBadge />
+                </div>
 
                 {/* 연속 재생 버튼 */}
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
@@ -131,7 +151,7 @@ export default function VideoPage() {
                                 <div className="list-thumbnail">
                                     <img src={video.thumbnail} alt={video.title} />
                                     <div className="list-play-icon">▶</div>
-                                    {video.isThisWeek && (
+                                    {isThisWeekForLocation(video) && (
                                         <span style={{
                                             position: 'absolute', top: '4px', left: '4px',
                                             background: '#ff3366', color: '#fff',

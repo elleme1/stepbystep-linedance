@@ -37,7 +37,7 @@ export default function CommunityPage() {
         }
         return [
             {
-                id: 1, category: '📢 공지사항', author: '구양희 원장', isDirector: true, time: '2시간 전',
+                id: 1, category: '📢 공지사항', author: '구향회 원장', isDirector: true, time: '2시간 전',
                 content: '회원님들~ 오늘 수업 때 배운 안무 영상이 [영상 보관함]에 업로드 되었습니다! 주말 동안 집에서 영상 보시면서 복습 꼭 해오세요~ 사랑합니다 ❤️',
                 image: null, likes: 45, commentList: [
                     { id: 101, author: '초보댄서 영희', time: '1시간 전', text: '감사합니다 원장님! 열심히 복습할게요~ 💪' },
@@ -48,7 +48,7 @@ export default function CommunityPage() {
                 id: 2, category: '👋 가입인사', author: '초보댄서 영희', isDirector: false, time: '5시간 전',
                 content: '안녕하세요! 이번 달부터 화목 오전반에서 수업 듣게 된 영희입니다. 라인댄스는 처음이라 많이 뚝딱거리지만 잘 부탁드립니다!!',
                 image: null, likes: 28, commentList: [
-                    { id: 201, author: '구양희 원장', time: '4시간 전', text: '영희님 환영합니다~! 천천히 하면 금방 늘어요 화이팅! 🎉' }
+                    { id: 201, author: '구향회 원장', time: '4시간 전', text: '영희님 환영합니다~! 천천히 하면 금방 늘어요 화이팅! 🎉' }
                 ], isLiked: true
             },
             {
@@ -484,7 +484,7 @@ export default function CommunityPage() {
                         <div className="welcome-header">
                             <div className="welcome-emoji">🎉</div>
                             <h2 className="welcome-title">환영합니다!</h2>
-                            <p className="welcome-subtitle">구양희 스텝바이스텝 라인댄스에<br/>오신 것을 환영합니다!</p>
+                            <p className="welcome-subtitle">구향회 스텝바이스텝 라인댄스에<br/>오신 것을 환영합니다!</p>
                         </div>
 
                         <div className="welcome-body">

@@ -367,7 +367,7 @@ export default function TheoryPage() {
       ))}
 
       <div className="jive-footer">
-        구양희 스텝바이스텝 · 자이브 통합루틴 진행교본<br/>
+        구향회 스텝바이스텝 · 자이브 통합루틴 진행교본<br/>
         영상 출처: 와이트리댄스스쿨 YouTube
       </div>
     </div>

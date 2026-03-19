@@ -334,7 +334,7 @@ export default function PlaylistPage() {
                             </span>
                         </div>
                         <p className="playlist-song-artist" style={{ color: '#aaa', margin: '4px 0 0 0' }}>
-                            {currentSong.artist || '구양희 라인댄스'} · {currentSong.choreographer || 'Various'}
+                            {currentSong.artist || '구향회 라인댄스'} · {currentSong.choreographer || 'Various'}
                         </p>
                     </div>
                 )}
@@ -425,7 +425,7 @@ export default function PlaylistPage() {
                                 </div>
                                 <div className="playlist-item-info">
                                     <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', color: '#fff' }}>{song.title}</h4>
-                                    <p style={{ margin: 0, fontSize: '12px', color: '#888' }}>{song.artist || '구양희 원장'} · {song.choreographer || 'Various'}</p>
+                                    <p style={{ margin: 0, fontSize: '12px', color: '#888' }}>{song.artist || '구향회 원장'} · {song.choreographer || 'Various'}</p>
                                 </div>
                                 <span className={`level-badge level-${song.level || 'beginner'}`}>
                                     {levelStars[song.level] || '★★'}

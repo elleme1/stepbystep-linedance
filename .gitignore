@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 .vercel
 files.zip
+*.mp4
+.tmp.driveupload/

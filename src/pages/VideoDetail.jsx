@@ -261,7 +261,7 @@ export default function VideoDetail() {
     const handleShare = async () => {
         const shareUrl = `https://stepbystep-linedance.vercel.app/video/${id}`;
         const youtubeUrl = `https://youtu.be/${currentVideoId}`;
-        const shareText = `💃 ${videoData.title}\n\n구양희 스텝바이스텝 라인댄스에서 함께 춰봐요!\n\n🎬 영상: ${youtubeUrl}\n📱 앱: ${shareUrl}`;
+        const shareText = `💃 ${videoData.title}\n\n구향회 스텝바이스텝 라인댄스에서 함께 춰봐요!\n\n🎬 영상: ${youtubeUrl}\n📱 앱: ${shareUrl}`;
 
         if (navigator.share) {
             try {
@@ -550,7 +550,7 @@ export default function VideoDetail() {
                         ))}
                     </div>
                     <h1 style={{ fontSize: '22px', fontWeight: '800', lineHeight: '1.4', marginBottom: '8px', wordBreak: 'keep-all' }}>{videoData.title}</h1>
-                    <p style={{ color: '#aaa', fontSize: '14px', marginBottom: '16px' }}>안무가: {videoData.choreographer || '구양희 원장'}</p>
+                    <p style={{ color: '#aaa', fontSize: '14px', marginBottom: '16px' }}>안무가: {videoData.choreographer || '구향회 원장'}</p>
 
                     <div style={{ padding: '20px', backgroundColor: '#1a1a24', borderRadius: '12px', border: '1px solid #2a2a35' }}>
                         <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', color: '#ff2d55' }}>📝 원장님의 안무 노트</h3>

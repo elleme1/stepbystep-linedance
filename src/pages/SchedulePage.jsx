@@ -94,7 +94,7 @@ export default function SchedulePage() {
             <div className="schedule-header">
                 <h1 className="schedule-title">📅 수업 일정</h1>
                 <p className="schedule-subtitle">
-                    구양희 선생님의 {locationInfo ? `${locationInfo.emoji} ${locationInfo.name}` : ''} 수업 시간표
+                    구향회 선생님의 {locationInfo ? `${locationInfo.emoji} ${locationInfo.name}` : ''} 수업 시간표
                 </p>
 
                 {/* 📍 장소 뱃지 */}

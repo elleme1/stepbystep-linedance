@@ -884,13 +884,13 @@ const rawSongs = [
 
 // ============================================================
 // 📅 곡별 등록일 & 수업장소 매핑
-// location: 'kororong' = 코오롱 스포렉스, 'sindun' = 신둔면, 'both' = 양쪽 모두
+// location: 'kolon' = 코오롱 스포렉스, 'sindun' = 신둔면, 'both' = 양쪽 모두
 // 각 장소별로 가장 최근 날짜의 곡이 자동으로 "이번주 수업곡"이 됩니다.
 // ============================================================
 const songSchedule = {
-  42: { date: '2026-03-19', location: 'kororong' },  // No.9 (코오롱 센터)
+  42: { date: '2026-03-19', location: 'kolon' },  // No.9 (코오롱 센터)
   41: { date: '2026-03-12', location: 'both' },       // Wild West & Wicked
-  10: { date: '2026-03-10', location: 'kororong' },   // Everyone Needs a Hero
+  10: { date: '2026-03-10', location: 'kolon' },   // Everyone Needs a Hero
   1: { date: '2026-03-19', location: 'sindun' },      // Why (신둔면 이번주 곡)
   2: { date: '2026-02-24', location: 'both' },        // 정말 잘해왔어
   3: { date: '2026-02-17', location: 'both' },        // This Is My Life
@@ -941,7 +941,7 @@ function getLatestDateForLocation(loc) {
 }
 
 const latestByLocation = {
-  kororong: getLatestDateForLocation('kororong'),
+  kolon: getLatestDateForLocation('kolon'),
   sindun: getLatestDateForLocation('sindun'),
 };
 
@@ -952,20 +952,20 @@ const processedSongs = rawSongs.map(s => {
     addedDate: schedule.date,
     location: schedule.location,
     // 장소별 isThisWeek 플래그
-    isThisWeekKororong: (schedule.location === 'kororong' || schedule.location === 'both')
-      && schedule.date === latestByLocation.kororong,
+    isThisWeekKolon: (schedule.location === 'kolon' || schedule.location === 'both')
+      && schedule.date === latestByLocation.kolon,
     isThisWeekSindun: (schedule.location === 'sindun' || schedule.location === 'both')
       && schedule.date === latestByLocation.sindun,
     // 하위 호환: 전체 기준 최신
-    isThisWeek: schedule.date === Math.max(latestByLocation.kororong, latestByLocation.sindun)
+    isThisWeek: schedule.date === Math.max(latestByLocation.kolon, latestByLocation.sindun)
       ? true : false,
   };
 });
 
 // 유틸 함수: 장소별 이번주 곡 가져오기
 export function getThisWeekSong(locationId) {
-  if (locationId === 'kororong') {
-    return processedSongs.find(s => s.isThisWeekKororong) || processedSongs[0];
+  if (locationId === 'kolon') {
+    return processedSongs.find(s => s.isThisWeekKolon) || processedSongs[0];
   }
   if (locationId === 'sindun') {
     return processedSongs.find(s => s.isThisWeekSindun) || processedSongs[0];

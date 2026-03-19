@@ -8,7 +8,7 @@ export default function SchedulePage() {
 
     // 📍 장소별 수업 일정 데이터
     const allScheduleData = {
-        kororong: [
+        kolon: [
             {
                 id: 1,
                 date: '이번 주 화요일',
@@ -78,7 +78,7 @@ export default function SchedulePage() {
         ]
     };
 
-    const scheduleData = allScheduleData[selectedLocation] || allScheduleData.kororong;
+    const scheduleData = allScheduleData[selectedLocation] || allScheduleData.kolon;
 
     const getMapLink = (loc) => {
         if (loc.includes('코오롱')) {

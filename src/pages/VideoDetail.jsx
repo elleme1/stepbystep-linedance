@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import songs from '../data/songs';
+import songs, { getSongsForLocation } from '../data/songs';
+import { useLocation } from '../context/LocationContext';
 
 export default function VideoDetail() {
     const { id } = useParams();
@@ -57,10 +58,15 @@ export default function VideoDetail() {
         setAbLoopActive(false);
     }, [id]);
 
-    const currentIndex = songs.findIndex(song => String(song.id) === String(id));
-    const videoData = currentIndex !== -1 ? songs[currentIndex] : songs[0];
-    const prevSong = currentIndex > 0 ? songs[currentIndex - 1] : null;
-    const nextSong = currentIndex < songs.length - 1 ? songs[currentIndex + 1] : null;
+    const { selectedLocation } = useLocation();
+
+    // 📍 장소별 곡 목록 — 이전/다음 네비게이션은 이 배열 기준
+    const locationSongs = useMemo(() => getSongsForLocation(selectedLocation), [selectedLocation]);
+
+    const currentIndex = locationSongs.findIndex(song => String(song.id) === String(id));
+    const videoData = currentIndex !== -1 ? locationSongs[currentIndex] : (locationSongs[0] || songs[0]);
+    const prevSong = currentIndex > 0 ? locationSongs[currentIndex - 1] : null;
+    const nextSong = currentIndex < locationSongs.length - 1 ? locationSongs[currentIndex + 1] : null;
 
     const extractVideoId = (url) => {
         if (!url) return '';

@@ -37,7 +37,7 @@ export default function VideoPage() {
 
     // isThisWeek를 장소별로 판단
     const isThisWeekForLocation = (song) => {
-        if (selectedLocation === 'kororong') return song.isThisWeekKororong;
+        if (selectedLocation === 'kolon') return song.isThisWeekKolon;
         if (selectedLocation === 'sindun') return song.isThisWeekSindun;
         return song.isThisWeek;
     };

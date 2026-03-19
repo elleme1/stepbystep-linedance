@@ -16,7 +16,7 @@ export default function Layout() {
 
     // 📍 장소 전환 함수 (코오롱 ↔ 신둔면 토글)
     const toggleLocation = () => {
-        const next = selectedLocation === 'kororong' ? 'sindun' : 'kororong';
+        const next = selectedLocation === 'kolon' ? 'sindun' : 'kolon';
         setSelectedLocation(next);
         // localStorage에 즉시 저장 후 리로드하여 모든 데이터 확실히 반영
         try { localStorage.setItem('stepbystep-location', next); } catch {}
@@ -89,7 +89,7 @@ export default function Layout() {
                             title="장소 전환"
                         >
                             <span style={{ fontSize: '14px' }}>{locationInfo?.emoji || '📍'}</span>
-                            <span>{locationInfo ? (locationInfo.id === 'kororong' ? '코오롱' : '신둔면') : ''}</span>
+                            <span>{locationInfo ? (locationInfo.id === 'kolon' ? '코오롱' : '신둔면') : ''}</span>
                             <span style={{ fontSize: '10px', opacity: 0.6 }}>⇄</span>
                         </button>
                     )}

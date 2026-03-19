@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // 수업 장소 정의
 export const LOCATIONS = [
-  { id: 'kororong', name: '코오롱 센터', emoji: '🏢', color: '#8B5CF6', desc: '코오롱스포렉스 수업' },
+  { id: 'kolon', name: '코오롱 센터', emoji: '🏢', color: '#8B5CF6', desc: '코오롱스포렉스 수업' },
   { id: 'sindun', name: '신둔면', emoji: '🏡', color: '#D4A853', desc: '신둔면 주민자치센터 수업' },
 ];
 

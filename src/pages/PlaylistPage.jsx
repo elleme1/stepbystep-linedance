@@ -40,7 +40,7 @@ export default function PlaylistPage() {
 
     // 📍 장소별 곡 필터링 + isThisWeek 장소별 판단
     const isThisWeekForLocation = (song) => {
-        if (selectedLocation === 'kororong') return song.isThisWeekKororong;
+        if (selectedLocation === 'kolon') return song.isThisWeekKolon;
         if (selectedLocation === 'sindun') return song.isThisWeekSindun;
         return song.isThisWeek;
     };

@@ -51,8 +51,8 @@
     transform: translateY(-4px) scale(1.15);
 }
 
-/* 📱 가로 모드 → BottomNav 완전 숨김 */
-@media (orientation: landscape) {
+/* 📱 모바일 가로 모드에서만 BottomNav 숨김 (데스크톱에서는 항상 표시) */
+@media (orientation: landscape) and (max-height: 500px) {
     .bottom-nav {
         display: none !important;
     }

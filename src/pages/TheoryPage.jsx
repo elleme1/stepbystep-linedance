@@ -147,13 +147,77 @@ export default function TheoryPage() {
   const [pointA, setPointA] = useState(null);
   const [pointB, setPointB] = useState(null);
   const [abLoopActive, setAbLoopActive] = useState(false);
-  const playerRef = useRef(null);
-  const playerContainerRef = useRef(null);
-  const abIntervalRef = useRef(null);
-  const mountedRef = useRef(true);
-  const loadedVideoIdRef = useRef(null);
 
-  // YouTube IFrame API 로드
+  // 🎮 플레이어 관리 — 독립 인스턴스
+  const playerRef = useRef(null);           // 현재 활성 YT.Player 인스턴스
+  const playerNodeRef = useRef(null);       // 현재 플레이어가 붙은 DOM 노드
+  const abIntervalRef = useRef(null);       // A-B 루프 타이머 ID
+  const mountedRef = useRef(true);          // 컴포넌트 마운트 상태
+  const initTimerRef = useRef(null);        // 플레이어 생성 딜레이 타이머
+
+  // ====================================
+  // 🔧 플레이어 생명주기 유틸
+  // ====================================
+  /** 기존 플레이어 + 좀비 타이머 100% 제거 */
+  const destroyPlayer = useCallback(() => {
+    // 1) A-B 루프 인터벌 제거
+    if (abIntervalRef.current) {
+      clearInterval(abIntervalRef.current);
+      abIntervalRef.current = null;
+    }
+    // 2) 생성 대기 타이머 제거
+    if (initTimerRef.current) {
+      clearTimeout(initTimerRef.current);
+      initTimerRef.current = null;
+    }
+    // 3) YT.Player 인스턴스 파괴
+    if (playerRef.current) {
+      try { playerRef.current.destroy(); } catch(e){}
+      playerRef.current = null;
+    }
+    playerNodeRef.current = null;
+  }, []);
+
+  /** 지정된 DOM 노드에 새 YT.Player 생성 */
+  const createPlayerOnNode = useCallback((node, videoId) => {
+    if (!mountedRef.current || !window.YT?.Player || !node) return;
+    destroyPlayer();
+    playerNodeRef.current = node;
+    playerRef.current = new window.YT.Player(node, {
+      videoId,
+      playerVars: {
+        rel: 0,
+        modestbranding: 1,
+        playsinline: 1,       // ✅ 아이폰 인라인 재생 강제
+        autoplay: 1,
+        cc_load_policy: 3,
+        fs: 1,                // 전체화면 버튼 허용
+      },
+      events: {
+        onReady: (event) => {
+          // ✅ iframe에 playsinline 속성 이중 보장 (iOS Safari 방어)
+          try {
+            const iframe = event.target.getIframe();
+            if (iframe) {
+              iframe.setAttribute('playsinline', '1');
+              iframe.setAttribute('webkit-playsinline', '1');
+              // ✅ 반응형 CSS 강제 — API가 만든 iframe이 컨테이너를 100% 채우도록
+              iframe.style.position = 'absolute';
+              iframe.style.top = '0';
+              iframe.style.left = '0';
+              iframe.style.width = '100%';
+              iframe.style.height = '100%';
+              iframe.style.border = 'none';
+            }
+          } catch(e){}
+        }
+      }
+    });
+  }, [destroyPlayer]);
+
+  // ====================================
+  // 📡 YouTube IFrame API 로드 (최초 1회)
+  // ====================================
   useEffect(() => {
     mountedRef.current = true;
     if (!window.YT) {
@@ -164,70 +228,75 @@ export default function TheoryPage() {
     }
     return () => {
       mountedRef.current = false;
-      clearInterval(abIntervalRef.current);
-      try { if (playerRef.current?.destroy) playerRef.current.destroy(); } catch(e){}
-      playerRef.current = null;
+      destroyPlayer();   // ✅ 컴포넌트 언마운트 시 플레이어 + 모든 타이머 제거
     };
-  }, []);
+  }, [destroyPlayer]);
 
-  // activeVideo 변경 시 플레이어 생성/갱신
-  useEffect(() => {
-    clearInterval(abIntervalRef.current);
+  // ====================================
+  // 🎬 activeVideo 변경 → 플레이어 (재)생성
+  // ====================================
+  /** callback ref — 글로벌/인라인 어느 쪽이든 렌더된 DOM 노드에 바인딩 */
+  const playerDivCallback = useCallback((node) => {
+    // A-B 루프 상태 초기화
     setPointA(null); setPointB(null); setAbLoopActive(false);
 
-    if (!activeVideo) {
-      try { if (playerRef.current?.destroy) playerRef.current.destroy(); } catch(e){}
-      playerRef.current = null;
-      loadedVideoIdRef.current = null;
+    if (!node || !activeVideo) {
+      destroyPlayer();
       return;
     }
 
-    const createPlayer = () => {
-      if (!mountedRef.current || !window.YT?.Player || !playerContainerRef.current) return;
-      try { if (playerRef.current?.destroy) playerRef.current.destroy(); } catch(e){}
-      loadedVideoIdRef.current = activeVideo.videoId;
-      playerRef.current = new window.YT.Player(playerContainerRef.current, {
-        videoId: activeVideo.videoId,
-        playerVars: { rel: 0, modestbranding: 1, playsinline: 1, autoplay: 1, cc_load_policy: 3 },
-        events: { onReady: () => {} }
-      });
-    };
-
-    // 약간의 딜레이를 줘서 DOM ref가 준비되도록
-    const timer = setTimeout(() => {
+    // DOM 노드가 준비되면 플레이어 생성
+    initTimerRef.current = setTimeout(() => {
       if (window.YT?.Player) {
-        createPlayer();
+        createPlayerOnNode(node, activeVideo.videoId);
       } else {
-        // API 아직 로드 안됨 — onReady 콜백으로
+        // API 아직 로드 안됨 — 콜백 등록
         const prev = window.onYouTubeIframeAPIReady;
         window.onYouTubeIframeAPIReady = () => {
           if (prev) prev();
-          createPlayer();
+          if (mountedRef.current) createPlayerOnNode(node, activeVideo.videoId);
         };
       }
-    }, 100);
+    }, 80);
+  }, [activeVideo, createPlayerOnNode, destroyPlayer]);
 
-    return () => clearTimeout(timer);
-  }, [activeVideo?.videoId, activeVideo?.cardN]);
-
-  // A-B 루프 인터벌
+  // activeVideo가 null로 바뀌면 (영상 닫기) 플레이어 정리
   useEffect(() => {
-    clearInterval(abIntervalRef.current);
+    if (!activeVideo) destroyPlayer();
+  }, [activeVideo, destroyPlayer]);
+
+  // ====================================
+  // 🔁 A-B 루프 인터벌 (독립 관리)
+  // ====================================
+  useEffect(() => {
+    // 기존 인터벌 확실히 제거
+    if (abIntervalRef.current) {
+      clearInterval(abIntervalRef.current);
+      abIntervalRef.current = null;
+    }
     if (abLoopActive && pointA !== null && pointB !== null) {
       abIntervalRef.current = setInterval(() => {
         try {
-          const t = playerRef.current?.getCurrentTime() || 0;
+          const t = playerRef.current?.getCurrentTime?.() || 0;
           if (t >= pointB || t < pointA) {
-            playerRef.current?.seekTo(pointA, true);
+            playerRef.current?.seekTo?.(pointA, true);
           }
         } catch(e){}
       }, 300);
     }
-    return () => clearInterval(abIntervalRef.current);
+    return () => {
+      if (abIntervalRef.current) {
+        clearInterval(abIntervalRef.current);
+        abIntervalRef.current = null;
+      }
+    };
   }, [abLoopActive, pointA, pointB]);
 
+  // ====================================
+  // 🛠 A-B 유틸 함수들
+  // ====================================
   const getCurrentTime = () => {
-    try { return playerRef.current?.getCurrentTime() || 0; } catch(e) { return 0; }
+    try { return playerRef.current?.getCurrentTime?.() || 0; } catch(e) { return 0; }
   };
   const formatTime = (sec) => {
     if (sec == null) return '--:--';
@@ -249,7 +318,10 @@ export default function TheoryPage() {
   };
   const handleClearAB = () => {
     setPointA(null); setPointB(null); setAbLoopActive(false);
-    clearInterval(abIntervalRef.current);
+    if (abIntervalRef.current) {
+      clearInterval(abIntervalRef.current);
+      abIntervalRef.current = null;
+    }
   };
 
   const toggleCard = (n) => {
@@ -339,7 +411,7 @@ export default function TheoryPage() {
         .jive-vbtn.secondary { background: rgba(99,102,241,.12); color: #a5b4fc; }
         .jive-vbtn.tertiary { background: rgba(16,185,129,.1); color: #6ee7b7; }
         .jive-video-embed { margin-top: 10px; border-radius: 12px; overflow: hidden; position: relative; z-index: 0; isolation: isolate; width: 100%; padding-bottom: 56.25%; background: #000; }
-        .jive-video-embed iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; z-index: 0; }
+        .jive-video-embed iframe { position: absolute !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important; border: none !important; z-index: 0; }
         .jive-video-close-inline { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 8px; padding: 10px 0; background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.25); border-radius: 10px; color: #f87171; font-size: .85rem; font-weight: 700; cursor: pointer; width: 100%; -webkit-tap-highlight-color: transparent; }
         .jive-video-close-inline:active { background: rgba(239,68,68,.25); transform: scale(.97); }
         /* 🔁 A-B 반복구간 컨트롤 */
@@ -388,7 +460,7 @@ export default function TheoryPage() {
         <div style={{marginBottom:24}}>
           <div className="jive-video-embed">
             {abLoopActive && <div className="jive-ab-badge">🔁 {formatTime(pointA)} → {formatTime(pointB)}</div>}
-            <div ref={playerContainerRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} />
+            <div key={`global-${activeVideo.videoId}`} ref={playerDivCallback} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} />
           </div>
           <div className="jive-ab-panel">
             <div className="jive-ab-row">
@@ -463,7 +535,7 @@ export default function TheoryPage() {
                       <div style={{position:'relative', zIndex: 0}}>
                         <div className="jive-video-embed" onClick={(e) => e.stopPropagation()}>
                           {abLoopActive && <div className="jive-ab-badge">🔁 {formatTime(pointA)} → {formatTime(pointB)}</div>}
-                          <div ref={playerContainerRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} />
+                          <div key={`card-${x.n}-${activeVideo.videoId}`} ref={playerDivCallback} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} />
                         </div>
                         <div className="jive-ab-panel" onClick={(e) => e.stopPropagation()}>
                           <div className="jive-ab-row">

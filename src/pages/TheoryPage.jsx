@@ -269,7 +269,7 @@ export default function TheoryPage() {
   }, []);
 
   // ====================================
-  // 🔁 A-B 루프 인터벌 — seekTo(false) + 중복 seek 방지
+  // 🔁 A-B 루프 인터벌 — seekTo(true) + 중복 seek 방지
   // ====================================
   useEffect(() => {
     if (abIntervalRef.current) {
@@ -281,10 +281,9 @@ export default function TheoryPage() {
         try {
           const t = activePlayerRef.current?.getCurrentTime?.() || 0;
           const now = Date.now();
-          // B 지점을 넘었을 때만 seek (중복 seek 방지: 최소 500ms 간격)
           if (t >= pointB && now - lastSeekTimeRef.current > 500) {
             lastSeekTimeRef.current = now;
-            activePlayerRef.current?.seekTo?.(pointA, false);
+            activePlayerRef.current?.seekTo?.(pointA, true);
           }
         } catch(e){}
       }, 250);
@@ -467,17 +466,17 @@ export default function TheoryPage() {
           <div style={{ position: 'relative' }}>
             {abLoopActive && <div className="jive-ab-badge">🔁 {formatTime(pointA)} → {formatTime(pointB)}</div>}
             <JiveYouTubePlayer videoId={activeVideo.videoId} onPlayerReady={handlePlayerReady} />
-          </div>
-          <div className="jive-ab-panel">
-            <div className="jive-ab-row">
-              <button className="jive-ab-btn a-btn" onClick={handleSetA}>A 지점 {pointA !== null ? `(${formatTime(pointA)})` : '설정'}</button>
-              <span style={{color:'#555',fontSize:'16px'}}>→</span>
-              <button className="jive-ab-btn b-btn" onClick={handleSetB}>B 지점 {pointB !== null ? `(${formatTime(pointB)})` : '설정'}</button>
-              {abLoopActive && <button className="jive-ab-btn clear-btn" onClick={handleClearAB}>✕ 해제</button>}
+            {/* 🔁 A-B 구간 + 닫기 — 영상 하단 오버레이 */}
+            <div style={{ position:'absolute', bottom:0, left:0, right:0, background:'linear-gradient(transparent, rgba(0,0,0,0.85))', padding:'24px 10px 8px', borderRadius:'0 0 12px 12px', zIndex:5 }}>
+              <div style={{ display:'flex', gap:'6px', alignItems:'center', justifyContent:'center', flexWrap:'wrap' }}>
+                <button className="jive-ab-btn a-btn" onClick={handleSetA}>A {pointA !== null ? formatTime(pointA) : '설정'}</button>
+                <span style={{color:'#888',fontSize:'14px'}}>→</span>
+                <button className="jive-ab-btn b-btn" onClick={handleSetB}>B {pointB !== null ? formatTime(pointB) : '설정'}</button>
+                {abLoopActive && <button className="jive-ab-btn clear-btn" onClick={handleClearAB}>✕</button>}
+                <button className="jive-ab-btn clear-btn" onClick={()=>setActiveVideo(null)} style={{marginLeft:'auto'}}>✕ 닫기</button>
+              </div>
             </div>
-            <div className="jive-ab-hint">{!pointA ? '▶ 영상 재생 후 A 지점을 설정하세요' : !pointB ? '▶ B 지점을 설정하면 자동 반복됩니다' : '🔁 A→B 구간 반복 중'}</div>
           </div>
-          <button className="jive-video-close-inline" onClick={()=>setActiveVideo(null)}>✕ 영상 닫기</button>
         </div>
       )}
 
@@ -538,21 +537,21 @@ export default function TheoryPage() {
 
                     {/* 인라인 영상 플레이어 */}
                     {showingVideo && (
-                      <div style={{position:'relative', zIndex: 0}}>
-                        <div onClick={(e) => e.stopPropagation()} style={{ position: 'relative' }}>
+                      <div style={{position:'relative', zIndex: 0}} onClick={(e) => e.stopPropagation()}>
+                        <div style={{ position: 'relative' }}>
                           {abLoopActive && <div className="jive-ab-badge">🔁 {formatTime(pointA)} → {formatTime(pointB)}</div>}
                           <JiveYouTubePlayer videoId={activeVideo.videoId} onPlayerReady={handlePlayerReady} />
-                        </div>
-                        <div className="jive-ab-panel" onClick={(e) => e.stopPropagation()}>
-                          <div className="jive-ab-row">
-                            <button className="jive-ab-btn a-btn" onClick={handleSetA}>A 지점 {pointA !== null ? `(${formatTime(pointA)})` : '설정'}</button>
-                            <span style={{color:'#555',fontSize:'16px'}}>→</span>
-                            <button className="jive-ab-btn b-btn" onClick={handleSetB}>B 지점 {pointB !== null ? `(${formatTime(pointB)})` : '설정'}</button>
-                            {abLoopActive && <button className="jive-ab-btn clear-btn" onClick={handleClearAB}>✕ 해제</button>}
+                          {/* 🔁 A-B 구간 + 닫기 — 영상 하단 오버레이 */}
+                          <div style={{ position:'absolute', bottom:0, left:0, right:0, background:'linear-gradient(transparent, rgba(0,0,0,0.85))', padding:'24px 10px 8px', borderRadius:'0 0 12px 12px', zIndex:5 }}>
+                            <div style={{ display:'flex', gap:'6px', alignItems:'center', justifyContent:'center', flexWrap:'wrap' }}>
+                              <button className="jive-ab-btn a-btn" onClick={handleSetA}>A {pointA !== null ? formatTime(pointA) : '설정'}</button>
+                              <span style={{color:'#888',fontSize:'14px'}}>→</span>
+                              <button className="jive-ab-btn b-btn" onClick={handleSetB}>B {pointB !== null ? formatTime(pointB) : '설정'}</button>
+                              {abLoopActive && <button className="jive-ab-btn clear-btn" onClick={handleClearAB}>✕</button>}
+                              <button className="jive-ab-btn clear-btn" onClick={(e) => { e.stopPropagation(); setActiveVideo(null); }} style={{marginLeft:'auto'}}>✕ 닫기</button>
+                            </div>
                           </div>
-                          <div className="jive-ab-hint">{!pointA ? '▶ 영상 재생 후 A 지점을 설정하세요' : !pointB ? '▶ B 지점을 설정하면 자동 반복됩니다' : '🔁 A→B 구간 반복 중'}</div>
                         </div>
-                        <button className="jive-video-close-inline" onClick={(e) => { e.stopPropagation(); setActiveVideo(null); }}>✕ 영상 닫기</button>
                       </div>
                     )}
                   </div>

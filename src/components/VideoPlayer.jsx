@@ -30,6 +30,16 @@ export default function VideoPlayer({ youtubeId }) {
                     events: {
                         onReady: (event) => {
                             event.target.setPlaybackRate(speed);
+                            // 📺 iframe에 allowfullscreen 속성 추가 → YouTube 내장 전체화면 버튼 활성화
+                            try {
+                                const iframe = iframeRef.current?.querySelector?.('iframe') || document.querySelector('.video-player-wrapper iframe');
+                                if (iframe) {
+                                    iframe.setAttribute('allowfullscreen', 'true');
+                                    iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen');
+                                    iframe.setAttribute('webkitallowfullscreen', 'true');
+                                    iframe.setAttribute('mozallowfullscreen', 'true');
+                                }
+                            } catch (e) {}
                         }
                     }
                 });

@@ -50,3 +50,10 @@
     filter: grayscale(0%) opacity(1);
     transform: translateY(-4px) scale(1.15);
 }
+
+/* 📱 가로 모드 → BottomNav 완전 숨김 */
+@media (orientation: landscape) {
+    .bottom-nav {
+        display: none !important;
+    }
+}

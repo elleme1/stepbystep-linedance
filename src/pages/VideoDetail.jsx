@@ -333,53 +333,25 @@ export default function VideoDetail() {
         cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '4px',
     });
 
-    // 📺 Fullscreen API를 사용한 진짜 전체화면 전환
+    // 📺 시네마 모드 (CSS 기반 전체화면)
     const playerContainerFullRef = useRef(null);
 
-    const enterFullscreen = useCallback(() => {
-        const container = playerContainerFullRef.current || document.querySelector('#yt-player-container');
-        if (!container) { setIsCinema(true); return; }
-
-        // 1순위: 브라우저 Fullscreen API (안드로이드 Chrome, 데스크톱 등)
-        const rfs = container.requestFullscreen
-            || container.webkitRequestFullscreen
-            || container.mozRequestFullScreen
-            || container.msRequestFullscreen;
-        if (rfs) {
-            rfs.call(container).then(() => {
-                setIsCinema(true);
-            }).catch(() => {
-                // Fullscreen API 실패 시 CSS 폴백
-                setIsCinema(true);
-            });
-        } else {
-            // Fullscreen API 미지원 (iOS Safari PWA 등) → CSS position:fixed 폴백
-            setIsCinema(true);
-        }
+    const enterCinema = useCallback(() => {
+        setIsCinema(true);
+        // YouTube iframe 강제 리사이즈 — 시네마 전환 시 검은 화면 방지
+        setTimeout(() => {
+            try {
+                const iframe = document.querySelector('#yt-player-container iframe');
+                if (iframe) {
+                    iframe.style.width = '100%';
+                    iframe.style.height = '100%';
+                }
+            } catch (e) {}
+        }, 100);
     }, []);
 
-    const exitFullscreen = useCallback(() => {
+    const exitCinema = useCallback(() => {
         setIsCinema(false);
-        try {
-            if (document.fullscreenElement || document.webkitFullscreenElement) {
-                (document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen).call(document);
-            }
-        } catch (e) {}
-    }, []);
-
-    // Fullscreen 종료 이벤트 리스너 (ESC 키, 뒤로가기 등)
-    useEffect(() => {
-        const handleFsChange = () => {
-            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-                setIsCinema(false);
-            }
-        };
-        document.addEventListener('fullscreenchange', handleFsChange);
-        document.addEventListener('webkitfullscreenchange', handleFsChange);
-        return () => {
-            document.removeEventListener('fullscreenchange', handleFsChange);
-            document.removeEventListener('webkitfullscreenchange', handleFsChange);
-        };
     }, []);
 
     // 가로 모드이거나 수동 시네마 → 전체화면
@@ -443,7 +415,7 @@ export default function VideoDetail() {
                 )}
 
                 {isFullscreen && (
-                    <button onClick={exitFullscreen} style={{
+                    <button onClick={exitCinema} style={{
                         position: 'absolute', top: 'max(20px, env(safe-area-inset-top))', right: '20px',
                         background: 'rgba(255,45,85,0.8)', border: 'none', color: '#fff', padding: '10px 16px',
                         borderRadius: '20px', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer', zIndex: 10000,
@@ -617,7 +589,7 @@ export default function VideoDetail() {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', background: '#1c1c26', padding: '8px', borderRadius: '16px', border: '1px solid #2a2a35' }}>
                         <button onClick={() => prevSong && navigate(`/video/${prevSong.id}`)} disabled={!prevSong} style={{ flex: 1, padding: '12px 0', background: 'transparent', border: 'none', color: prevSong ? '#fff' : '#444', fontSize: '14px', fontWeight: 'bold', cursor: prevSong ? 'pointer' : 'default' }}>⏮ 이전 곡</button>
                         <div style={{ width: '1px', height: '24px', backgroundColor: '#3a3a45' }} />
-                        <button onClick={enterFullscreen} style={{ flex: 1.2, padding: '12px 0', background: 'transparent', border: 'none', color: '#ff2d55', fontSize: '15px', fontWeight: 'bold', cursor: 'pointer' }}>🎬 전체 화면</button>
+                        <button onClick={enterCinema} style={{ flex: 1.2, padding: '12px 0', background: 'transparent', border: 'none', color: '#ff2d55', fontSize: '15px', fontWeight: 'bold', cursor: 'pointer' }}>🎬 전체 화면</button>
                         <div style={{ width: '1px', height: '24px', backgroundColor: '#3a3a45' }} />
                         <button onClick={() => nextSong && navigate(`/video/${nextSong.id}`)} disabled={!nextSong} style={{ flex: 1, padding: '12px 0', background: 'transparent', border: 'none', color: nextSong ? '#fff' : '#444', fontSize: '14px', fontWeight: 'bold', cursor: nextSong ? 'pointer' : 'default' }}>다음 곡 ⏭</button>
                     </div>

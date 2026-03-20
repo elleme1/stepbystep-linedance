@@ -14,14 +14,26 @@ export default function VideoDetail() {
     const [playerReady, setPlayerReady] = useState(false);
     const [isMirror, setIsMirror] = useState(false);
 
-    // 📱 가로 모드 자동 감지 → 전체화면 자동 전환
+    // 📱 모바일 판별 (데스크톱에서는 시네마/가로 자동 전환 비활성화)
+    const isMobile = useMemo(() => 
+        /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+        || ('ontouchstart' in window && window.innerWidth < 1024)
+    , []);
+
+    // 📱 모바일에서만 가로 모드 감지 (데스크톱은 항상 false)
     useEffect(() => {
-        const mql = window.matchMedia('(orientation: landscape)');
-        const handleChange = (e) => setIsLandscape(e.matches);
-        setIsLandscape(mql.matches);
-        mql.addEventListener('change', handleChange);
-        return () => mql.removeEventListener('change', handleChange);
-    }, []);
+        if (!isMobile) { setIsLandscape(false); return; }
+        const checkOrientation = () => {
+            setIsLandscape(window.innerWidth > window.innerHeight);
+        };
+        checkOrientation();
+        window.addEventListener('resize', checkOrientation);
+        window.addEventListener('orientationchange', () => setTimeout(checkOrientation, 100));
+        return () => {
+            window.removeEventListener('resize', checkOrientation);
+            window.removeEventListener('orientationchange', checkOrientation);
+        };
+    }, [isMobile]);
 
     // 🎬 HD 강제
     const [quality, setQuality] = useState('hd720');
@@ -356,8 +368,14 @@ export default function VideoDetail() {
         setIsCinema(false);
     }, []);
 
-    // 가로 모드이거나 수동 시네마 → 전체화면
-    const isFullscreen = isCinema || isLandscape;
+    // 모바일 가로 → 자동 시네마 / 세로 → 자동 해제
+    useEffect(() => {
+        if (isMobile && isLandscape) setIsCinema(true);
+        if (isMobile && !isLandscape) setIsCinema(false);
+    }, [isMobile, isLandscape]);
+
+    // 모바일 가로/수동 시네마 → 전체화면 (데스크톱은 항상 false)
+    const isFullscreen = isMobile && (isCinema || isLandscape);
 
     return (
         <div ref={playerContainerFullRef} style={isFullscreen
@@ -365,10 +383,13 @@ export default function VideoDetail() {
             : { backgroundColor: '#0a0a0f', minHeight: '100vh', display: 'flex', flexDirection: 'column', color: '#fff' }
         }>
 
-            {/* 📺 영상 플레이어 — 자동으로 화면 대부분 차지 */}
-            <div id="yt-player-container" style={{
-                flex: isFullscreen ? 1 : 'none', width: '100%', position: 'relative', backgroundColor: '#000',
-                ...(isFullscreen ? {} : { height: 'calc(100dvh - 140px)', minHeight: '300px' })
+            {/* 📺 영상 플레이어 */}
+            <div id="yt-player-container" style={isFullscreen ? {
+                flex: 1, width: '100%', position: 'relative', backgroundColor: '#000',
+            } : {
+                width: '100%', position: 'relative', backgroundColor: '#000',
+                aspectRatio: '16/9', maxHeight: isMobile ? 'calc(100dvh - 140px)' : '70vh',
+                minHeight: '250px', borderRadius: isMobile ? 0 : '12px', overflow: 'hidden',
             }}>
                 {/* 돌아가기 버튼 — 항상 표시 (가로 시네마에서도 탈출 경로) */}
                 <button onClick={() => navigate(-1)} style={{
@@ -425,8 +446,8 @@ export default function VideoDetail() {
                         borderRadius: '20px', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer', zIndex: 9998,
                     }}>✕ 화면 작게</button>
                 )}
-                {/* 📱 세로 모드에서만 가로 전환 안내 */}
-                {!isFullscreen && !isLandscape && (
+                {/* 📱 모바일 세로에서만 가로 전환 안내 */}
+                {isMobile && !isFullscreen && !isLandscape && (
                     <div style={{
                         position: 'absolute', bottom: '12px', left: '50%', transform: 'translateX(-50%)',
                         background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', borderRadius: '20px',

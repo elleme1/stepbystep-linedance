@@ -116,6 +116,8 @@ export default function VideoDetail() {
         }
         loadedVideoId.current = currentVideoId;
         playerRef.current = new window.YT.Player(containerRef.current, {
+            width: '100%',
+            height: '100%',
             videoId: currentVideoId,
             playerVars: { rel: 0, modestbranding: 1, playsinline: 1, autoplay: 0, cc_load_policy: 3 },
             events: {

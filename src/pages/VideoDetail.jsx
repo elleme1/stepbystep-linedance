@@ -364,18 +364,24 @@ export default function VideoDetail() {
         }, 100);
     }, []);
 
+    const manualExitRef = useRef(false);
+
     const exitCinema = useCallback(() => {
         setIsCinema(false);
+        manualExitRef.current = true; // 수동 종료 → 가로여도 자동 재진입 방지
     }, []);
 
-    // 모바일 가로 → 자동 시네마 / 세로 → 자동 해제
+    // 모바일 가로 → 자동 시네마 (수동 종료 시 무시) / 세로 → 자동 해제 + 플래그 리셋
     useEffect(() => {
-        if (isMobile && isLandscape) setIsCinema(true);
-        if (isMobile && !isLandscape) setIsCinema(false);
+        if (isMobile && isLandscape && !manualExitRef.current) setIsCinema(true);
+        if (isMobile && !isLandscape) {
+            setIsCinema(false);
+            manualExitRef.current = false; // 세로 복귀 시 리셋 → 다음 가로에서 자동 진입
+        }
     }, [isMobile, isLandscape]);
 
-    // 모바일 가로/수동 시네마 → 전체화면 (데스크톱은 항상 false)
-    const isFullscreen = isMobile && (isCinema || isLandscape);
+    // 모바일 시네마 → 전체화면 (데스크톱은 항상 false)
+    const isFullscreen = isMobile && isCinema;
 
     return (
         <div ref={playerContainerFullRef} style={isFullscreen

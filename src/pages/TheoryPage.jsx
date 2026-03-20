@@ -405,19 +405,20 @@ export default function TheoryPage() {
         .jive-memo { margin-top: 6px; padding: 6px 12px; background: rgba(99,102,241,.08); border-radius: 8px; font-size: .78rem; color: #a5b4fc; }
         .jive-memo::before { content: '📝 '; }
         .jive-video-btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
-        .jive-vbtn { display: inline-flex; align-items: center; gap: 4px; padding: 7px 12px; border-radius: 10px; font-size: .78rem; font-weight: 600; cursor: pointer; transition: all .3s; border: none; }
+        .jive-vbtn { display: inline-flex; align-items: center; gap: 4px; padding: 7px 12px; border-radius: 10px; font-size: .78rem; font-weight: 600; cursor: pointer; transition: all .3s; border: none; touch-action: manipulation; }
         .jive-vbtn:active { transform: scale(.95); }
         .jive-vbtn.primary { background: rgba(239,68,68,.15); color: #f87171; }
         .jive-vbtn.secondary { background: rgba(99,102,241,.12); color: #a5b4fc; }
         .jive-vbtn.tertiary { background: rgba(16,185,129,.1); color: #6ee7b7; }
-        .jive-video-embed { margin-top: 10px; border-radius: 12px; overflow: hidden; position: relative; z-index: 0; isolation: isolate; width: 100%; padding-bottom: 56.25%; background: #000; }
+        .jive-video-embed { margin-top: 10px; border-radius: 12px; overflow: hidden; position: relative; z-index: 0; isolation: isolate; width: 100%; aspect-ratio: 16/9; padding-bottom: 56.25%; background: #000; }
+        @supports (aspect-ratio: 16/9) { .jive-video-embed { padding-bottom: unset; } }
         .jive-video-embed iframe { position: absolute !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important; border: none !important; z-index: 0; }
-        .jive-video-close-inline { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 8px; padding: 10px 0; background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.25); border-radius: 10px; color: #f87171; font-size: .85rem; font-weight: 700; cursor: pointer; width: 100%; -webkit-tap-highlight-color: transparent; }
+        .jive-video-close-inline { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 8px; padding: 10px 0; background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.25); border-radius: 10px; color: #f87171; font-size: .85rem; font-weight: 700; cursor: pointer; width: 100%; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
         .jive-video-close-inline:active { background: rgba(239,68,68,.25); transform: scale(.97); }
         /* 🔁 A-B 반복구간 컨트롤 */
         .jive-ab-panel { margin-top: 8px; padding: 12px; background: linear-gradient(135deg, #1a1a2e, #16213e); border-radius: 12px; border: 1px solid rgba(255,255,255,.08); }
         .jive-ab-row { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
-        .jive-ab-btn { padding: 9px 14px; border-radius: 10px; font-size: .8rem; font-weight: 700; cursor: pointer; border: none; transition: all .2s; -webkit-tap-highlight-color: transparent; }
+        .jive-ab-btn { padding: 9px 14px; border-radius: 10px; font-size: .8rem; font-weight: 700; cursor: pointer; border: none; transition: all .2s; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
         .jive-ab-btn:active { transform: scale(.93); }
         .jive-ab-btn.a-btn { background: rgba(255,107,138,.15); color: #ff6b8a; border: 1px solid rgba(255,107,138,.25); }
         .jive-ab-btn.b-btn { background: rgba(78,205,196,.15); color: #4ecdc4; border: 1px solid rgba(78,205,196,.25); }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // 📚 자이브 57개 동작 데이터 + 유튜브 영상 매칭
@@ -127,6 +127,93 @@ function getVideos(n) {
   };
 }
 
+// ================================================
+// 🎬 독립 YouTube 플레이어 컴포넌트
+//    — 각 영상이 자기만의 playerRef + 생명주기를 독립 관리
+//    — 이중 래퍼 구조로 YT API의 div→iframe 교체 시 높이 0 방지
+// ================================================
+const JiveYouTubePlayer = memo(function JiveYouTubePlayer({ videoId, onPlayerReady }) {
+  const wrapperRef = useRef(null);
+  const playerRef = useRef(null);
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    if (!videoId || !wrapperRef.current) return;
+
+    const buildPlayer = () => {
+      if (!mountedRef.current || !wrapperRef.current) return;
+      // 기존 플레이어 제거
+      if (playerRef.current) {
+        try { playerRef.current.destroy(); } catch (e) {}
+        playerRef.current = null;
+      }
+      // ✅ 핵심: 컨테이너 안에 자식 div를 동적 생성 → YT.Player가 이것만 iframe으로 교체
+      //    부모 래퍼(wrapperRef)의 CSS 레이아웃은 100% 보존됨
+      wrapperRef.current.innerHTML = '';
+      const targetDiv = document.createElement('div');
+      targetDiv.style.cssText = 'width:100%;height:100%';
+      wrapperRef.current.appendChild(targetDiv);
+
+      playerRef.current = new window.YT.Player(targetDiv, {
+        width: '100%',
+        height: '100%',
+        videoId: videoId,
+        playerVars: {
+          rel: 0, modestbranding: 1,
+          playsinline: 1,
+          autoplay: 1,
+          cc_load_policy: 3,
+          fs: 1,
+        },
+        events: {
+          onReady: (event) => {
+            if (!mountedRef.current) return;
+            try {
+              const iframe = event.target.getIframe();
+              if (iframe) {
+                iframe.setAttribute('playsinline', '1');
+                iframe.setAttribute('webkit-playsinline', '1');
+                iframe.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;border:none';
+              }
+            } catch (e) {}
+            if (onPlayerReady) onPlayerReady(playerRef.current);
+          }
+        }
+      });
+    };
+
+    // YouTube API가 로드될 때까지 대기
+    const timer = setTimeout(() => {
+      if (window.YT?.Player) {
+        buildPlayer();
+      } else {
+        const prev = window.onYouTubeIframeAPIReady;
+        window.onYouTubeIframeAPIReady = () => {
+          if (prev) prev();
+          if (mountedRef.current) buildPlayer();
+        };
+      }
+    }, 120);
+
+    return () => {
+      mountedRef.current = false;
+      clearTimeout(timer);
+      if (playerRef.current) {
+        try { playerRef.current.destroy(); } catch (e) {}
+        playerRef.current = null;
+      }
+      if (wrapperRef.current) wrapperRef.current.innerHTML = '';
+    };
+  }, [videoId]);
+
+  return (
+    <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', backgroundColor: '#000', overflow: 'hidden', borderRadius: '12px' }}>
+      <div ref={wrapperRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} />
+    </div>
+  );
+});
+
 // 레벨 카테고리 정보
 const levelSections = [
   { id: 'beginner', title: '초급 (크루즈과정)', emoji: '🟢', count: 8, cls: 'lv-beginner' },
@@ -148,99 +235,43 @@ export default function TheoryPage() {
   const [pointB, setPointB] = useState(null);
   const [abLoopActive, setAbLoopActive] = useState(false);
 
-  // 🎮 플레이어 관리
-  const playerRef = useRef(null);           // YT.Player 인스턴스
-  const containerRef = useRef(null);        // 컨테이너 div (React 관리 — 절대 교체 안 됨)
+  // 🎮 플레이어 관리 — 독립 컴포넌트에서 올려주는 인스턴스를 여기서 받음
+  const activePlayerRef = useRef(null);     // 현재 활성 YT.Player 인스턴스
   const abIntervalRef = useRef(null);       // A-B 루프 타이머 ID
-  const mountedRef = useRef(true);          // 컴포넌트 마운트 상태
-  const initTimerRef = useRef(null);        // 플레이어 생성 딜레이 타이머
-
-  // ====================================
-  // 🔧 플레이어 생명주기 유틸
-  // ====================================
-  /** 기존 플레이어 + 좀비 타이머 100% 제거 */
-  const destroyPlayer = useCallback(() => {
-    if (abIntervalRef.current) { clearInterval(abIntervalRef.current); abIntervalRef.current = null; }
-    if (initTimerRef.current) { clearTimeout(initTimerRef.current); initTimerRef.current = null; }
-    if (playerRef.current) { try { playerRef.current.destroy(); } catch(e){} playerRef.current = null; }
-    // 컨테이너 내부만 비움 (컨테이너 div 자체는 React가 관리하므로 건드리지 않음)
-    if (containerRef.current) { containerRef.current.innerHTML = ''; }
-  }, []);
+  const lastSeekTimeRef = useRef(0);        // 중복 seek 방지용
 
   // ====================================
   // 📡 YouTube IFrame API 로드 (최초 1회)
   // ====================================
   useEffect(() => {
-    mountedRef.current = true;
     if (!window.YT) {
       const tag = document.createElement('script');
       tag.src = 'https://www.youtube.com/iframe_api';
       const first = document.getElementsByTagName('script')[0];
       first.parentNode.insertBefore(tag, first);
     }
-    return () => { mountedRef.current = false; destroyPlayer(); };
-  }, [destroyPlayer]);
-
-  // ====================================
-  // 🎬 activeVideo 변경 → 플레이어 (재)생성
-  // ====================================
-  useEffect(() => {
-    // A-B 루프 초기화
-    setPointA(null); setPointB(null); setAbLoopActive(false);
-    destroyPlayer();
-
-    if (!activeVideo) return;
-
-    const buildPlayer = () => {
-      if (!mountedRef.current || !containerRef.current) return;
-      // ✅ 핵심: 컨테이너 안에 자식 div를 동적 생성 → 이것을 YT.Player에 전달
-      //    YT.Player는 이 자식 div를 iframe으로 교체하지만, 부모 컨테이너는 온전히 유지됨
-      containerRef.current.innerHTML = '';
-      const playerDiv = document.createElement('div');
-      playerDiv.style.cssText = 'width:100%;height:100%';
-      containerRef.current.appendChild(playerDiv);
-
-      playerRef.current = new window.YT.Player(playerDiv, {
-        videoId: activeVideo.videoId,
-        playerVars: {
-          rel: 0, modestbranding: 1,
-          playsinline: 1,       // ✅ iOS 인라인 재생 강제
-          autoplay: 1,
-          cc_load_policy: 3,
-          fs: 1,
-        },
-        events: {
-          onReady: (event) => {
-            try {
-              const iframe = event.target.getIframe();
-              if (iframe) {
-                iframe.setAttribute('playsinline', '1');
-                iframe.setAttribute('webkit-playsinline', '1');
-                iframe.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;border:none';
-              }
-            } catch(e){}
-          }
-        }
-      });
+    return () => {
+      if (abIntervalRef.current) { clearInterval(abIntervalRef.current); abIntervalRef.current = null; }
     };
-
-    initTimerRef.current = setTimeout(() => {
-      if (window.YT?.Player) {
-        buildPlayer();
-      } else {
-        const prev = window.onYouTubeIframeAPIReady;
-        window.onYouTubeIframeAPIReady = () => { if (prev) prev(); if (mountedRef.current) buildPlayer(); };
-      }
-    }, 120);
-
-    return () => { if (initTimerRef.current) { clearTimeout(initTimerRef.current); initTimerRef.current = null; } };
-  }, [activeVideo?.videoId, activeVideo?.cardN, destroyPlayer]);
+  }, []);
 
   // ====================================
-  // 🔁 A-B 루프 인터벌 (독립 관리)
+  // 🎬 activeVideo 변경 → A-B 초기화
   // ====================================
   useEffect(() => {
-    // 기존 인터벌 확실히 제거
+    setPointA(null); setPointB(null); setAbLoopActive(false);
+    activePlayerRef.current = null;
+  }, [activeVideo?.videoId, activeVideo?.cardN]);
+
+  // ✅ 독립 컴포넌트에서 플레이어 인스턴스를 받는 콜백
+  const handlePlayerReady = useCallback((player) => {
+    activePlayerRef.current = player;
+  }, []);
+
+  // ====================================
+  // 🔁 A-B 루프 인터벌 — seekTo(false) + 중복 seek 방지
+  // ====================================
+  useEffect(() => {
     if (abIntervalRef.current) {
       clearInterval(abIntervalRef.current);
       abIntervalRef.current = null;
@@ -248,12 +279,15 @@ export default function TheoryPage() {
     if (abLoopActive && pointA !== null && pointB !== null) {
       abIntervalRef.current = setInterval(() => {
         try {
-          const t = playerRef.current?.getCurrentTime?.() || 0;
-          if (t >= pointB || t < pointA) {
-            playerRef.current?.seekTo?.(pointA, true);
+          const t = activePlayerRef.current?.getCurrentTime?.() || 0;
+          const now = Date.now();
+          // B 지점을 넘었을 때만 seek (중복 seek 방지: 최소 500ms 간격)
+          if (t >= pointB && now - lastSeekTimeRef.current > 500) {
+            lastSeekTimeRef.current = now;
+            activePlayerRef.current?.seekTo?.(pointA, false);
           }
         } catch(e){}
-      }, 300);
+      }, 250);
     }
     return () => {
       if (abIntervalRef.current) {
@@ -267,7 +301,7 @@ export default function TheoryPage() {
   // 🛠 A-B 유틸 함수들
   // ====================================
   const getCurrentTime = () => {
-    try { return playerRef.current?.getCurrentTime?.() || 0; } catch(e) { return 0; }
+    try { return activePlayerRef.current?.getCurrentTime?.() || 0; } catch(e) { return 0; }
   };
   const formatTime = (sec) => {
     if (sec == null) return '--:--';
@@ -430,9 +464,9 @@ export default function TheoryPage() {
       {/* 글로벌 플레이어 */}
       {activeVideo && activeVideo.cardN === 'global' && (
         <div style={{marginBottom:24}}>
-          <div className="jive-video-embed">
+          <div style={{ position: 'relative' }}>
             {abLoopActive && <div className="jive-ab-badge">🔁 {formatTime(pointA)} → {formatTime(pointB)}</div>}
-            <div ref={containerRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} />
+            <JiveYouTubePlayer videoId={activeVideo.videoId} onPlayerReady={handlePlayerReady} />
           </div>
           <div className="jive-ab-panel">
             <div className="jive-ab-row">
@@ -505,9 +539,9 @@ export default function TheoryPage() {
                     {/* 인라인 영상 플레이어 */}
                     {showingVideo && (
                       <div style={{position:'relative', zIndex: 0}}>
-                        <div className="jive-video-embed" onClick={(e) => e.stopPropagation()}>
+                        <div onClick={(e) => e.stopPropagation()} style={{ position: 'relative' }}>
                           {abLoopActive && <div className="jive-ab-badge">🔁 {formatTime(pointA)} → {formatTime(pointB)}</div>}
-                          <div ref={containerRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} />
+                          <JiveYouTubePlayer videoId={activeVideo.videoId} onPlayerReady={handlePlayerReady} />
                         </div>
                         <div className="jive-ab-panel" onClick={(e) => e.stopPropagation()}>
                           <div className="jive-ab-row">

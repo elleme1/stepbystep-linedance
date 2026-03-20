@@ -201,15 +201,22 @@ export default function VideoDetail() {
         clearInterval(abIntervalRef.current);
     };
 
+    // A-B 루프: 검은 화면 방지를 위해 allowSeekAhead=false 사용 + 중복 seek 억제
+    const lastSeekTimeRef = useRef(0);
     useEffect(() => {
         clearInterval(abIntervalRef.current);
         if (abLoopActive && pointA !== null && pointB !== null) {
             abIntervalRef.current = setInterval(() => {
                 const t = getCurrentTime();
-                if (t >= pointB || t < pointA) {
-                    try { playerRef.current?.seekTo(pointA, true); } catch (e) {}
+                const now = Date.now();
+                // B 지점을 넘었을 때만 seek (중복 seek 방지: 최소 500ms 간격)
+                if (t >= pointB && now - lastSeekTimeRef.current > 500) {
+                    lastSeekTimeRef.current = now;
+                    try {
+                        playerRef.current?.seekTo(pointA, false);
+                    } catch (e) {}
                 }
-            }, 300);
+            }, 250);
         }
         return () => clearInterval(abIntervalRef.current);
     }, [abLoopActive, pointA, pointB]);

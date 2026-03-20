@@ -9,9 +9,19 @@ export default function VideoDetail() {
 
     const [viewMode, setViewMode] = useState('main');
     const [isCinema, setIsCinema] = useState(false);
+    const [isLandscape, setIsLandscape] = useState(false);
     const [speed, setSpeed] = useState(1);
     const [playerReady, setPlayerReady] = useState(false);
     const [isMirror, setIsMirror] = useState(false);
+
+    // 📱 가로 모드 자동 감지 → 전체화면 자동 전환
+    useEffect(() => {
+        const mql = window.matchMedia('(orientation: landscape)');
+        const handleChange = (e) => setIsLandscape(e.matches);
+        setIsLandscape(mql.matches);
+        mql.addEventListener('change', handleChange);
+        return () => mql.removeEventListener('change', handleChange);
+    }, []);
 
     // 🎬 HD 강제
     const [quality, setQuality] = useState('hd720');
@@ -313,13 +323,16 @@ export default function VideoDetail() {
         cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '4px',
     });
 
+    // 가로 모드이거나 수동 시네마 → 전체화면
+    const isFullscreen = isCinema || isLandscape;
+
     return (
-        <div style={isCinema
+        <div style={isFullscreen
             ? { position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 99999, backgroundColor: '#000', display: 'flex', flexDirection: 'column' }
             : { backgroundColor: '#0a0a0f', minHeight: '100vh', display: 'flex', flexDirection: 'column', color: '#fff' }
         }>
 
-            {!isCinema && (
+            {!isFullscreen && (
                 <div style={{ padding: 'max(16px, env(safe-area-inset-top)) 16px 16px', display: 'flex', alignItems: 'center', zIndex: 10 }}>
                     <button onClick={() => navigate(-1)} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: '15px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: '20px', cursor: 'pointer', backdropFilter: 'blur(10px)' }}>
                         <span style={{ fontSize: '22px', paddingBottom: '2px' }}>‹</span> 돌아가기
@@ -329,8 +342,8 @@ export default function VideoDetail() {
 
             {/* 📺 영상 플레이어 */}
             <div id="yt-player-container" style={{
-                flex: isCinema ? 1 : 'none', width: '100%', position: 'relative', backgroundColor: '#000',
-                ...(isCinema ? {} : { paddingBottom: '56.25%', height: 0 })
+                flex: isFullscreen ? 1 : 'none', width: '100%', position: 'relative', backgroundColor: '#000',
+                ...(isFullscreen ? {} : { paddingBottom: '56.25%', height: 0 })
             }}>
                 <div style={{
                     position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
@@ -370,16 +383,16 @@ export default function VideoDetail() {
                     </div>
                 )}
 
-                {isCinema && (
-                    <button onClick={() => setIsCinema(false)} style={{
+                {isFullscreen && (
+                    <button onClick={() => { setIsCinema(false); }} style={{
                         position: 'absolute', top: 'max(20px, env(safe-area-inset-top))', right: '20px',
                         background: 'rgba(255,45,85,0.8)', border: 'none', color: '#fff', padding: '10px 16px',
                         borderRadius: '20px', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer', zIndex: 10000,
-                    }}>✕ 화면 작게</button>
+                    }}>{isLandscape ? '📱 세로로 돌려주세요' : '✕ 화면 작게'}</button>
                 )}
             </div>
 
-            {!isCinema && (
+            {!isFullscreen && (
                 <div style={{ padding: '16px 16px', flex: 1, paddingBottom: 'calc(24px + env(safe-area-inset-bottom))' }}>
 
                     {/* 🎛️ 도구 아이콘 바 */}

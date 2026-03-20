@@ -351,25 +351,46 @@ export default function VideoDetail() {
     const playerContainerFullRef = useRef(null);
 
     const enterCinema = useCallback(() => {
-        setIsCinema(true);
-        // YouTube iframe 강제 리사이즈 — 시네마 전환 시 검은 화면 방지
-        setTimeout(() => {
-            try {
-                const iframe = document.querySelector('#yt-player-container iframe');
-                if (iframe) {
-                    iframe.style.width = '100%';
-                    iframe.style.height = '100%';
-                }
-            } catch (e) {}
-        }, 100);
-    }, []);
+        if (!isMobile) {
+            // 데스크톱: 브라우저 Fullscreen API
+            const container = document.querySelector('#yt-player-container');
+            if (container && container.requestFullscreen) {
+                container.requestFullscreen().catch(() => setIsCinema(true));
+            } else {
+                setIsCinema(true); // 폴백
+            }
+        } else {
+            // 모바일: CSS 시네마 모드
+            setIsCinema(true);
+            setTimeout(() => {
+                try {
+                    const iframe = document.querySelector('#yt-player-container iframe');
+                    if (iframe) { iframe.style.width = '100%'; iframe.style.height = '100%'; }
+                } catch (e) {}
+            }, 100);
+        }
+    }, [isMobile]);
 
     const manualExitRef = useRef(false);
 
     const exitCinema = useCallback(() => {
         setIsCinema(false);
-        manualExitRef.current = true; // 수동 종료 → 가로여도 자동 재진입 방지
-    }, []);
+        manualExitRef.current = true;
+        // 데스크톱: Fullscreen API 종료
+        if (!isMobile && document.fullscreenElement) {
+            document.exitFullscreen().catch(() => {});
+        }
+    }, [isMobile]);
+
+    // 데스크톱: ESC 키 등으로 전체화면 종료 시 상태 동기화
+    useEffect(() => {
+        if (isMobile) return;
+        const onFsChange = () => {
+            if (!document.fullscreenElement) setIsCinema(false);
+        };
+        document.addEventListener('fullscreenchange', onFsChange);
+        return () => document.removeEventListener('fullscreenchange', onFsChange);
+    }, [isMobile]);
 
     // 모바일 가로 → 자동 시네마 (수동 종료 시 무시) / 세로 → 자동 해제 + 플래그 리셋
     useEffect(() => {

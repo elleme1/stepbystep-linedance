@@ -389,13 +389,16 @@ export default function VideoDetail() {
             : { backgroundColor: '#0a0a0f', minHeight: '100vh', display: 'flex', flexDirection: 'column', color: '#fff' }
         }>
 
-            {/* 📺 영상 플레이어 */}
+            {/* 📺 영상 플레이어 — 모바일: 자동 크게 / 데스크톱: 16:9 */}
             <div id="yt-player-container" style={isFullscreen ? {
                 flex: 1, width: '100%', position: 'relative', backgroundColor: '#000',
+            } : isMobile ? {
+                width: '100%', position: 'relative', backgroundColor: '#000',
+                height: 'calc(100dvh - 140px)', minHeight: '250px',
             } : {
                 width: '100%', position: 'relative', backgroundColor: '#000',
-                aspectRatio: '16/9', maxHeight: isMobile ? 'calc(100dvh - 140px)' : '70vh',
-                minHeight: '250px', borderRadius: isMobile ? 0 : '12px', overflow: 'hidden',
+                aspectRatio: '16/9', maxHeight: '70vh',
+                minHeight: '250px', borderRadius: '12px', overflow: 'hidden',
             }}>
                 {/* 돌아가기 버튼 — 항상 표시 (가로 시네마에서도 탈출 경로) */}
                 <button onClick={() => navigate(-1)} style={{

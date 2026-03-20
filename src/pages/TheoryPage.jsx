@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // 📚 자이브 57개 동작 데이터 + 유튜브 영상 매칭
@@ -143,6 +143,115 @@ export default function TheoryPage() {
   const [activeVideo, setActiveVideo] = useState(null);
   const [expandedSections, setExpandedSections] = useState({});
 
+  // 🔁 A-B 반복구간 상태
+  const [pointA, setPointA] = useState(null);
+  const [pointB, setPointB] = useState(null);
+  const [abLoopActive, setAbLoopActive] = useState(false);
+  const playerRef = useRef(null);
+  const playerContainerRef = useRef(null);
+  const abIntervalRef = useRef(null);
+  const mountedRef = useRef(true);
+  const loadedVideoIdRef = useRef(null);
+
+  // YouTube IFrame API 로드
+  useEffect(() => {
+    mountedRef.current = true;
+    if (!window.YT) {
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      const first = document.getElementsByTagName('script')[0];
+      first.parentNode.insertBefore(tag, first);
+    }
+    return () => {
+      mountedRef.current = false;
+      clearInterval(abIntervalRef.current);
+      try { if (playerRef.current?.destroy) playerRef.current.destroy(); } catch(e){}
+      playerRef.current = null;
+    };
+  }, []);
+
+  // activeVideo 변경 시 플레이어 생성/갱신
+  useEffect(() => {
+    clearInterval(abIntervalRef.current);
+    setPointA(null); setPointB(null); setAbLoopActive(false);
+
+    if (!activeVideo) {
+      try { if (playerRef.current?.destroy) playerRef.current.destroy(); } catch(e){}
+      playerRef.current = null;
+      loadedVideoIdRef.current = null;
+      return;
+    }
+
+    const createPlayer = () => {
+      if (!mountedRef.current || !window.YT?.Player || !playerContainerRef.current) return;
+      try { if (playerRef.current?.destroy) playerRef.current.destroy(); } catch(e){}
+      loadedVideoIdRef.current = activeVideo.videoId;
+      playerRef.current = new window.YT.Player(playerContainerRef.current, {
+        videoId: activeVideo.videoId,
+        playerVars: { rel: 0, modestbranding: 1, playsinline: 1, autoplay: 1, cc_load_policy: 3 },
+        events: { onReady: () => {} }
+      });
+    };
+
+    // 약간의 딜레이를 줘서 DOM ref가 준비되도록
+    const timer = setTimeout(() => {
+      if (window.YT?.Player) {
+        createPlayer();
+      } else {
+        // API 아직 로드 안됨 — onReady 콜백으로
+        const prev = window.onYouTubeIframeAPIReady;
+        window.onYouTubeIframeAPIReady = () => {
+          if (prev) prev();
+          createPlayer();
+        };
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [activeVideo?.videoId, activeVideo?.cardN]);
+
+  // A-B 루프 인터벌
+  useEffect(() => {
+    clearInterval(abIntervalRef.current);
+    if (abLoopActive && pointA !== null && pointB !== null) {
+      abIntervalRef.current = setInterval(() => {
+        try {
+          const t = playerRef.current?.getCurrentTime() || 0;
+          if (t >= pointB || t < pointA) {
+            playerRef.current?.seekTo(pointA, true);
+          }
+        } catch(e){}
+      }, 300);
+    }
+    return () => clearInterval(abIntervalRef.current);
+  }, [abLoopActive, pointA, pointB]);
+
+  const getCurrentTime = () => {
+    try { return playerRef.current?.getCurrentTime() || 0; } catch(e) { return 0; }
+  };
+  const formatTime = (sec) => {
+    if (sec == null) return '--:--';
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return `${m}:${String(s).padStart(2, '0')}`;
+  };
+  const handleSetA = () => {
+    const t = getCurrentTime();
+    setPointA(t);
+    if (pointB !== null && t >= pointB) setPointB(null);
+  };
+  const handleSetB = () => {
+    const t = getCurrentTime();
+    if (pointA !== null && t > pointA) {
+      setPointB(t);
+      setAbLoopActive(true);
+    }
+  };
+  const handleClearAB = () => {
+    setPointA(null); setPointB(null); setAbLoopActive(false);
+    clearInterval(abIntervalRef.current);
+  };
+
   const toggleCard = (n) => {
     setOpenCardId(openCardId === n ? null : n);
     setActiveVideo(null);
@@ -233,6 +342,16 @@ export default function TheoryPage() {
         .jive-video-embed iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; z-index: 0; }
         .jive-video-close-inline { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 8px; padding: 10px 0; background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.25); border-radius: 10px; color: #f87171; font-size: .85rem; font-weight: 700; cursor: pointer; width: 100%; -webkit-tap-highlight-color: transparent; }
         .jive-video-close-inline:active { background: rgba(239,68,68,.25); transform: scale(.97); }
+        /* 🔁 A-B 반복구간 컨트롤 */
+        .jive-ab-panel { margin-top: 8px; padding: 12px; background: linear-gradient(135deg, #1a1a2e, #16213e); border-radius: 12px; border: 1px solid rgba(255,255,255,.08); }
+        .jive-ab-row { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+        .jive-ab-btn { padding: 9px 14px; border-radius: 10px; font-size: .8rem; font-weight: 700; cursor: pointer; border: none; transition: all .2s; -webkit-tap-highlight-color: transparent; }
+        .jive-ab-btn:active { transform: scale(.93); }
+        .jive-ab-btn.a-btn { background: rgba(255,107,138,.15); color: #ff6b8a; border: 1px solid rgba(255,107,138,.25); }
+        .jive-ab-btn.b-btn { background: rgba(78,205,196,.15); color: #4ecdc4; border: 1px solid rgba(78,205,196,.25); }
+        .jive-ab-btn.clear-btn { background: rgba(255,68,68,.15); color: #ff4444; border: 1px solid rgba(255,68,68,.25); }
+        .jive-ab-hint { text-align: center; color: #666; font-size: .75rem; margin-top: 6px; }
+        .jive-ab-badge { position: absolute; top: 10px; left: 10px; background: rgba(255,45,85,.9); border-radius: 10px; padding: 5px 12px; font-size: .78rem; font-weight: 700; color: #fff; z-index: 5; pointer-events: none; }
         .jive-expand-btn { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 12px 0; margin-top: 6px; border-radius: 12px; background: rgba(255,255,255,.04); border: 1px dashed rgba(255,255,255,.12); color: #a0a0c0; font-size: .82rem; font-weight: 600; cursor: pointer; transition: all .2s; -webkit-tap-highlight-color: transparent; }
         .jive-expand-btn:active { background: rgba(255,255,255,.08); transform: scale(.98); }
         .jive-footer { text-align: center; margin-top: 32px; padding: 16px; color: #555; font-size: .75rem; border-top: 1px solid rgba(255,255,255,.05); }
@@ -268,13 +387,17 @@ export default function TheoryPage() {
       {activeVideo && activeVideo.cardN === 'global' && (
         <div style={{marginBottom:24}}>
           <div className="jive-video-embed">
-            <iframe
-              key={`global-${activeVideo.videoId}`}
-              src={`https://www.youtube.com/embed/${activeVideo.videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1&cc_load_policy=3`}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
-            />
+            {abLoopActive && <div className="jive-ab-badge">🔁 {formatTime(pointA)} → {formatTime(pointB)}</div>}
+            <div ref={playerContainerRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} />
+          </div>
+          <div className="jive-ab-panel">
+            <div className="jive-ab-row">
+              <button className="jive-ab-btn a-btn" onClick={handleSetA}>A 지점 {pointA !== null ? `(${formatTime(pointA)})` : '설정'}</button>
+              <span style={{color:'#555',fontSize:'16px'}}>→</span>
+              <button className="jive-ab-btn b-btn" onClick={handleSetB}>B 지점 {pointB !== null ? `(${formatTime(pointB)})` : '설정'}</button>
+              {abLoopActive && <button className="jive-ab-btn clear-btn" onClick={handleClearAB}>✕ 해제</button>}
+            </div>
+            <div className="jive-ab-hint">{!pointA ? '▶ 영상 재생 후 A 지점을 설정하세요' : !pointB ? '▶ B 지점을 설정하면 자동 반복됩니다' : '🔁 A→B 구간 반복 중'}</div>
           </div>
           <button className="jive-video-close-inline" onClick={()=>setActiveVideo(null)}>✕ 영상 닫기</button>
         </div>
@@ -339,13 +462,17 @@ export default function TheoryPage() {
                     {showingVideo && (
                       <div style={{position:'relative', zIndex: 0}}>
                         <div className="jive-video-embed" onClick={(e) => e.stopPropagation()}>
-                          <iframe
-                            key={`inline-${activeVideo.videoId}`}
-                            src={`https://www.youtube.com/embed/${activeVideo.videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1&cc_load_policy=3`}
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
-                          />
+                          {abLoopActive && <div className="jive-ab-badge">🔁 {formatTime(pointA)} → {formatTime(pointB)}</div>}
+                          <div ref={playerContainerRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} />
+                        </div>
+                        <div className="jive-ab-panel" onClick={(e) => e.stopPropagation()}>
+                          <div className="jive-ab-row">
+                            <button className="jive-ab-btn a-btn" onClick={handleSetA}>A 지점 {pointA !== null ? `(${formatTime(pointA)})` : '설정'}</button>
+                            <span style={{color:'#555',fontSize:'16px'}}>→</span>
+                            <button className="jive-ab-btn b-btn" onClick={handleSetB}>B 지점 {pointB !== null ? `(${formatTime(pointB)})` : '설정'}</button>
+                            {abLoopActive && <button className="jive-ab-btn clear-btn" onClick={handleClearAB}>✕ 해제</button>}
+                          </div>
+                          <div className="jive-ab-hint">{!pointA ? '▶ 영상 재생 후 A 지점을 설정하세요' : !pointB ? '▶ B 지점을 설정하면 자동 반복됩니다' : '🔁 A→B 구간 반복 중'}</div>
                         </div>
                         <button className="jive-video-close-inline" onClick={(e) => { e.stopPropagation(); setActiveVideo(null); }}>✕ 영상 닫기</button>
                       </div>

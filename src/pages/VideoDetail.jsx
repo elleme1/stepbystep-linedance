@@ -361,7 +361,7 @@ export default function VideoDetail() {
 
     return (
         <div ref={playerContainerFullRef} style={isFullscreen
-            ? { position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 99999, backgroundColor: '#000', display: 'flex', flexDirection: 'column', touchAction: 'manipulation' }
+            ? { position: 'fixed', top: 0, left: 0, width: '100vw', height: '100dvh', zIndex: 9997, backgroundColor: '#000', display: 'flex', flexDirection: 'column', touchAction: 'manipulation' }
             : { backgroundColor: '#0a0a0f', minHeight: '100vh', display: 'flex', flexDirection: 'column', color: '#fff' }
         }>
 
@@ -370,17 +370,16 @@ export default function VideoDetail() {
                 flex: isFullscreen ? 1 : 'none', width: '100%', position: 'relative', backgroundColor: '#000',
                 ...(isFullscreen ? {} : { height: 'calc(100dvh - 140px)', minHeight: '300px' })
             }}>
-                {/* 돌아가기 버튼 — 영상 위 오버레이 */}
-                {!isFullscreen && (
-                    <button onClick={() => navigate(-1)} style={{
-                        position: 'absolute', top: 'max(12px, env(safe-area-inset-top))', left: '12px', zIndex: 10,
-                        background: 'rgba(0,0,0,0.5)', border: 'none', color: '#fff', fontSize: '14px', fontWeight: 'bold',
-                        display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', borderRadius: '20px',
-                        cursor: 'pointer', backdropFilter: 'blur(10px)',
-                    }}>
-                        <span style={{ fontSize: '20px' }}>‹</span> 돌아가기
-                    </button>
-                )}
+                {/* 돌아가기 버튼 — 항상 표시 (가로 시네마에서도 탈출 경로) */}
+                <button onClick={() => navigate(-1)} style={{
+                    position: 'absolute', top: isFullscreen ? 'env(safe-area-inset-top, 8px)' : 'max(12px, env(safe-area-inset-top))', left: '12px', zIndex: 9998,
+                    background: 'rgba(0,0,0,0.5)', border: 'none', color: '#fff', fontSize: '14px', fontWeight: 'bold',
+                    display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', borderRadius: isFullscreen ? '50%' : '20px',
+                    cursor: 'pointer', backdropFilter: 'blur(10px)', width: isFullscreen ? '36px' : 'auto', height: isFullscreen ? '36px' : 'auto',
+                    justifyContent: 'center',
+                }} aria-label="돌아가기">
+                    {isFullscreen ? '←' : <><span style={{ fontSize: '20px' }}>‹</span> 돌아가기</>}
+                </button>
                 <div style={{
                     position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
                     transform: isMirror ? 'scaleX(-1)' : 'none', ...filterStyle,
@@ -421,10 +420,19 @@ export default function VideoDetail() {
 
                 {isFullscreen && (
                     <button onClick={exitCinema} style={{
-                        position: 'absolute', top: 'max(20px, env(safe-area-inset-top))', right: '20px',
+                        position: 'absolute', top: 'env(safe-area-inset-top, 8px)', right: '20px',
                         background: 'rgba(255,45,85,0.8)', border: 'none', color: '#fff', padding: '10px 16px',
-                        borderRadius: '20px', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer', zIndex: 10000,
-                    }}>{isLandscape ? '📱 세로로 돌려주세요' : '✕ 화면 작게'}</button>
+                        borderRadius: '20px', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer', zIndex: 9998,
+                    }}>✕ 화면 작게</button>
+                )}
+                {/* 📱 세로 모드에서만 가로 전환 안내 */}
+                {!isFullscreen && !isLandscape && (
+                    <div style={{
+                        position: 'absolute', bottom: '12px', left: '50%', transform: 'translateX(-50%)',
+                        background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', borderRadius: '20px',
+                        padding: '6px 16px', fontSize: '12px', color: 'rgba(255,255,255,0.7)', zIndex: 5,
+                        whiteSpace: 'nowrap',
+                    }}>📱 가로로 돌리면 더 크게 볼 수 있어요</div>
                 )}
             </div>
 

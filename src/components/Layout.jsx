@@ -27,7 +27,7 @@ export default function Layout() {
     if (!isMainTab && !isOurSubPage) {
         return (
             <div style={{ backgroundColor: 'var(--bg-primary)', height: '100dvh', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ height: 'max(54px, env(safe-area-inset-top))', flexShrink: 0, backgroundColor: 'var(--bg-primary)' }}></div>
+                <div className="layout-sub-topbar" style={{ height: 'max(54px, env(safe-area-inset-top))', flexShrink: 0, backgroundColor: 'var(--bg-primary)' }}></div>
                 <div style={{ flex: 1, position: 'relative', transform: 'translateZ(0)', zIndex: 1, overflow: 'auto', paddingBottom: 'calc(80px + env(safe-area-inset-bottom))' }}>
                     <Outlet />
                 </div>

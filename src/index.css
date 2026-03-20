@@ -2684,3 +2684,10 @@ main .jive-container {
 .bottom-nav * {
   pointer-events: auto !important;
 }
+
+/* 📱 가로 모드 → 서브 페이지 상단 빈 영역 숨김 (영상이 최상단부터 시작) */
+@media (orientation: landscape) {
+  .layout-sub-topbar {
+    display: none !important;
+  }
+}

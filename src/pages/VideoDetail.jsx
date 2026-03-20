@@ -8,7 +8,7 @@ export default function VideoDetail() {
     const navigate = useNavigate();
 
     const [viewMode, setViewMode] = useState('main');
-    const [isCinema, setIsCinema] = useState(false);
+    const [isCinema, setIsCinema] = useState(true); // 영상 진입 시 자동 전체화면
     const [isLandscape, setIsLandscape] = useState(false);
     const [speed, setSpeed] = useState(1);
     const [playerReady, setPlayerReady] = useState(false);

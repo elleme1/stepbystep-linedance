@@ -432,7 +432,7 @@ export default function VideoDetail() {
                     {isFullscreen ? '←' : <><span style={{ fontSize: '20px' }}>‹</span> 돌아가기</>}
                 </button>
                 <div style={{
-                    position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+                    position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0,
                     transform: isMirror ? 'scaleX(-1)' : 'none', ...filterStyle,
                 }}>
                     <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
@@ -473,7 +473,8 @@ export default function VideoDetail() {
                     <button onClick={exitCinema} style={{
                         position: 'absolute', top: 'env(safe-area-inset-top, 8px)', right: '20px',
                         background: 'rgba(255,45,85,0.8)', border: 'none', color: '#fff', padding: '10px 16px',
-                        borderRadius: '20px', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer', zIndex: 9998,
+                        borderRadius: '20px', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer',
+                        zIndex: 9998, pointerEvents: 'auto',
                     }}>✕ 화면 작게</button>
                 )}
                 {/* 📱 모바일 세로에서만 가로 전환 안내 */}

@@ -2,38 +2,19 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom';
 import songs, { getSongsForLocation } from '../data/songs';
 import { useLocation } from '../context/LocationContext';
+import { useDevice } from '../context/DeviceContext';
+import YouTubePlayer from '../components/YouTubePlayer/YouTubePlayer';
 
 export default function VideoDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { isMobile } = useDevice();
+    const playerRef = useRef(null);
 
     const [viewMode, setViewMode] = useState('main');
-    const [isCinema, setIsCinema] = useState(false);
-    const [isLandscape, setIsLandscape] = useState(false);
     const [speed, setSpeed] = useState(1);
     const [playerReady, setPlayerReady] = useState(false);
     const [isMirror, setIsMirror] = useState(false);
-
-    // 📱 모바일 판별 (데스크톱에서는 시네마/가로 자동 전환 비활성화)
-    const isMobile = useMemo(() => 
-        /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
-        || ('ontouchstart' in window && window.innerWidth < 1024)
-    , []);
-
-    // 📱 모바일에서만 가로 모드 감지 (데스크톱은 항상 false)
-    useEffect(() => {
-        if (!isMobile) { setIsLandscape(false); return; }
-        const checkOrientation = () => {
-            setIsLandscape(window.innerWidth > window.innerHeight);
-        };
-        checkOrientation();
-        window.addEventListener('resize', checkOrientation);
-        window.addEventListener('orientationchange', () => setTimeout(checkOrientation, 100));
-        return () => {
-            window.removeEventListener('resize', checkOrientation);
-            window.removeEventListener('orientationchange', checkOrientation);
-        };
-    }, [isMobile]);
 
     // 🎬 HD 강제
     const [quality, setQuality] = useState('hd720');
@@ -59,33 +40,21 @@ export default function VideoDetail() {
     // 🔆 밝기/대비
     const [brightness, setBrightness] = useState(100);
     const [contrast, setContrast] = useState(100);
-    const [showFilters, setShowFilters] = useState(false);
 
     // 🎛️ 도구 패널 토글
     const [activeTool, setActiveTool] = useState(null);
-
-    // 🎬 가로 시네마 오버레이 표시/숨김 (터치 토글)
-    const [showOverlay, setShowOverlay] = useState(true);
-    const overlayTimerRef = useRef(null);
-
-    const playerRef = useRef(null);
-    const containerRef = useRef(null);
-    const loadedVideoId = useRef(null);
-    const mountedRef = useRef(true);
 
     const speeds = [0.25, 0.5, 0.75, 1, 1.25, 1.5];
 
     useEffect(() => {
         window.scrollTo(0, 0);
         setViewMode('main');
-        setIsCinema(false);
         setPointA(null);
         setPointB(null);
         setAbLoopActive(false);
     }, [id]);
 
     const { selectedLocation } = useLocation();
-
     const locationSongs = useMemo(() => getSongsForLocation(selectedLocation), [selectedLocation]);
 
     const currentIndex = locationSongs.findIndex(song => String(song.id) === String(id));
@@ -122,86 +91,30 @@ export default function VideoDetail() {
         }
     };
 
-    // YouTube Player 생성
-    const createPlayer = useCallback(() => {
-        if (!mountedRef.current || !window.YT || !window.YT.Player || !containerRef.current || !currentVideoId) return;
-        if (playerRef.current) {
-            try { playerRef.current.destroy(); } catch (e) {}
-            playerRef.current = null;
-        }
-        loadedVideoId.current = currentVideoId;
-        playerRef.current = new window.YT.Player(containerRef.current, {
-            width: '100%',
-            height: '100%',
-            videoId: currentVideoId,
-            playerVars: { rel: 0, modestbranding: 1, playsinline: 1, autoplay: 0 },
-            events: {
-                onReady: () => {
-                    if (!mountedRef.current) return;
-                    setPlayerReady(true);
-                    try {
-                        playerRef.current.setPlaybackRate(speed);
-                        playerRef.current.setPlaybackQuality(quality);
-                    } catch (e) {}
-                    try {
-                        const iframe = document.querySelector('#yt-player-container iframe');
-                        if (iframe) {
-                            iframe.setAttribute('allowfullscreen', 'true');
-                            iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen');
-                            iframe.setAttribute('webkitallowfullscreen', 'true');
-                            iframe.setAttribute('mozallowfullscreen', 'true');
-                        }
-                    } catch (e) {}
-                },
-                onPlaybackQualityChange: (e) => {},
-            }
-        });
-    }, [currentVideoId]);
-
-    useEffect(() => {
-        mountedRef.current = true;
-        if (!window.YT) {
-            const tag = document.createElement('script');
-            tag.src = 'https://www.youtube.com/iframe_api';
-            const firstScript = document.getElementsByTagName('script')[0];
-            firstScript.parentNode.insertBefore(tag, firstScript);
-            window.onYouTubeIframeAPIReady = createPlayer;
-        } else if (window.YT.Player) {
-            createPlayer();
-        }
-        return () => {
-            mountedRef.current = false;
-            clearInterval(abIntervalRef.current);
-            clearInterval(countIntervalRef.current);
-            try { if (playerRef.current?.destroy) playerRef.current.destroy(); } catch (e) {}
-            playerRef.current = null;
-            setPlayerReady(false);
-        };
-    }, []);
-
-    useEffect(() => {
-        if (!playerReady || !playerRef.current || !currentVideoId) return;
-        if (currentVideoId === loadedVideoId.current) return;
-        loadedVideoId.current = currentVideoId;
+    // =============================
+    // 플레이어 콜백
+    // =============================
+    const handlePlayerReady = useCallback((e) => {
+        setPlayerReady(true);
         try {
-            playerRef.current.cueVideoById(currentVideoId);
-            playerRef.current.setPlaybackRate(speed);
-            playerRef.current.setPlaybackQuality(quality);
-        } catch (e) {}
-    }, [currentVideoId, playerReady]);
+            const player = e.target;
+            player.setPlaybackRate(speed);
+            player.setPlaybackQuality(quality);
+        } catch (err) {}
+    }, []);
 
     const handleSpeedChange = (s) => {
         setSpeed(s);
-        try { playerRef.current?.setPlaybackRate(s); } catch (e) {}
+        playerRef.current?.setSpeed(s);
     };
 
     const handleQualityChange = (q) => {
         setQuality(q);
-        try { playerRef.current?.setPlaybackQuality(q); } catch (e) {}
+        playerRef.current?.setQuality(q);
     };
 
     const getCurrentTime = () => {
-        try { return playerRef.current?.getCurrentTime() || 0; } catch (e) { return 0; }
+        return playerRef.current?.getCurrentTime() || 0;
     };
 
     const formatTime = (sec) => {
@@ -211,6 +124,9 @@ export default function VideoDetail() {
         return `${m}:${String(s).padStart(2, '0')}`;
     };
 
+    // =============================
+    // A-B 구간 반복
+    // =============================
     const setAPoint = () => {
         const t = getCurrentTime();
         setPointA(t);
@@ -241,17 +157,18 @@ export default function VideoDetail() {
                 const now = Date.now();
                 if (t >= pointB && now - lastSeekTimeRef.current > 500) {
                     lastSeekTimeRef.current = now;
-                    try { playerRef.current?.seekTo(pointA, false); } catch (e) {}
+                    playerRef.current?.seekTo(pointA, false);
                 }
             }, 250);
         }
         return () => clearInterval(abIntervalRef.current);
     }, [abLoopActive, pointA, pointB]);
 
+    // =============================
+    // PIP
+    // =============================
     const togglePip = async () => {
         try {
-            const iframe = document.querySelector('#yt-player-container iframe');
-            if (!iframe) return;
             if (document.pictureInPictureElement) {
                 await document.exitPictureInPicture();
                 setIsPip(false);
@@ -263,6 +180,9 @@ export default function VideoDetail() {
         } catch (e) {}
     };
 
+    // =============================
+    // 카운트 오버레이
+    // =============================
     useEffect(() => {
         clearInterval(countIntervalRef.current);
         if (showCount && bpm > 0) {
@@ -275,6 +195,17 @@ export default function VideoDetail() {
         return () => clearInterval(countIntervalRef.current);
     }, [showCount, bpm]);
 
+    // 언마운트 시 정리
+    useEffect(() => {
+        return () => {
+            clearInterval(abIntervalRef.current);
+            clearInterval(countIntervalRef.current);
+        };
+    }, []);
+
+    // =============================
+    // 북마크
+    // =============================
     const addBookmark = () => {
         const t = getCurrentTime();
         const label = prompt(`${formatTime(t)} 시점에 메모를 입력하세요:`, `스텝 포인트`);
@@ -284,13 +215,16 @@ export default function VideoDetail() {
     };
 
     const jumpToBookmark = (time) => {
-        try { playerRef.current?.seekTo(time, true); } catch (e) {}
+        playerRef.current?.seekTo(time, true);
     };
 
     const deleteBookmark = (bmId) => {
         saveBookmarks(bookmarks.filter(b => b.id !== bmId));
     };
 
+    // =============================
+    // 공유
+    // =============================
     const [shareToast, setShareToast] = useState('');
     const handleShare = async () => {
         const shareUrl = `https://stepbystep-linedance.vercel.app/video/${id}`;
@@ -312,11 +246,6 @@ export default function VideoDetail() {
         }
     };
 
-    const filterStyle = {
-        filter: `brightness(${brightness}%) contrast(${contrast}%)`,
-        transition: 'filter 0.3s ease',
-    };
-
     const toolBtnStyle = (isActive) => ({
         padding: '8px 12px', borderRadius: '12px', fontSize: '13px', fontWeight: 700,
         border: isActive ? '2px solid #ff2d55' : '1px solid rgba(255,255,255,0.1)',
@@ -325,205 +254,28 @@ export default function VideoDetail() {
         cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '4px',
     });
 
-    const playerContainerFullRef = useRef(null);
-
-    const enterCinema = useCallback(() => {
-        if (!isMobile) {
-            const container = document.querySelector('#yt-player-container');
-            if (container && container.requestFullscreen) {
-                container.requestFullscreen().catch(() => setIsCinema(true));
-            } else {
-                setIsCinema(true);
-            }
-        } else {
-            setIsCinema(true);
-            setShowOverlay(true);
-            // 3초 후 오버레이 자동 숨김
-            clearTimeout(overlayTimerRef.current);
-            overlayTimerRef.current = setTimeout(() => setShowOverlay(false), 3000);
-            setTimeout(() => {
-                try {
-                    const iframe = document.querySelector('#yt-player-container iframe');
-                    if (iframe) { iframe.style.width = '100%'; iframe.style.height = '100%'; }
-                } catch (e) {}
-            }, 100);
-        }
-    }, [isMobile]);
-
-    const manualExitRef = useRef(false);
-
-    const exitCinema = useCallback(() => {
-        setIsCinema(false);
-        manualExitRef.current = true;
-        if (!isMobile && document.fullscreenElement) {
-            document.exitFullscreen().catch(() => {});
-        }
-    }, [isMobile]);
-
-    // 가로 시네마 오버레이 터치 토글
-    const handleOverlayToggle = useCallback(() => {
-        if (!isLandscapeCinema) return;
-        setShowOverlay(prev => {
-            const next = !prev;
-            clearTimeout(overlayTimerRef.current);
-            if (next) {
-                // 표시 후 3초 뒤 자동 숨김
-                overlayTimerRef.current = setTimeout(() => setShowOverlay(false), 3000);
-            }
-            return next;
-        });
-    }, []);
-
-    useEffect(() => {
-        if (isMobile) return;
-        const onFsChange = () => {
-            if (!document.fullscreenElement) setIsCinema(false);
-        };
-        document.addEventListener('fullscreenchange', onFsChange);
-        return () => document.removeEventListener('fullscreenchange', onFsChange);
-    }, [isMobile]);
-
-    useEffect(() => {
-        if (isMobile && isLandscape && !manualExitRef.current) setIsCinema(true);
-        if (isMobile && !isLandscape) {
-            setIsCinema(false);
-            manualExitRef.current = false;
-        }
-    }, [isMobile, isLandscape]);
-
-    const isFullscreen = isMobile && isCinema;
-    const isLandscapeCinema = isMobile && isCinema && isLandscape;
-
+    // =============================
+    // 렌더
+    // =============================
     return (
-        <div ref={playerContainerFullRef} style={isFullscreen
-            ? {
-                position: 'fixed', top: 0, left: 0, width: '100vw', height: '100dvh',
-                zIndex: 9997, backgroundColor: '#000',
-                display: 'flex', flexDirection: 'column',
-                touchAction: 'manipulation',
-                padding: 0, margin: 0, overflow: 'hidden',
-              }
-            : { backgroundColor: '#0a0a0f', minHeight: '100vh', display: 'flex', flexDirection: 'column', color: '#fff' }
-        }>
+        <div style={{ backgroundColor: '#0a0a0f', minHeight: '100vh', display: 'flex', flexDirection: 'column', color: '#fff' }}>
 
-            {/* 🔙 시네마 모드 오버레이 버튼들 */}
-            {isFullscreen && (
-                <>
-                    {isLandscapeCinema ? (
-                        /* ✅ 가로 시네마: 반투명 오버레이 (터치로 표시/숨김 토글) */
-                        <div style={{
-                            position: 'fixed', top: 0, left: 0, right: 0,
-                            height: '52px',
-                            background: 'linear-gradient(to bottom, rgba(0,0,0,0.6), transparent)',
-                            display: 'flex', alignItems: 'center',
-                            padding: '0 max(12px, env(safe-area-inset-left))',
-                            gap: '10px',
-                            zIndex: 10000,
-                            pointerEvents: showOverlay ? 'auto' : 'none',
-                            opacity: showOverlay ? 1 : 0,
-                            transition: 'opacity 0.3s ease',
-                        }}>
-                            <button
-                                onClick={() => navigate(-1)}
-                                onTouchEnd={(e) => { e.preventDefault(); e.stopPropagation(); navigate(-1); }}
-                                style={{
-                                    background: 'rgba(0,0,0,0.5)', color: '#fff', border: 'none',
-                                    borderRadius: '20px', padding: '7px 16px',
-                                    fontSize: '13px', fontWeight: 600, cursor: 'pointer',
-                                    backdropFilter: 'blur(8px)', touchAction: 'manipulation',
-                                    WebkitBackdropFilter: 'blur(8px)',
-                                }}
-                            >‹ 돌아가기</button>
-                            <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '13px', fontWeight: 600,
-                                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1,
-                            }}>{videoData.title}</span>
-                            <button
-                                onClick={exitCinema}
-                                onTouchEnd={(e) => { e.preventDefault(); e.stopPropagation(); exitCinema(); }}
-                                style={{
-                                    background: 'rgba(0,0,0,0.5)', color: '#fff', border: 'none',
-                                    borderRadius: '20px', padding: '7px 16px',
-                                    fontSize: '13px', fontWeight: 600, cursor: 'pointer',
-                                    backdropFilter: 'blur(8px)', touchAction: 'manipulation',
-                                    WebkitBackdropFilter: 'blur(8px)',
-                                }}
-                            >✕ 화면작게</button>
-                        </div>
-                    ) : (
-                        /* 세로 시네마: 기존 개별 fixed 버튼 */
-                        <>
-                            <button
-                                onClick={() => navigate(-1)}
-                                onTouchEnd={(e) => { e.preventDefault(); navigate(-1); }}
-                                style={{
-                                    position: 'fixed', top: 'max(8px, env(safe-area-inset-top))', left: '12px', zIndex: 10000,
-                                    background: 'rgba(0,0,0,0.6)', border: 'none', color: '#fff', fontSize: '18px',
-                                    borderRadius: '50%', width: '40px', height: '40px', cursor: 'pointer',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    backdropFilter: 'blur(4px)', pointerEvents: 'auto', touchAction: 'manipulation',
-                                }}
-                                aria-label="돌아가기"
-                            >←</button>
-                            <button
-                                onClick={exitCinema}
-                                onTouchEnd={(e) => { e.preventDefault(); exitCinema(); }}
-                                style={{
-                                    position: 'fixed', top: 'max(8px, env(safe-area-inset-top))', right: '12px', zIndex: 10000,
-                                    background: 'rgba(255,45,85,0.9)', border: 'none', color: '#fff', fontSize: '14px', fontWeight: 'bold',
-                                    borderRadius: '20px', padding: '10px 16px', cursor: 'pointer',
-                                    pointerEvents: 'auto', touchAction: 'manipulation',
-                                }}
-                            >✕ 화면 작게</button>
-                        </>
-                    )}
-                </>
-            )}
-
-            {/* 📺 영상 플레이어 */}
-            <div
-                id="yt-player-container"
-                /* ✅ 가로 시네마: 영상 영역 터치 시 오버레이 토글 */
-                onClick={isLandscapeCinema ? handleOverlayToggle : undefined}
-                style={isLandscapeCinema ? {
-                    /* ✅ 가로 시네마: 화면 완전히 꽉 채움, 여백 0 */
-                    position: 'absolute', top: 0, left: 0,
-                    width: '100%', height: '100%',
-                    backgroundColor: '#000',
-                    padding: 0, margin: 0,
-                } : isFullscreen ? {
-                    flex: 1, width: '100%', position: 'relative', backgroundColor: '#000',
-                } : isMobile ? {
-                    width: '100%', position: 'relative', backgroundColor: '#000',
-                    height: 'calc(100dvh - 140px)', minHeight: '250px',
-                } : {
-                    width: '100%', position: 'relative', backgroundColor: '#000',
-                    aspectRatio: '16/9', maxHeight: '70vh',
-                    minHeight: '250px', borderRadius: '12px', overflow: 'hidden',
-                }}
+            {/* 📺 통합 YouTube 플레이어 */}
+            <YouTubePlayer
+                ref={playerRef}
+                videoId={currentVideoId}
+                title={videoData.title}
+                mirror={isMirror}
+                brightness={brightness}
+                contrast={contrast}
+                onReady={handlePlayerReady}
+                onBack={() => navigate(-1)}
             >
-                {/* 돌아가기 버튼 — 비시네마 모드에서만 */}
-                {!isFullscreen && (
-                    <button onClick={() => navigate(-1)} style={{
-                        position: 'absolute', top: 'max(12px, env(safe-area-inset-top))', left: '12px', zIndex: 10,
-                        background: 'rgba(0,0,0,0.5)', border: 'none', color: '#fff', fontSize: '14px', fontWeight: 'bold',
-                        display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', borderRadius: '20px',
-                        cursor: 'pointer', backdropFilter: 'blur(10px)',
-                    }}>
-                        <span style={{ fontSize: '20px' }}>‹</span> 돌아가기
-                    </button>
-                )}
-                <div style={{
-                    position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0,
-                    transform: isMirror ? 'scaleX(-1)' : 'none', ...filterStyle,
-                }}>
-                    <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
-                </div>
-
                 {/* 카운트 오버레이 */}
                 {showCount && (
                     <div style={{
                         position: 'absolute', bottom: '60px', left: '50%', transform: 'translateX(-50%)',
-                        background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)',
+                        background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
                         borderRadius: '20px', padding: '12px 24px', display: 'flex', gap: '8px', zIndex: 5,
                     }}>
                         {[1,2,3,4,5,6,7,8].map(n => (
@@ -549,210 +301,199 @@ export default function VideoDetail() {
                         🔁 {formatTime(pointA)} → {formatTime(pointB)}
                     </div>
                 )}
+            </YouTubePlayer>
 
-                {/* 📱 모바일 세로에서만 가로 전환 안내 */}
-                {isMobile && !isFullscreen && !isLandscape && (
-                    <div style={{
-                        position: 'absolute', bottom: '12px', left: '50%', transform: 'translateX(-50%)',
-                        background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', borderRadius: '20px',
-                        padding: '6px 16px', fontSize: '12px', color: 'rgba(255,255,255,0.7)', zIndex: 5,
-                        whiteSpace: 'nowrap',
-                    }}>📱 가로로 돌리면 더 크게 볼 수 있어요</div>
-                )}
-            </div>
+            {/* 도구 패널 영역 (시네마 모드가 아닐 때 표시) */}
+            <div style={{ padding: '16px 16px', flex: 1, paddingBottom: 'calc(24px + env(safe-area-inset-bottom))' }}>
 
-            {!isFullscreen && (
-                <div style={{ padding: '16px 16px', flex: 1, paddingBottom: 'calc(24px + env(safe-area-inset-bottom))' }}>
+                {/* 🎛️ 도구 아이콘 바 */}
+                <div style={{
+                    display: 'flex', gap: '6px', marginBottom: '12px', overflowX: 'auto', padding: '4px 0',
+                    scrollbarWidth: 'none',
+                }}>
+                    <button style={toolBtnStyle(activeTool === 'speed')} onClick={() => setActiveTool(activeTool === 'speed' ? null : 'speed')}>🐢 속도</button>
+                    <button style={toolBtnStyle(activeTool === 'ab')} onClick={() => setActiveTool(activeTool === 'ab' ? null : 'ab')}>🔁 구간</button>
+                    <button style={toolBtnStyle(activeTool === 'count')} onClick={() => setActiveTool(activeTool === 'count' ? null : 'count')}>🥁 카운트</button>
+                    <button style={toolBtnStyle(activeTool === 'bookmark')} onClick={() => setActiveTool(activeTool === 'bookmark' ? null : 'bookmark')}>🔖 북마크</button>
+                    <button style={toolBtnStyle(activeTool === 'filter')} onClick={() => setActiveTool(activeTool === 'filter' ? null : 'filter')}>🔆 화면</button>
+                    <button style={toolBtnStyle(isMirror)} onClick={() => setIsMirror(!isMirror)}>🪞 거울</button>
+                    <button style={toolBtnStyle(false)} onClick={togglePip}>📌 팝업</button>
+                    <button style={toolBtnStyle(false)} onClick={handleShare}>🔗 공유</button>
+                </div>
 
-                    {/* 🎛️ 도구 아이콘 바 */}
-                    <div style={{
-                        display: 'flex', gap: '6px', marginBottom: '12px', overflowX: 'auto', padding: '4px 0',
-                        scrollbarWidth: 'none',
-                    }}>
-                        <button style={toolBtnStyle(activeTool === 'speed')} onClick={() => setActiveTool(activeTool === 'speed' ? null : 'speed')}>🐢 속도</button>
-                        <button style={toolBtnStyle(activeTool === 'ab')} onClick={() => setActiveTool(activeTool === 'ab' ? null : 'ab')}>🔁 구간</button>
-                        <button style={toolBtnStyle(activeTool === 'count')} onClick={() => setActiveTool(activeTool === 'count' ? null : 'count')}>🥁 카운트</button>
-                        <button style={toolBtnStyle(activeTool === 'bookmark')} onClick={() => setActiveTool(activeTool === 'bookmark' ? null : 'bookmark')}>🔖 북마크</button>
-                        <button style={toolBtnStyle(activeTool === 'filter')} onClick={() => setActiveTool(activeTool === 'filter' ? null : 'filter')}>🔆 화면</button>
-                        <button style={toolBtnStyle(isMirror)} onClick={() => setIsMirror(!isMirror)}>🪞 거울</button>
-                        <button style={toolBtnStyle(false)} onClick={togglePip}>📌 팝업</button>
-                        <button style={toolBtnStyle(false)} onClick={handleShare}>🔗 공유</button>
-                    </div>
-
-                    {/* 🐢 속도 조절 패널 */}
-                    {activeTool === 'speed' && (
-                        <div style={panelStyle}>
-                            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: 'center' }}>
-                                {speeds.map(s => (
-                                    <button key={s} onClick={() => handleSpeedChange(s)} style={{
-                                        padding: '10px 16px', borderRadius: '20px', fontSize: '15px', fontWeight: 700,
-                                        border: speed === s ? '2px solid #ff2d55' : '1px solid rgba(255,255,255,0.12)',
-                                        background: speed === s ? 'rgba(255,45,85,0.2)' : 'rgba(255,255,255,0.05)',
-                                        color: speed === s ? '#ff6b8a' : '#a0a0c0', cursor: 'pointer', minWidth: '54px',
-                                    }}>
-                                        {s === 0.25 ? '¼×' : s === 0.5 ? '½×' : s === 0.75 ? '¾×' : `${s}×`}
-                                    </button>
-                                ))}
-                            </div>
-                            <div style={{ display: 'flex', gap: '8px', marginTop: '10px', justifyContent: 'center' }}>
-                                {['small', 'default', 'medium', 'large', 'hd720', 'hd1080'].map(q => (
-                                    <button key={q} onClick={() => handleQualityChange(q)} style={{
-                                        padding: '6px 10px', borderRadius: '8px', fontSize: '11px', fontWeight: 600,
-                                        border: quality === q ? '1px solid #4ecdc4' : '1px solid rgba(255,255,255,0.08)',
-                                        background: quality === q ? 'rgba(78,205,196,0.15)' : 'transparent',
-                                        color: quality === q ? '#4ecdc4' : '#666', cursor: 'pointer',
-                                    }}>
-                                        {q === 'small' ? '240p' : q === 'default' ? '360p' : q === 'medium' ? '480p' : q === 'large' ? '720p' : q === 'hd720' ? 'HD' : 'FHD'}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* 🔁 A-B 구간 반복 패널 */}
-                    {activeTool === 'ab' && (
-                        <div style={panelStyle}>
-                            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
-                                <button onClick={setAPoint} style={abBtnStyle('#ff6b8a')}>
-                                    A 지점 {pointA !== null ? `(${formatTime(pointA)})` : '설정'}
-                                </button>
-                                <span style={{ color: '#555', fontSize: '18px' }}>→</span>
-                                <button onClick={setBPoint} style={abBtnStyle('#4ecdc4')}>
-                                    B 지점 {pointB !== null ? `(${formatTime(pointB)})` : '설정'}
-                                </button>
-                                {abLoopActive && (
-                                    <button onClick={clearAB} style={{ ...abBtnStyle('#ff4444'), background: 'rgba(255,68,68,0.15)' }}>
-                                        ✕ 해제
-                                    </button>
-                                )}
-                            </div>
-                            <p style={{ textAlign: 'center', color: '#666', fontSize: '12px', margin: '8px 0 0' }}>
-                                {!pointA ? '▶ 영상 재생 후 A 지점을 설정하세요' : !pointB ? '▶ B 지점을 설정하면 자동 반복됩니다' : '🔁 A-B 구간 반복 중'}
-                            </p>
-                        </div>
-                    )}
-
-                    {/* 🥁 카운트 오버레이 패널 */}
-                    {activeTool === 'count' && (
-                        <div style={panelStyle}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'center' }}>
-                                <button onClick={() => setShowCount(!showCount)} style={{
-                                    padding: '10px 20px', borderRadius: '20px', fontSize: '14px', fontWeight: 700,
-                                    border: 'none', cursor: 'pointer',
-                                    background: showCount ? 'linear-gradient(135deg, #ff2d55, #ff6b8a)' : 'rgba(255,255,255,0.1)',
-                                    color: '#fff',
+                {/* 🐢 속도 조절 패널 */}
+                {activeTool === 'speed' && (
+                    <div style={panelStyle}>
+                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                            {speeds.map(s => (
+                                <button key={s} onClick={() => handleSpeedChange(s)} style={{
+                                    padding: '10px 16px', borderRadius: '20px', fontSize: '15px', fontWeight: 700,
+                                    border: speed === s ? '2px solid #ff2d55' : '1px solid rgba(255,255,255,0.12)',
+                                    background: speed === s ? 'rgba(255,45,85,0.2)' : 'rgba(255,255,255,0.05)',
+                                    color: speed === s ? '#ff6b8a' : '#a0a0c0', cursor: 'pointer', minWidth: '54px',
                                 }}>
-                                    {showCount ? '⏹ 카운트 끄기' : '▶ 카운트 켜기'}
+                                    {s === 0.25 ? '¼×' : s === 0.5 ? '½×' : s === 0.75 ? '¾×' : `${s}×`}
                                 </button>
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'center', marginTop: '10px' }}>
-                                <span style={{ color: '#999', fontSize: '13px' }}>BPM</span>
-                                <button onClick={() => setBpm(Math.max(60, bpm - 5))} style={smallBtnStyle}>−</button>
-                                <span style={{ color: '#fff', fontSize: '18px', fontWeight: 800, width: '50px', textAlign: 'center' }}>{bpm}</span>
-                                <button onClick={() => setBpm(Math.min(200, bpm + 5))} style={smallBtnStyle}>+</button>
-                            </div>
-                            <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', marginTop: '8px' }}>
-                                {[80, 100, 120, 140, 160].map(b => (
-                                    <button key={b} onClick={() => setBpm(b)} style={{
-                                        padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: 600,
-                                        border: bpm === b ? '1px solid #ff2d55' : '1px solid rgba(255,255,255,0.08)',
-                                        background: bpm === b ? 'rgba(255,45,85,0.15)' : 'transparent',
-                                        color: bpm === b ? '#ff6b8a' : '#666', cursor: 'pointer',
-                                    }}>{b}</button>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* 🔖 북마크 패널 */}
-                    {activeTool === 'bookmark' && (
-                        <div style={panelStyle}>
-                            <button onClick={addBookmark} style={{
-                                width: '100%', padding: '12px', borderRadius: '12px', fontSize: '14px', fontWeight: 700,
-                                border: '1px dashed rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.03)',
-                                color: '#a0a0c0', cursor: 'pointer', marginBottom: bookmarks.length ? '10px' : 0,
-                            }}>
-                                ➕ 현재 시점 북마크 추가
-                            </button>
-                            {bookmarks.map(bm => (
-                                <div key={bm.id} style={{
-                                    display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px',
-                                    background: 'rgba(255,255,255,0.03)', borderRadius: '10px', marginTop: '6px',
-                                }}>
-                                    <button onClick={() => jumpToBookmark(bm.time)} style={{
-                                        background: 'rgba(255,45,85,0.15)', border: 'none', color: '#ff6b8a',
-                                        padding: '4px 10px', borderRadius: '6px', fontSize: '13px', fontWeight: 700, cursor: 'pointer',
-                                    }}>{formatTime(bm.time)}</button>
-                                    <span style={{ flex: 1, color: '#bbb', fontSize: '13px' }}>{bm.label}</span>
-                                    <button onClick={() => deleteBookmark(bm.id)} style={{
-                                        background: 'transparent', border: 'none', color: '#555', fontSize: '14px', cursor: 'pointer',
-                                    }}>✕</button>
-                                </div>
                             ))}
-                            {bookmarks.length === 0 && (
-                                <p style={{ textAlign: 'center', color: '#555', fontSize: '12px', margin: '8px 0 0' }}>
-                                    아직 북마크가 없어요
-                                </p>
+                        </div>
+                        <div style={{ display: 'flex', gap: '8px', marginTop: '10px', justifyContent: 'center' }}>
+                            {['small', 'default', 'medium', 'large', 'hd720', 'hd1080'].map(q => (
+                                <button key={q} onClick={() => handleQualityChange(q)} style={{
+                                    padding: '6px 10px', borderRadius: '8px', fontSize: '11px', fontWeight: 600,
+                                    border: quality === q ? '1px solid #4ecdc4' : '1px solid rgba(255,255,255,0.08)',
+                                    background: quality === q ? 'rgba(78,205,196,0.15)' : 'transparent',
+                                    color: quality === q ? '#4ecdc4' : '#666', cursor: 'pointer',
+                                }}>
+                                    {q === 'small' ? '240p' : q === 'default' ? '360p' : q === 'medium' ? '480p' : q === 'large' ? '720p' : q === 'hd720' ? 'HD' : 'FHD'}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* 🔁 A-B 구간 반복 패널 */}
+                {activeTool === 'ab' && (
+                    <div style={panelStyle}>
+                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
+                            <button onClick={setAPoint} style={abBtnStyle('#ff6b8a')}>
+                                A 지점 {pointA !== null ? `(${formatTime(pointA)})` : '설정'}
+                            </button>
+                            <span style={{ color: '#555', fontSize: '18px' }}>→</span>
+                            <button onClick={setBPoint} style={abBtnStyle('#4ecdc4')}>
+                                B 지점 {pointB !== null ? `(${formatTime(pointB)})` : '설정'}
+                            </button>
+                            {abLoopActive && (
+                                <button onClick={clearAB} style={{ ...abBtnStyle('#ff4444'), background: 'rgba(255,68,68,0.15)' }}>
+                                    ✕ 해제
+                                </button>
                             )}
                         </div>
-                    )}
+                        <p style={{ textAlign: 'center', color: '#666', fontSize: '12px', margin: '8px 0 0' }}>
+                            {!pointA ? '▶ 영상 재생 후 A 지점을 설정하세요' : !pointB ? '▶ B 지점을 설정하면 자동 반복됩니다' : '🔁 A-B 구간 반복 중'}
+                        </p>
+                    </div>
+                )}
 
-                    {/* 🔆 밝기/대비 패널 */}
-                    {activeTool === 'filter' && (
-                        <div style={panelStyle}>
-                            <div style={{ marginBottom: '12px' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                                    <span style={{ color: '#999', fontSize: '13px' }}>☀️ 밝기</span>
-                                    <span style={{ color: '#ff6b8a', fontSize: '13px', fontWeight: 700 }}>{brightness}%</span>
-                                </div>
-                                <input type="range" min={50} max={200} value={brightness} onChange={e => setBrightness(Number(e.target.value))}
-                                    style={{ width: '100%', accentColor: '#ff2d55' }} />
-                            </div>
-                            <div style={{ marginBottom: '12px' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                                    <span style={{ color: '#999', fontSize: '13px' }}>🔲 대비</span>
-                                    <span style={{ color: '#4ecdc4', fontSize: '13px', fontWeight: 700 }}>{contrast}%</span>
-                                </div>
-                                <input type="range" min={50} max={200} value={contrast} onChange={e => setContrast(Number(e.target.value))}
-                                    style={{ width: '100%', accentColor: '#4ecdc4' }} />
-                            </div>
-                            <button onClick={() => { setBrightness(100); setContrast(100); }} style={{
-                                width: '100%', padding: '8px', borderRadius: '8px', fontSize: '13px', fontWeight: 600,
-                                border: '1px solid rgba(255,255,255,0.1)', background: 'transparent', color: '#888', cursor: 'pointer',
-                            }}>초기화</button>
+                {/* 🥁 카운트 오버레이 패널 */}
+                {activeTool === 'count' && (
+                    <div style={panelStyle}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'center' }}>
+                            <button onClick={() => setShowCount(!showCount)} style={{
+                                padding: '10px 20px', borderRadius: '20px', fontSize: '14px', fontWeight: 700,
+                                border: 'none', cursor: 'pointer',
+                                background: showCount ? 'linear-gradient(135deg, #ff2d55, #ff6b8a)' : 'rgba(255,255,255,0.1)',
+                                color: '#fff',
+                            }}>
+                                {showCount ? '⏹ 카운트 끄기' : '▶ 카운트 켜기'}
+                            </button>
                         </div>
-                    )}
-
-                    {/* 이전곡 / 전체화면 / 다음곡 */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', background: '#1c1c26', padding: '8px', borderRadius: '16px', border: '1px solid #2a2a35' }}>
-                        <button onClick={() => prevSong && navigate(`/video/${prevSong.id}`)} disabled={!prevSong} style={{ flex: 1, padding: '12px 0', background: 'transparent', border: 'none', color: prevSong ? '#fff' : '#444', fontSize: '14px', fontWeight: 'bold', cursor: prevSong ? 'pointer' : 'default' }}>⏮ 이전 곡</button>
-                        <div style={{ width: '1px', height: '24px', backgroundColor: '#3a3a45' }} />
-                        <button onClick={enterCinema} style={{ flex: 1.2, padding: '12px 0', background: 'transparent', border: 'none', color: '#ff2d55', fontSize: '15px', fontWeight: 'bold', cursor: 'pointer' }}>🎬 전체 화면</button>
-                        <div style={{ width: '1px', height: '24px', backgroundColor: '#3a3a45' }} />
-                        <button onClick={() => nextSong && navigate(`/video/${nextSong.id}`)} disabled={!nextSong} style={{ flex: 1, padding: '12px 0', background: 'transparent', border: 'none', color: nextSong ? '#fff' : '#444', fontSize: '14px', fontWeight: 'bold', cursor: nextSong ? 'pointer' : 'default' }}>다음 곡 ⏭</button>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'center', marginTop: '10px' }}>
+                            <span style={{ color: '#999', fontSize: '13px' }}>BPM</span>
+                            <button onClick={() => setBpm(Math.max(60, bpm - 5))} style={smallBtnStyle}>−</button>
+                            <span style={{ color: '#fff', fontSize: '18px', fontWeight: 800, width: '50px', textAlign: 'center' }}>{bpm}</span>
+                            <button onClick={() => setBpm(Math.min(200, bpm + 5))} style={smallBtnStyle}>+</button>
+                        </div>
+                        <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', marginTop: '8px' }}>
+                            {[80, 100, 120, 140, 160].map(b => (
+                                <button key={b} onClick={() => setBpm(b)} style={{
+                                    padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: 600,
+                                    border: bpm === b ? '1px solid #ff2d55' : '1px solid rgba(255,255,255,0.08)',
+                                    background: bpm === b ? 'rgba(255,45,85,0.15)' : 'transparent',
+                                    color: bpm === b ? '#ff6b8a' : '#666', cursor: 'pointer',
+                                }}>{b}</button>
+                            ))}
+                        </div>
                     </div>
+                )}
 
-                    {/* 실전 / 스텝설명 토글 */}
-                    <div style={{ display: 'flex', background: '#1c1c26', borderRadius: '12px', padding: '4px', marginBottom: '16px' }}>
-                        <button onClick={() => setViewMode('main')} style={{ flex: 1, padding: '14px 0', borderRadius: '10px', fontSize: '15px', fontWeight: 'bold', border: 'none', cursor: 'pointer', transition: 'all 0.3s', backgroundColor: viewMode === 'main' ? '#ff2d55' : 'transparent', color: viewMode === 'main' ? '#fff' : '#888' }}>🎵 음악 맞춰 실전</button>
-                        <button onClick={() => setViewMode('tutorial')} style={{ flex: 1, padding: '14px 0', borderRadius: '10px', fontSize: '15px', fontWeight: 'bold', border: 'none', cursor: 'pointer', transition: 'all 0.3s', backgroundColor: viewMode === 'tutorial' ? '#ff2d55' : 'transparent', color: viewMode === 'tutorial' ? '#fff' : '#888' }}>👣 친절한 스텝 설명</button>
-                    </div>
-
-                    {/* 태그 + 곡 정보 */}
-                    <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
-                        {videoData.tags?.map((tag, idx) => (
-                            <span key={idx} style={{ background: 'rgba(255,45,85,0.15)', color: '#ff2d55', padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold' }}>{tag}</span>
+                {/* 🔖 북마크 패널 */}
+                {activeTool === 'bookmark' && (
+                    <div style={panelStyle}>
+                        <button onClick={addBookmark} style={{
+                            width: '100%', padding: '12px', borderRadius: '12px', fontSize: '14px', fontWeight: 700,
+                            border: '1px dashed rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.03)',
+                            color: '#a0a0c0', cursor: 'pointer', marginBottom: bookmarks.length ? '10px' : 0,
+                        }}>
+                            ➕ 현재 시점 북마크 추가
+                        </button>
+                        {bookmarks.map(bm => (
+                            <div key={bm.id} style={{
+                                display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px',
+                                background: 'rgba(255,255,255,0.03)', borderRadius: '10px', marginTop: '6px',
+                            }}>
+                                <button onClick={() => jumpToBookmark(bm.time)} style={{
+                                    background: 'rgba(255,45,85,0.15)', border: 'none', color: '#ff6b8a',
+                                    padding: '4px 10px', borderRadius: '6px', fontSize: '13px', fontWeight: 700, cursor: 'pointer',
+                                }}>{formatTime(bm.time)}</button>
+                                <span style={{ flex: 1, color: '#bbb', fontSize: '13px' }}>{bm.label}</span>
+                                <button onClick={() => deleteBookmark(bm.id)} style={{
+                                    background: 'transparent', border: 'none', color: '#555', fontSize: '14px', cursor: 'pointer',
+                                }}>✕</button>
+                            </div>
                         ))}
+                        {bookmarks.length === 0 && (
+                            <p style={{ textAlign: 'center', color: '#555', fontSize: '12px', margin: '8px 0 0' }}>
+                                아직 북마크가 없어요
+                            </p>
+                        )}
                     </div>
-                    <h1 style={{ fontSize: '22px', fontWeight: '800', lineHeight: '1.4', marginBottom: '8px', wordBreak: 'keep-all' }}>{videoData.title}</h1>
-                    <p style={{ color: '#aaa', fontSize: '14px', marginBottom: '16px' }}>안무가: {videoData.choreographer || '구향회 원장'}</p>
+                )}
 
-                    <div style={{ padding: '20px', backgroundColor: '#1a1a24', borderRadius: '12px', border: '1px solid #2a2a35' }}>
-                        <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', color: '#ff2d55' }}>📝 원장님의 안무 노트</h3>
-                        <p style={{ color: '#ddd', fontSize: '15px', lineHeight: '1.6', margin: 0, wordBreak: 'keep-all', whiteSpace: 'pre-line' }}>{videoData.description || '신나게 스텝을 밟아보세요!'}</p>
+                {/* 🔆 밝기/대비 패널 */}
+                {activeTool === 'filter' && (
+                    <div style={panelStyle}>
+                        <div style={{ marginBottom: '12px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                                <span style={{ color: '#999', fontSize: '13px' }}>☀️ 밝기</span>
+                                <span style={{ color: '#ff6b8a', fontSize: '13px', fontWeight: 700 }}>{brightness}%</span>
+                            </div>
+                            <input type="range" min={50} max={200} value={brightness} onChange={e => setBrightness(Number(e.target.value))}
+                                style={{ width: '100%', accentColor: '#ff2d55' }} />
+                        </div>
+                        <div style={{ marginBottom: '12px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                                <span style={{ color: '#999', fontSize: '13px' }}>🔲 대비</span>
+                                <span style={{ color: '#4ecdc4', fontSize: '13px', fontWeight: 700 }}>{contrast}%</span>
+                            </div>
+                            <input type="range" min={50} max={200} value={contrast} onChange={e => setContrast(Number(e.target.value))}
+                                style={{ width: '100%', accentColor: '#4ecdc4' }} />
+                        </div>
+                        <button onClick={() => { setBrightness(100); setContrast(100); }} style={{
+                            width: '100%', padding: '8px', borderRadius: '8px', fontSize: '13px', fontWeight: 600,
+                            border: '1px solid rgba(255,255,255,0.1)', background: 'transparent', color: '#888', cursor: 'pointer',
+                        }}>초기화</button>
                     </div>
+                )}
+
+                {/* 이전곡 / 전체화면 / 다음곡 */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', background: '#1c1c26', padding: '8px', borderRadius: '16px', border: '1px solid #2a2a35' }}>
+                    <button onClick={() => prevSong && navigate(`/video/${prevSong.id}`)} disabled={!prevSong} style={{ flex: 1, padding: '12px 0', background: 'transparent', border: 'none', color: prevSong ? '#fff' : '#444', fontSize: '14px', fontWeight: 'bold', cursor: prevSong ? 'pointer' : 'default' }}>⏮ 이전 곡</button>
+                    <div style={{ width: '1px', height: '24px', backgroundColor: '#3a3a45' }} />
+                    <button onClick={() => playerRef.current?.enterCinema()} style={{ flex: 1.2, padding: '12px 0', background: 'transparent', border: 'none', color: '#ff2d55', fontSize: '15px', fontWeight: 'bold', cursor: 'pointer' }}>🎬 전체 화면</button>
+                    <div style={{ width: '1px', height: '24px', backgroundColor: '#3a3a45' }} />
+                    <button onClick={() => nextSong && navigate(`/video/${nextSong.id}`)} disabled={!nextSong} style={{ flex: 1, padding: '12px 0', background: 'transparent', border: 'none', color: nextSong ? '#fff' : '#444', fontSize: '14px', fontWeight: 'bold', cursor: nextSong ? 'pointer' : 'default' }}>다음 곡 ⏭</button>
                 </div>
-            )}
+
+                {/* 실전 / 스텝설명 토글 */}
+                <div style={{ display: 'flex', background: '#1c1c26', borderRadius: '12px', padding: '4px', marginBottom: '16px' }}>
+                    <button onClick={() => setViewMode('main')} style={{ flex: 1, padding: '14px 0', borderRadius: '10px', fontSize: '15px', fontWeight: 'bold', border: 'none', cursor: 'pointer', transition: 'all 0.3s', backgroundColor: viewMode === 'main' ? '#ff2d55' : 'transparent', color: viewMode === 'main' ? '#fff' : '#888' }}>🎵 음악 맞춰 실전</button>
+                    <button onClick={() => setViewMode('tutorial')} style={{ flex: 1, padding: '14px 0', borderRadius: '10px', fontSize: '15px', fontWeight: 'bold', border: 'none', cursor: 'pointer', transition: 'all 0.3s', backgroundColor: viewMode === 'tutorial' ? '#ff2d55' : 'transparent', color: viewMode === 'tutorial' ? '#fff' : '#888' }}>👣 친절한 스텝 설명</button>
+                </div>
+
+                {/* 태그 + 곡 정보 */}
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
+                    {videoData.tags?.map((tag, idx) => (
+                        <span key={idx} style={{ background: 'rgba(255,45,85,0.15)', color: '#ff2d55', padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold' }}>{tag}</span>
+                    ))}
+                </div>
+                <h1 style={{ fontSize: '22px', fontWeight: '800', lineHeight: '1.4', marginBottom: '8px', wordBreak: 'keep-all' }}>{videoData.title}</h1>
+                <p style={{ color: '#aaa', fontSize: '14px', marginBottom: '16px' }}>안무가: {videoData.choreographer || '구향회 원장'}</p>
+
+                <div style={{ padding: '20px', backgroundColor: '#1a1a24', borderRadius: '12px', border: '1px solid #2a2a35' }}>
+                    <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', color: '#ff2d55' }}>📝 원장님의 안무 노트</h3>
+                    <p style={{ color: '#ddd', fontSize: '15px', lineHeight: '1.6', margin: 0, wordBreak: 'keep-all', whiteSpace: 'pre-line' }}>{videoData.description || '신나게 스텝을 밟아보세요!'}</p>
+                </div>
+            </div>
 
             {/* 공유 토스트 */}
             {shareToast && (

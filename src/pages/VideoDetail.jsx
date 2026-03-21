@@ -62,7 +62,11 @@ export default function VideoDetail() {
     const [showFilters, setShowFilters] = useState(false);
 
     // 🎛️ 도구 패널 토글
-    const [activeTool, setActiveTool] = useState(null); // 'speed' | 'ab' | 'count' | 'bookmark' | 'filter' | null
+    const [activeTool, setActiveTool] = useState(null);
+
+    // 🎬 가로 시네마 오버레이 표시/숨김 (터치 토글)
+    const [showOverlay, setShowOverlay] = useState(true);
+    const overlayTimerRef = useRef(null);
 
     const playerRef = useRef(null);
     const containerRef = useRef(null);
@@ -82,7 +86,6 @@ export default function VideoDetail() {
 
     const { selectedLocation } = useLocation();
 
-    // 📍 장소별 곡 목록 — 이전/다음 네비게이션은 이 배열 기준
     const locationSongs = useMemo(() => getSongsForLocation(selectedLocation), [selectedLocation]);
 
     const currentIndex = locationSongs.findIndex(song => String(song.id) === String(id));
@@ -140,7 +143,6 @@ export default function VideoDetail() {
                         playerRef.current.setPlaybackRate(speed);
                         playerRef.current.setPlaybackQuality(quality);
                     } catch (e) {}
-                    // 📺 iframe에 allowfullscreen 속성 추가 → YouTube 내장 전체화면 버튼 활성화
                     try {
                         const iframe = document.querySelector('#yt-player-container iframe');
                         if (iframe) {
@@ -151,9 +153,7 @@ export default function VideoDetail() {
                         }
                     } catch (e) {}
                 },
-                onPlaybackQualityChange: (e) => {
-                    // HD 강제 적용 확인
-                },
+                onPlaybackQualityChange: (e) => {},
             }
         });
     }, [currentVideoId]);
@@ -190,19 +190,16 @@ export default function VideoDetail() {
         } catch (e) {}
     }, [currentVideoId, playerReady]);
 
-    // ⏩ 속도 변경
     const handleSpeedChange = (s) => {
         setSpeed(s);
         try { playerRef.current?.setPlaybackRate(s); } catch (e) {}
     };
 
-    // 🎬 HD 강제
     const handleQualityChange = (q) => {
         setQuality(q);
         try { playerRef.current?.setPlaybackQuality(q); } catch (e) {}
     };
 
-    // 🔁 A-B 구간 반복
     const getCurrentTime = () => {
         try { return playerRef.current?.getCurrentTime() || 0; } catch (e) { return 0; }
     };
@@ -235,7 +232,6 @@ export default function VideoDetail() {
         clearInterval(abIntervalRef.current);
     };
 
-    // A-B 루프: 검은 화면 방지를 위해 allowSeekAhead=false 사용 + 중복 seek 억제
     const lastSeekTimeRef = useRef(0);
     useEffect(() => {
         clearInterval(abIntervalRef.current);
@@ -243,19 +239,15 @@ export default function VideoDetail() {
             abIntervalRef.current = setInterval(() => {
                 const t = getCurrentTime();
                 const now = Date.now();
-                // B 지점을 넘었을 때만 seek (중복 seek 방지: 최소 500ms 간격)
                 if (t >= pointB && now - lastSeekTimeRef.current > 500) {
                     lastSeekTimeRef.current = now;
-                    try {
-                        playerRef.current?.seekTo(pointA, false);
-                    } catch (e) {}
+                    try { playerRef.current?.seekTo(pointA, false); } catch (e) {}
                 }
             }, 250);
         }
         return () => clearInterval(abIntervalRef.current);
     }, [abLoopActive, pointA, pointB]);
 
-    // 🖼️ PIP 모드
     const togglePip = async () => {
         try {
             const iframe = document.querySelector('#yt-player-container iframe');
@@ -264,8 +256,6 @@ export default function VideoDetail() {
                 await document.exitPictureInPicture();
                 setIsPip(false);
             } else {
-                // PIP는 video 요소에서만 가능 — iframe 내부 접근 불가하므로 대안 사용
-                // YouTube 영상은 팝아웃 방식으로 처리
                 window.open(`https://www.youtube.com/embed/${currentVideoId}?autoplay=1&rel=0&playsinline=1`, '_blank',
                     'width=400,height=250,toolbar=0,menubar=0,location=0');
                 setIsPip(true);
@@ -273,7 +263,6 @@ export default function VideoDetail() {
         } catch (e) {}
     };
 
-    // 🎵 카운트 오버레이
     useEffect(() => {
         clearInterval(countIntervalRef.current);
         if (showCount && bpm > 0) {
@@ -286,7 +275,6 @@ export default function VideoDetail() {
         return () => clearInterval(countIntervalRef.current);
     }, [showCount, bpm]);
 
-    // 🔖 북마크 추가
     const addBookmark = () => {
         const t = getCurrentTime();
         const label = prompt(`${formatTime(t)} 시점에 메모를 입력하세요:`, `스텝 포인트`);
@@ -303,7 +291,6 @@ export default function VideoDetail() {
         saveBookmarks(bookmarks.filter(b => b.id !== bmId));
     };
 
-    // 🔗 영상 공유
     const [shareToast, setShareToast] = useState('');
     const handleShare = async () => {
         const shareUrl = `https://stepbystep-linedance.vercel.app/video/${id}`;
@@ -312,28 +299,19 @@ export default function VideoDetail() {
 
         if (navigator.share) {
             try {
-                await navigator.share({
-                    title: `💃 ${videoData.title} - 스텝바이스텝`,
-                    text: shareText,
-                    url: shareUrl,
-                });
-            } catch (e) {
-                // 사용자가 취소한 경우
-            }
+                await navigator.share({ title: `💃 ${videoData.title} - 스텝바이스텝`, text: shareText, url: shareUrl });
+            } catch (e) {}
         } else {
-            // Web Share API 미지원 (데스크톱) → 클립보드 복사
             try {
                 await navigator.clipboard.writeText(shareText);
                 setShareToast('📋 링크가 복사되었습니다! 카톡에 붙여넣기 하세요');
                 setTimeout(() => setShareToast(''), 2500);
             } catch (e) {
-                // prompt 폴백
                 prompt('아래 링크를 복사하세요:', shareUrl);
             }
         }
     };
 
-    // CSS 필터
     const filterStyle = {
         filter: `brightness(${brightness}%) contrast(${contrast}%)`,
         transition: 'filter 0.3s ease',
@@ -347,21 +325,22 @@ export default function VideoDetail() {
         cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '4px',
     });
 
-    // 📺 시네마 모드 (CSS 기반 전체화면)
     const playerContainerFullRef = useRef(null);
 
     const enterCinema = useCallback(() => {
         if (!isMobile) {
-            // 데스크톱: 브라우저 Fullscreen API
             const container = document.querySelector('#yt-player-container');
             if (container && container.requestFullscreen) {
                 container.requestFullscreen().catch(() => setIsCinema(true));
             } else {
-                setIsCinema(true); // 폴백
+                setIsCinema(true);
             }
         } else {
-            // 모바일: CSS 시네마 모드
             setIsCinema(true);
+            setShowOverlay(true);
+            // 3초 후 오버레이 자동 숨김
+            clearTimeout(overlayTimerRef.current);
+            overlayTimerRef.current = setTimeout(() => setShowOverlay(false), 3000);
             setTimeout(() => {
                 try {
                     const iframe = document.querySelector('#yt-player-container iframe');
@@ -376,13 +355,25 @@ export default function VideoDetail() {
     const exitCinema = useCallback(() => {
         setIsCinema(false);
         manualExitRef.current = true;
-        // 데스크톱: Fullscreen API 종료
         if (!isMobile && document.fullscreenElement) {
             document.exitFullscreen().catch(() => {});
         }
     }, [isMobile]);
 
-    // 데스크톱: ESC 키 등으로 전체화면 종료 시 상태 동기화
+    // 가로 시네마 오버레이 터치 토글
+    const handleOverlayToggle = useCallback(() => {
+        if (!isLandscapeCinema) return;
+        setShowOverlay(prev => {
+            const next = !prev;
+            clearTimeout(overlayTimerRef.current);
+            if (next) {
+                // 표시 후 3초 뒤 자동 숨김
+                overlayTimerRef.current = setTimeout(() => setShowOverlay(false), 3000);
+            }
+            return next;
+        });
+    }, []);
+
     useEffect(() => {
         if (isMobile) return;
         const onFsChange = () => {
@@ -392,18 +383,15 @@ export default function VideoDetail() {
         return () => document.removeEventListener('fullscreenchange', onFsChange);
     }, [isMobile]);
 
-    // 모바일 가로 → 자동 시네마 (수동 종료 시 무시) / 세로 → 자동 해제 + 플래그 리셋
     useEffect(() => {
         if (isMobile && isLandscape && !manualExitRef.current) setIsCinema(true);
         if (isMobile && !isLandscape) {
             setIsCinema(false);
-            manualExitRef.current = false; // 세로 복귀 시 리셋 → 다음 가로에서 자동 진입
+            manualExitRef.current = false;
         }
     }, [isMobile, isLandscape]);
 
-    // 모바일 시네마 → 전체화면 (데스크톱은 항상 false)
     const isFullscreen = isMobile && isCinema;
-    // 🎬 가로 시네마 모드 (모바일 + 시네마 + 가로)
     const isLandscapeCinema = isMobile && isCinema && isLandscape;
 
     return (
@@ -413,46 +401,51 @@ export default function VideoDetail() {
                 zIndex: 9997, backgroundColor: '#000',
                 display: 'flex', flexDirection: 'column',
                 touchAction: 'manipulation',
-                // 가로 시네마: padding/margin 완전 제거, overflow 숨김
-                ...(isLandscapeCinema ? { padding: 0, margin: 0, overflow: 'hidden' } : {}),
+                padding: 0, margin: 0, overflow: 'hidden',
               }
             : { backgroundColor: '#0a0a0f', minHeight: '100vh', display: 'flex', flexDirection: 'column', color: '#fff' }
         }>
 
-            {/* 🔙 시네마 모드일 때 버튼들 */}
+            {/* 🔙 시네마 모드 오버레이 버튼들 */}
             {isFullscreen && (
                 <>
-                    {/* 가로 시네마: 상단 반투명 그라데이션 오버레이 컨트롤 */}
                     {isLandscapeCinema ? (
+                        /* ✅ 가로 시네마: 반투명 오버레이 (터치로 표시/숨김 토글) */
                         <div style={{
                             position: 'fixed', top: 0, left: 0, right: 0,
-                            height: '48px',
-                            background: 'linear-gradient(to bottom, rgba(0,0,0,0.7), transparent)',
+                            height: '52px',
+                            background: 'linear-gradient(to bottom, rgba(0,0,0,0.6), transparent)',
                             display: 'flex', alignItems: 'center',
-                            padding: '0 12px',
-                            gap: '12px',
+                            padding: '0 max(12px, env(safe-area-inset-left))',
+                            gap: '10px',
                             zIndex: 10000,
-                            pointerEvents: 'auto',
+                            pointerEvents: showOverlay ? 'auto' : 'none',
+                            opacity: showOverlay ? 1 : 0,
+                            transition: 'opacity 0.3s ease',
                         }}>
                             <button
                                 onClick={() => navigate(-1)}
-                                onTouchEnd={(e) => { e.preventDefault(); navigate(-1); }}
+                                onTouchEnd={(e) => { e.preventDefault(); e.stopPropagation(); navigate(-1); }}
                                 style={{
-                                    background: 'rgba(0,0,0,0.4)', color: '#fff', border: 'none',
-                                    borderRadius: '16px', padding: '6px 14px',
-                                    fontSize: '14px', fontWeight: 600, cursor: 'pointer',
-                                    backdropFilter: 'blur(4px)', touchAction: 'manipulation',
+                                    background: 'rgba(0,0,0,0.5)', color: '#fff', border: 'none',
+                                    borderRadius: '20px', padding: '7px 16px',
+                                    fontSize: '13px', fontWeight: 600, cursor: 'pointer',
+                                    backdropFilter: 'blur(8px)', touchAction: 'manipulation',
+                                    WebkitBackdropFilter: 'blur(8px)',
                                 }}
                             >‹ 돌아가기</button>
-                            <div style={{ flex: 1 }} />
+                            <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '13px', fontWeight: 600,
+                                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1,
+                            }}>{videoData.title}</span>
                             <button
                                 onClick={exitCinema}
-                                onTouchEnd={(e) => { e.preventDefault(); exitCinema(); }}
+                                onTouchEnd={(e) => { e.preventDefault(); e.stopPropagation(); exitCinema(); }}
                                 style={{
-                                    background: 'rgba(0,0,0,0.4)', color: '#fff', border: 'none',
-                                    borderRadius: '16px', padding: '6px 14px',
-                                    fontSize: '14px', fontWeight: 600, cursor: 'pointer',
-                                    backdropFilter: 'blur(4px)', touchAction: 'manipulation',
+                                    background: 'rgba(0,0,0,0.5)', color: '#fff', border: 'none',
+                                    borderRadius: '20px', padding: '7px 16px',
+                                    fontSize: '13px', fontWeight: 600, cursor: 'pointer',
+                                    backdropFilter: 'blur(8px)', touchAction: 'manipulation',
+                                    WebkitBackdropFilter: 'blur(8px)',
                                 }}
                             >✕ 화면작게</button>
                         </div>
@@ -485,23 +478,30 @@ export default function VideoDetail() {
                     )}
                 </>
             )}
-            {/* 📺 영상 플레이어 — 모바일: 자동 크게 / 데스크톱: 16:9 */}
-            <div id="yt-player-container" style={isLandscapeCinema ? {
-                // 가로 시네마: 화면 꽉 채움
-                position: 'absolute', top: 0, left: 0,
-                width: '100%', height: '100%',
-                backgroundColor: '#000',
-            } : isFullscreen ? {
-                flex: 1, width: '100%', position: 'relative', backgroundColor: '#000',
-            } : isMobile ? {
-                width: '100%', position: 'relative', backgroundColor: '#000',
-                height: 'calc(100dvh - 140px)', minHeight: '250px',
-            } : {
-                width: '100%', position: 'relative', backgroundColor: '#000',
-                aspectRatio: '16/9', maxHeight: '70vh',
-                minHeight: '250px', borderRadius: '12px', overflow: 'hidden',
-            }}>
-                {/* 돌아가기 버튼 — 비시네마 모드에서만 (시네마일 때는 위 오버레이 사용) */}
+
+            {/* 📺 영상 플레이어 */}
+            <div
+                id="yt-player-container"
+                /* ✅ 가로 시네마: 영상 영역 터치 시 오버레이 토글 */
+                onClick={isLandscapeCinema ? handleOverlayToggle : undefined}
+                style={isLandscapeCinema ? {
+                    /* ✅ 가로 시네마: 화면 완전히 꽉 채움, 여백 0 */
+                    position: 'absolute', top: 0, left: 0,
+                    width: '100%', height: '100%',
+                    backgroundColor: '#000',
+                    padding: 0, margin: 0,
+                } : isFullscreen ? {
+                    flex: 1, width: '100%', position: 'relative', backgroundColor: '#000',
+                } : isMobile ? {
+                    width: '100%', position: 'relative', backgroundColor: '#000',
+                    height: 'calc(100dvh - 140px)', minHeight: '250px',
+                } : {
+                    width: '100%', position: 'relative', backgroundColor: '#000',
+                    aspectRatio: '16/9', maxHeight: '70vh',
+                    minHeight: '250px', borderRadius: '12px', overflow: 'hidden',
+                }}
+            >
+                {/* 돌아가기 버튼 — 비시네마 모드에서만 */}
                 {!isFullscreen && (
                     <button onClick={() => navigate(-1)} style={{
                         position: 'absolute', top: 'max(12px, env(safe-area-inset-top))', left: '12px', zIndex: 10,
@@ -522,7 +522,7 @@ export default function VideoDetail() {
                 {/* 카운트 오버레이 */}
                 {showCount && (
                     <div style={{
-                        position: 'absolute', bottom: '60px', left: '50%', transform: 'translateX(-50)',
+                        position: 'absolute', bottom: '60px', left: '50%', transform: 'translateX(-50%)',
                         background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)',
                         borderRadius: '20px', padding: '12px 24px', display: 'flex', gap: '8px', zIndex: 5,
                     }}>
@@ -550,7 +550,6 @@ export default function VideoDetail() {
                     </div>
                 )}
 
-                {/* 화면작게 버튼은 위 fixed 버튼으로 이동됨 */}
                 {/* 📱 모바일 세로에서만 가로 전환 안내 */}
                 {isMobile && !isFullscreen && !isLandscape && (
                     <div style={{

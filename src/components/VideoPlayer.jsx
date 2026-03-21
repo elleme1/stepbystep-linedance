@@ -1,75 +1,32 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
+import useYouTubePlayer from './YouTubePlayer/useYouTubePlayer';
 
 export default function VideoPlayer({ youtubeId }) {
     const [speed, setSpeed] = useState(1);
     const [isMirror, setIsMirror] = useState(false);
-    const playerRef = useRef(null);
-    const iframeRef = useRef(null);
+    const containerRef = useRef(null);
 
     const speeds = [0.5, 0.75, 1, 1.25];
 
-    useEffect(() => {
-        // Load YouTube IFrame API
-        if (!window.YT) {
-            const tag = document.createElement('script');
-            tag.src = 'https://www.youtube.com/iframe_api';
-            const firstScript = document.getElementsByTagName('script')[0];
-            firstScript.parentNode.insertBefore(tag, firstScript);
-        }
-
-        const initPlayer = () => {
-            if (window.YT && window.YT.Player && iframeRef.current) {
-                playerRef.current = new window.YT.Player(iframeRef.current, {
-                    videoId: youtubeId,
-                    playerVars: {
-                        rel: 0,
-                        modestbranding: 1,
-                        playsinline: 1,
-                    },
-                    events: {
-                        onReady: (event) => {
-                            event.target.setPlaybackRate(speed);
-                            // 📺 iframe에 allowfullscreen 속성 추가 → YouTube 내장 전체화면 버튼 활성화
-                            try {
-                                const iframe = iframeRef.current?.querySelector?.('iframe') || document.querySelector('.video-player-wrapper iframe');
-                                if (iframe) {
-                                    iframe.setAttribute('allowfullscreen', 'true');
-                                    iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen');
-                                    iframe.setAttribute('webkitallowfullscreen', 'true');
-                                    iframe.setAttribute('mozallowfullscreen', 'true');
-                                }
-                            } catch (e) {}
-                        }
-                    }
-                });
-            }
-        };
-
-        if (window.YT && window.YT.Player) {
-            initPlayer();
-        } else {
-            window.onYouTubeIframeAPIReady = initPlayer;
-        }
-
-        return () => {
-            if (playerRef.current && playerRef.current.destroy) {
-                playerRef.current.destroy();
-            }
-        };
-    }, [youtubeId]);
+    const player = useYouTubePlayer({
+        containerRef,
+        videoId: youtubeId,
+        autoplay: false,
+        onReady: (e) => {
+            e.target.setPlaybackRate(speed);
+        },
+    });
 
     const handleSpeedChange = (newSpeed) => {
         setSpeed(newSpeed);
-        if (playerRef.current && playerRef.current.setPlaybackRate) {
-            playerRef.current.setPlaybackRate(newSpeed);
-        }
+        player.setSpeed(newSpeed);
     };
 
     return (
         <div>
             <div className={`video-player-wrapper ${isMirror ? 'mirror' : ''}`}>
                 <div className="video-container">
-                    <div ref={iframeRef} />
+                    <div ref={containerRef} />
                 </div>
             </div>
 

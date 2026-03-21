@@ -129,82 +129,21 @@ function getVideos(n) {
 
 // ================================================
 // 🎬 독립 YouTube 플레이어 컴포넌트
-//    — 각 영상이 자기만의 playerRef + 생명주기를 독립 관리
-//    — 이중 래퍼 구조로 YT API의 div→iframe 교체 시 높이 0 방지
+//    — useYouTubePlayer 훅으로 통합 관리
 // ================================================
+import useYouTubePlayer from '../components/YouTubePlayer/useYouTubePlayer';
+
 const JiveYouTubePlayer = memo(function JiveYouTubePlayer({ videoId, onPlayerReady }) {
   const wrapperRef = useRef(null);
-  const playerRef = useRef(null);
-  const mountedRef = useRef(true);
 
-  useEffect(() => {
-    mountedRef.current = true;
-    if (!videoId || !wrapperRef.current) return;
-
-    const buildPlayer = () => {
-      if (!mountedRef.current || !wrapperRef.current) return;
-      // 기존 플레이어 제거
-      if (playerRef.current) {
-        try { playerRef.current.destroy(); } catch (e) {}
-        playerRef.current = null;
-      }
-      // ✅ 핵심: 컨테이너 안에 자식 div를 동적 생성 → YT.Player가 이것만 iframe으로 교체
-      //    부모 래퍼(wrapperRef)의 CSS 레이아웃은 100% 보존됨
-      wrapperRef.current.innerHTML = '';
-      const targetDiv = document.createElement('div');
-      targetDiv.style.cssText = 'width:100%;height:100%';
-      wrapperRef.current.appendChild(targetDiv);
-
-      playerRef.current = new window.YT.Player(targetDiv, {
-        width: '100%',
-        height: '100%',
-        videoId: videoId,
-        playerVars: {
-          rel: 0, modestbranding: 1,
-          playsinline: 1,
-          autoplay: 1,
-          fs: 1,
-        },
-        events: {
-          onReady: (event) => {
-            if (!mountedRef.current) return;
-            try {
-              const iframe = event.target.getIframe();
-              if (iframe) {
-                iframe.setAttribute('playsinline', '1');
-                iframe.setAttribute('webkit-playsinline', '1');
-                iframe.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;border:none';
-              }
-            } catch (e) {}
-            if (onPlayerReady) onPlayerReady(playerRef.current);
-          }
-        }
-      });
-    };
-
-    // YouTube API가 로드될 때까지 대기
-    const timer = setTimeout(() => {
-      if (window.YT?.Player) {
-        buildPlayer();
-      } else {
-        const prev = window.onYouTubeIframeAPIReady;
-        window.onYouTubeIframeAPIReady = () => {
-          if (prev) prev();
-          if (mountedRef.current) buildPlayer();
-        };
-      }
-    }, 120);
-
-    return () => {
-      mountedRef.current = false;
-      clearTimeout(timer);
-      if (playerRef.current) {
-        try { playerRef.current.destroy(); } catch (e) {}
-        playerRef.current = null;
-      }
-      if (wrapperRef.current) wrapperRef.current.innerHTML = '';
-    };
-  }, [videoId]);
+  const player = useYouTubePlayer({
+    containerRef: wrapperRef,
+    videoId,
+    autoplay: true,
+    onReady: (event) => {
+      if (onPlayerReady) onPlayerReady(event.target);
+    },
+  });
 
   return (
     <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', backgroundColor: '#000', overflow: 'hidden', borderRadius: '12px' }}>

@@ -403,42 +403,95 @@ export default function VideoDetail() {
 
     // 모바일 시네마 → 전체화면 (데스크톱은 항상 false)
     const isFullscreen = isMobile && isCinema;
+    // 🎬 가로 시네마 모드 (모바일 + 시네마 + 가로)
+    const isLandscapeCinema = isMobile && isCinema && isLandscape;
 
     return (
         <div ref={playerContainerFullRef} style={isFullscreen
-            ? { position: 'fixed', top: 0, left: 0, width: '100vw', height: '100dvh', zIndex: 9997, backgroundColor: '#000', display: 'flex', flexDirection: 'column', touchAction: 'manipulation' }
+            ? {
+                position: 'fixed', top: 0, left: 0, width: '100vw', height: '100dvh',
+                zIndex: 9997, backgroundColor: '#000',
+                display: 'flex', flexDirection: 'column',
+                touchAction: 'manipulation',
+                // 가로 시네마: padding/margin 완전 제거, overflow 숨김
+                ...(isLandscapeCinema ? { padding: 0, margin: 0, overflow: 'hidden' } : {}),
+              }
             : { backgroundColor: '#0a0a0f', minHeight: '100vh', display: 'flex', flexDirection: 'column', color: '#fff' }
         }>
 
-            {/* 🔙 시네마 모드일 때 버튼들 — iframe 밖에 fixed로 배치 (터치 캡처 방지) */}
+            {/* 🔙 시네마 모드일 때 버튼들 */}
             {isFullscreen && (
                 <>
-                    <button
-                        onClick={() => navigate(-1)}
-                        onTouchEnd={(e) => { e.preventDefault(); navigate(-1); }}
-                        style={{
-                            position: 'fixed', top: 'max(8px, env(safe-area-inset-top))', left: '12px', zIndex: 10000,
-                            background: 'rgba(0,0,0,0.6)', border: 'none', color: '#fff', fontSize: '18px',
-                            borderRadius: '50%', width: '40px', height: '40px', cursor: 'pointer',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            backdropFilter: 'blur(4px)', pointerEvents: 'auto', touchAction: 'manipulation',
-                        }}
-                        aria-label="돌아가기"
-                    >←</button>
-                    <button
-                        onClick={exitCinema}
-                        onTouchEnd={(e) => { e.preventDefault(); exitCinema(); }}
-                        style={{
-                            position: 'fixed', top: 'max(8px, env(safe-area-inset-top))', right: '12px', zIndex: 10000,
-                            background: 'rgba(255,45,85,0.9)', border: 'none', color: '#fff', fontSize: '14px', fontWeight: 'bold',
-                            borderRadius: '20px', padding: '10px 16px', cursor: 'pointer',
-                            pointerEvents: 'auto', touchAction: 'manipulation',
-                        }}
-                    >✕ 화면 작게</button>
+                    {/* 가로 시네마: 상단 반투명 그라데이션 오버레이 컨트롤 */}
+                    {isLandscapeCinema ? (
+                        <div style={{
+                            position: 'fixed', top: 0, left: 0, right: 0,
+                            height: '48px',
+                            background: 'linear-gradient(to bottom, rgba(0,0,0,0.7), transparent)',
+                            display: 'flex', alignItems: 'center',
+                            padding: '0 12px',
+                            gap: '12px',
+                            zIndex: 10000,
+                            pointerEvents: 'auto',
+                        }}>
+                            <button
+                                onClick={() => navigate(-1)}
+                                onTouchEnd={(e) => { e.preventDefault(); navigate(-1); }}
+                                style={{
+                                    background: 'rgba(0,0,0,0.4)', color: '#fff', border: 'none',
+                                    borderRadius: '16px', padding: '6px 14px',
+                                    fontSize: '14px', fontWeight: 600, cursor: 'pointer',
+                                    backdropFilter: 'blur(4px)', touchAction: 'manipulation',
+                                }}
+                            >‹ 돌아가기</button>
+                            <div style={{ flex: 1 }} />
+                            <button
+                                onClick={exitCinema}
+                                onTouchEnd={(e) => { e.preventDefault(); exitCinema(); }}
+                                style={{
+                                    background: 'rgba(0,0,0,0.4)', color: '#fff', border: 'none',
+                                    borderRadius: '16px', padding: '6px 14px',
+                                    fontSize: '14px', fontWeight: 600, cursor: 'pointer',
+                                    backdropFilter: 'blur(4px)', touchAction: 'manipulation',
+                                }}
+                            >✕ 화면작게</button>
+                        </div>
+                    ) : (
+                        /* 세로 시네마: 기존 개별 fixed 버튼 */
+                        <>
+                            <button
+                                onClick={() => navigate(-1)}
+                                onTouchEnd={(e) => { e.preventDefault(); navigate(-1); }}
+                                style={{
+                                    position: 'fixed', top: 'max(8px, env(safe-area-inset-top))', left: '12px', zIndex: 10000,
+                                    background: 'rgba(0,0,0,0.6)', border: 'none', color: '#fff', fontSize: '18px',
+                                    borderRadius: '50%', width: '40px', height: '40px', cursor: 'pointer',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    backdropFilter: 'blur(4px)', pointerEvents: 'auto', touchAction: 'manipulation',
+                                }}
+                                aria-label="돌아가기"
+                            >←</button>
+                            <button
+                                onClick={exitCinema}
+                                onTouchEnd={(e) => { e.preventDefault(); exitCinema(); }}
+                                style={{
+                                    position: 'fixed', top: 'max(8px, env(safe-area-inset-top))', right: '12px', zIndex: 10000,
+                                    background: 'rgba(255,45,85,0.9)', border: 'none', color: '#fff', fontSize: '14px', fontWeight: 'bold',
+                                    borderRadius: '20px', padding: '10px 16px', cursor: 'pointer',
+                                    pointerEvents: 'auto', touchAction: 'manipulation',
+                                }}
+                            >✕ 화면 작게</button>
+                        </>
+                    )}
                 </>
             )}
             {/* 📺 영상 플레이어 — 모바일: 자동 크게 / 데스크톱: 16:9 */}
-            <div id="yt-player-container" style={isFullscreen ? {
+            <div id="yt-player-container" style={isLandscapeCinema ? {
+                // 가로 시네마: 화면 꽉 채움
+                position: 'absolute', top: 0, left: 0,
+                width: '100%', height: '100%',
+                backgroundColor: '#000',
+            } : isFullscreen ? {
                 flex: 1, width: '100%', position: 'relative', backgroundColor: '#000',
             } : isMobile ? {
                 width: '100%', position: 'relative', backgroundColor: '#000',
@@ -448,7 +501,7 @@ export default function VideoDetail() {
                 aspectRatio: '16/9', maxHeight: '70vh',
                 minHeight: '250px', borderRadius: '12px', overflow: 'hidden',
             }}>
-                {/* 돌아가기 버튼 — 비시네마 모드에서만 (시네마일 때는 위 fixed 버튼 사용) */}
+                {/* 돌아가기 버튼 — 비시네마 모드에서만 (시네마일 때는 위 오버레이 사용) */}
                 {!isFullscreen && (
                     <button onClick={() => navigate(-1)} style={{
                         position: 'absolute', top: 'max(12px, env(safe-area-inset-top))', left: '12px', zIndex: 10,

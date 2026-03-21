@@ -2262,6 +2262,28 @@ select {
   box-shadow: var(--shadow-lg);
 }
 
+/* 데스크톱: PlaylistPage 레이아웃 제한 */
+@media (min-width: 768px) {
+  .playlist-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--space-md);
+    padding-bottom: calc(var(--nav-height) + 32px + var(--safe-area-bottom));
+  }
+
+  .playlist-video-area {
+    max-height: 70vh;
+  }
+
+  .playlist-video-area .video-player-wrapper {
+    max-height: 70vh;
+  }
+
+  .playlist-video-area .video-container {
+    max-height: 70vh;
+  }
+}
+
 .playlist-song-info {
   padding: 0 var(--space-xs);
 }

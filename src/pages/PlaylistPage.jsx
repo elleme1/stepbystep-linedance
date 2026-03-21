@@ -108,7 +108,7 @@ export default function PlaylistPage() {
             playerRef.current = new window.YT.Player(containerRef.current, {
                 videoId,
                 playerVars: {
-                    rel: 0, modestbranding: 1, playsinline: 1, autoplay: 0, cc_load_policy: 1, cc_lang_pref: 'ko',
+                    rel: 0, modestbranding: 1, playsinline: 1, autoplay: 0,
                 },
                 events: {
                     onReady: () => {

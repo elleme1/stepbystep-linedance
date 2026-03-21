@@ -25,7 +25,6 @@ export default function VideoPlayer({ youtubeId }) {
                         rel: 0,
                         modestbranding: 1,
                         playsinline: 1,
-                        cc_load_policy: 3,
                     },
                     events: {
                         onReady: (event) => {

@@ -163,7 +163,6 @@ const JiveYouTubePlayer = memo(function JiveYouTubePlayer({ videoId, onPlayerRea
           rel: 0, modestbranding: 1,
           playsinline: 1,
           autoplay: 1,
-          cc_load_policy: 3,
           fs: 1,
         },
         events: {

@@ -6,6 +6,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { FavoritesProvider } from './context/FavoritesContext';
 import { PracticeProvider } from './context/PracticeContext';
 import { LocationProvider, useLocation } from './context/LocationContext';
+import { DeviceProvider } from './context/DeviceContext';
 
 // 🎬 스플래시 화면
 import SplashScreen from './components/SplashScreen';
@@ -65,14 +66,16 @@ function AppContent() {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <FavoritesProvider>
-        <PracticeProvider>
-          <LocationProvider>
-            <AppContent />
-          </LocationProvider>
-        </PracticeProvider>
-      </FavoritesProvider>
-    </ThemeProvider>
+    <DeviceProvider>
+      <ThemeProvider>
+        <FavoritesProvider>
+          <PracticeProvider>
+            <LocationProvider>
+              <AppContent />
+            </LocationProvider>
+          </PracticeProvider>
+        </FavoritesProvider>
+      </ThemeProvider>
+    </DeviceProvider>
   );
 }

@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import songs, { getSongsForLocation } from '../data/songs';
 import { levelStars } from '../data/constants';
 import { useLocation } from '../context/LocationContext';
+import useYouTubePlayer from '../components/YouTubePlayer/useYouTubePlayer';
 
 export default function PlaylistPage() {
     const [searchParams] = useSearchParams();
@@ -19,26 +20,21 @@ export default function PlaylistPage() {
     const [progress, setProgress] = useState(0);
     const [duration, setDuration] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
-    const [playerReady, setPlayerReady] = useState(false);
 
-    // 🚀 [마법의 닻] 화면 최상단을 가리키는 레이더 장착
+    // 🚀 화면 최상단 ref
     const topRef = useRef(null);
-
-    const playerRef = useRef(null);
     const containerRef = useRef(null);
     const progressInterval = useRef(null);
     const playlistRef = useRef(null);
-    const loadedVideoId = useRef(null);
 
     // 유튜브 API 콜백에서 항상 최신 상태를 유지하기 위한 저장소
     const stateRef = useRef({});
     stateRef.current = { isAutoPlay, isRepeat, isPlaying, currentIndex, speed, isShuffle, shuffledOrder };
 
     const { selectedLocation } = useLocation();
-
     const speeds = [0.5, 0.75, 1, 1.25];
 
-    // 📍 장소별 곡 필터링 + isThisWeek 장소별 판단
+    // 📍 장소별 곡 필터링
     const isThisWeekForLocation = (song) => {
         if (selectedLocation === 'kolon') return song.isThisWeekKolon;
         if (selectedLocation === 'sindun') return song.isThisWeekSindun;
@@ -70,122 +66,81 @@ export default function PlaylistPage() {
     }, [isShuffle, shuffledOrder]);
 
     const currentSong = playlistSongs[getActualIndex(currentIndex)];
+    const currentVideoId = currentSong?.mainVideoId || currentSong?.youtubeId || '';
 
-    const startProgressTracking = () => {
+    // =============================
+    // 프로그래스 트래킹
+    // =============================
+    const startProgressTracking = useCallback(() => {
         stopProgressTracking();
         progressInterval.current = setInterval(() => {
             try {
-                if (playerRef.current && playerRef.current.getCurrentTime) {
-                    const ct = playerRef.current.getCurrentTime();
-                    const dur = playerRef.current.getDuration();
-                    setCurrentTime(ct);
-                    setDuration(dur);
-                    setProgress(dur > 0 ? (ct / dur) * 100 : 0);
-                }
+                const ct = player.getCurrentTime();
+                const dur = player.getDuration();
+                setCurrentTime(ct);
+                setDuration(dur);
+                setProgress(dur > 0 ? (ct / dur) * 100 : 0);
             } catch (e) { }
         }, 500);
-    };
+    }, []);
 
-    const stopProgressTracking = () => {
+    const stopProgressTracking = useCallback(() => {
         if (progressInterval.current) {
             clearInterval(progressInterval.current);
             progressInterval.current = null;
         }
-    };
-
-    // 1️⃣ 최초 접속 시 유튜브 플레이어를 딱 1번만 만듭니다
-    useEffect(() => {
-        let mounted = true;
-
-        const createPlayer = () => {
-            if (!mounted || !window.YT || !window.YT.Player || !containerRef.current) return;
-
-            // songs.js에 있는 mainVideoId도 완벽하게 지원하도록 수정!
-            const videoId = playlistSongs[0]?.mainVideoId || playlistSongs[0]?.youtubeId;
-            if (!videoId) return;
-            loadedVideoId.current = videoId;
-
-            playerRef.current = new window.YT.Player(containerRef.current, {
-                videoId,
-                playerVars: {
-                    rel: 0, modestbranding: 1, playsinline: 1, autoplay: 0,
-                },
-                events: {
-                    onReady: () => {
-                        if (!mounted) return;
-                        setPlayerReady(true);
-                        try {
-                            playerRef.current.setPlaybackRate(stateRef.current.speed);
-                            setDuration(playerRef.current.getDuration());
-                        } catch (e) { }
-                    },
-                    onStateChange: (event) => {
-                        if (!mounted) return;
-
-                        if (event.data === window.YT.PlayerState.PLAYING) {
-                            setIsPlaying(true);
-                            try { setDuration(event.target.getDuration()); } catch (e) { }
-                            startProgressTracking();
-                        } else if (event.data === window.YT.PlayerState.PAUSED) {
-                            setIsPlaying(false);
-                            stopProgressTracking();
-                        } else if (event.data === window.YT.PlayerState.ENDED) {
-                            stopProgressTracking();
-                            const s = stateRef.current;
-
-                            if (s.isRepeat) {
-                                try {
-                                    event.target.seekTo(0);
-                                    event.target.playVideo();
-                                } catch (e) { }
-                            } else if (s.isAutoPlay) {
-                                if (s.currentIndex < totalSongs - 1) {
-                                    setCurrentIndex(s.currentIndex + 1);
-                                    setIsPlaying(true);
-                                } else {
-                                    setIsPlaying(false);
-                                    setCurrentIndex(0);
-                                }
-                            } else {
-                                setIsPlaying(false);
-                            }
-                        }
-                    }
-                }
-            });
-        };
-
-        if (!window.YT) {
-            const tag = document.createElement('script');
-            tag.src = 'https://www.youtube.com/iframe_api';
-            const firstScript = document.getElementsByTagName('script')[0];
-            firstScript.parentNode.insertBefore(tag, firstScript);
-            window.onYouTubeIframeAPIReady = createPlayer;
-        } else if (window.YT.Player) {
-            createPlayer();
-        }
-
-        return () => {
-            mounted = false;
-            stopProgressTracking();
-            try {
-                if (playerRef.current && playerRef.current.destroy) {
-                    playerRef.current.destroy();
-                }
-            } catch (e) { }
-            playerRef.current = null;
-        };
     }, []);
 
-    // 2️⃣ 🚀 [버그 완벽 타파!] 곡이 다음 곡으로 넘어갈 때 발동하는 마법 코드!
+    // =============================
+    // 통합 YouTube Player 훅 사용
+    // =============================
+    const player = useYouTubePlayer({
+        containerRef,
+        videoId: currentVideoId,
+        autoplay: false,
+        onReady: (e) => {
+            try {
+                e.target.setPlaybackRate(stateRef.current.speed);
+                setDuration(e.target.getDuration());
+            } catch (err) { }
+        },
+        onStateChange: (event) => {
+            if (event.data === window.YT.PlayerState.PLAYING) {
+                setIsPlaying(true);
+                try { setDuration(event.target.getDuration()); } catch (e) { }
+                startProgressTracking();
+            } else if (event.data === window.YT.PlayerState.PAUSED) {
+                setIsPlaying(false);
+                stopProgressTracking();
+            } else if (event.data === window.YT.PlayerState.ENDED) {
+                stopProgressTracking();
+                const s = stateRef.current;
+
+                if (s.isRepeat) {
+                    try {
+                        event.target.seekTo(0);
+                        event.target.playVideo();
+                    } catch (e) { }
+                } else if (s.isAutoPlay) {
+                    if (s.currentIndex < totalSongs - 1) {
+                        setCurrentIndex(s.currentIndex + 1);
+                        setIsPlaying(true);
+                    } else {
+                        setIsPlaying(false);
+                        setCurrentIndex(0);
+                    }
+                } else {
+                    setIsPlaying(false);
+                }
+            }
+        },
+    });
+
+    // 곡 변경 시 스크롤 + 속도 적용
     useEffect(() => {
-        if (!playerReady || !playerRef.current || !currentSong) return;
+        if (!player.isReady || !currentSong) return;
 
-        const targetVideoId = currentSong.mainVideoId || currentSong.youtubeId;
-        if (targetVideoId === loadedVideoId.current) return;
-        loadedVideoId.current = targetVideoId;
-
-        // 🛠️ [해결 1] 무조건 화면 멱살을 잡고 맨 위(영상)로 스르륵! 즉시 끌어올립니다.
+        // 화면 스크롤
         window.scrollTo({ top: 0, behavior: 'smooth' });
         if (topRef.current) {
             topRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -195,24 +150,15 @@ export default function PlaylistPage() {
             pageContainer.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        try {
-            if (stateRef.current.isPlaying || stateRef.current.isAutoPlay) {
-                playerRef.current.loadVideoById(targetVideoId);
-            } else {
-                playerRef.current.cueVideoById(targetVideoId);
-            }
-            playerRef.current.setPlaybackRate(speed);
-        } catch (e) { }
+        // 속도 적용
+        player.setSpeed(speed);
 
-        // 🛠️ [해결 2] 모바일 Safari 까만 먹통 화면 완벽 제거! (화면 흔들어 깨우기 기술)
+        // Safari 먹통 화면 방지
         try {
-            const iframe = containerRef.current?.querySelector('iframe') || document.querySelector('.video-container iframe');
+            const iframe = containerRef.current?.querySelector('iframe');
             if (iframe) {
-                // 영상을 0.01% 살짝 찌그러뜨렸다가 0.05초 만에 복구시켜 폰이 깜짝 놀라게 하여 화면을 강제로 렌더링시킵니다!
                 iframe.style.transform = 'scale(0.99)';
-                setTimeout(() => {
-                    iframe.style.transform = 'scale(1)';
-                }, 50);
+                setTimeout(() => { iframe.style.transform = 'scale(1)'; }, 50);
             }
         } catch (e) { }
 
@@ -220,8 +166,7 @@ export default function PlaylistPage() {
         setCurrentTime(0);
         setDuration(0);
 
-        // 🛠️ [해결 3] 화면 전체를 질질 끌어내리던 원흉(scrollIntoView) 전면 교체!
-        // 화면 전체가 아니라, '재생목록 상자 안에서만' 얌전하게 휠을 굴리도록 똑똑하게 수학적으로 위치를 잡았습니다.
+        // 재생목록 스크롤
         setTimeout(() => {
             const listContainer = playlistRef.current;
             const activeItem = listContainer?.querySelector('.playlist-item.active');
@@ -230,8 +175,16 @@ export default function PlaylistPage() {
                 listContainer.scrollTo({ top: Math.max(0, offset), behavior: 'smooth' });
             }
         }, 100);
-    }, [currentIndex, playerReady, isShuffle, shuffledOrder, currentSong, speed]);
+    }, [currentIndex, player.isReady, isShuffle, shuffledOrder, currentSong, speed]);
 
+    // 언마운트 시 정리
+    useEffect(() => {
+        return () => stopProgressTracking();
+    }, []);
+
+    // =============================
+    // 컨트롤 핸들러
+    // =============================
     const handleSongSelect = (idx) => {
         if (isShuffle) {
             const shuffleIdx = shuffledOrder.indexOf(idx);
@@ -244,9 +197,7 @@ export default function PlaylistPage() {
 
     const handlePrev = () => {
         if (currentTime > 3) {
-            try {
-                if (playerRef.current && playerRef.current.seekTo) playerRef.current.seekTo(0);
-            } catch (e) { }
+            player.seekTo(0);
         } else {
             setCurrentIndex(prev => prev > 0 ? prev - 1 : totalSongs - 1);
             setIsPlaying(true);
@@ -259,26 +210,19 @@ export default function PlaylistPage() {
     };
 
     const handlePlayPause = () => {
-        if (!playerRef.current) return;
-        try {
-            if (isPlaying) playerRef.current.pauseVideo();
-            else playerRef.current.playVideo();
-        } catch (e) { }
+        if (isPlaying) player.pause();
+        else player.play();
     };
 
     const handleSpeedChange = (newSpeed) => {
         setSpeed(newSpeed);
-        try {
-            if (playerRef.current && playerRef.current.setPlaybackRate) playerRef.current.setPlaybackRate(newSpeed);
-        } catch (e) { }
+        player.setSpeed(newSpeed);
     };
 
     const handleProgressClick = (e) => {
         const rect = e.currentTarget.getBoundingClientRect();
         const pct = (e.clientX - rect.left) / rect.width;
-        try {
-            if (playerRef.current && playerRef.current.seekTo && duration > 0) playerRef.current.seekTo(pct * duration);
-        } catch (e2) { }
+        if (duration > 0) player.seekTo(pct * duration);
     };
 
     const handleShuffleToggle = () => {
@@ -294,7 +238,6 @@ export default function PlaylistPage() {
     };
 
     return (
-        // 🌟 마법의 닻 장착 완료!
         <div className="playlist-page" ref={topRef}>
             <div style={{
                 padding: 'max(16px, env(safe-area-inset-top)) 16px 16px', display: 'flex', alignItems: 'center',

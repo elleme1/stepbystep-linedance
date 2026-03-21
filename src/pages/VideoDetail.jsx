@@ -157,7 +157,7 @@ export default function VideoDetail() {
                 const now = Date.now();
                 if (t >= pointB && now - lastSeekTimeRef.current > 500) {
                     lastSeekTimeRef.current = now;
-                    playerRef.current?.seekTo(pointA, false);
+                    playerRef.current?.seekTo(pointA, true);
                 }
             }, 250);
         }

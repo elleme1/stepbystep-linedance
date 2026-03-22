@@ -206,12 +206,26 @@ export default function VideoDetail() {
     // =============================
     // 북마크
     // =============================
+    const [bookmarkModal, setBookmarkModal] = useState(null); // { time }
+    const [bookmarkLabel, setBookmarkLabel] = useState('스텝 포인트');
+    const bookmarkInputRef = useRef(null);
+
     const addBookmark = () => {
         const t = getCurrentTime();
-        const label = prompt(`${formatTime(t)} 시점에 메모를 입력하세요:`, `스텝 포인트`);
-        if (label) {
-            saveBookmarks([...bookmarks, { time: t, label, id: Date.now() }].sort((a, b) => a.time - b.time));
+        setBookmarkLabel('스텝 포인트');
+        setBookmarkModal({ time: t });
+        setTimeout(() => bookmarkInputRef.current?.focus(), 100);
+    };
+
+    const confirmBookmark = () => {
+        if (bookmarkModal && bookmarkLabel.trim()) {
+            saveBookmarks([...bookmarks, { time: bookmarkModal.time, label: bookmarkLabel.trim(), id: Date.now() }].sort((a, b) => a.time - b.time));
         }
+        setBookmarkModal(null);
+    };
+
+    const cancelBookmark = () => {
+        setBookmarkModal(null);
     };
 
     const jumpToBookmark = (time) => {
@@ -496,6 +510,51 @@ export default function VideoDetail() {
                     <p style={{ color: '#ddd', fontSize: '15px', lineHeight: '1.6', margin: 0, wordBreak: 'keep-all', whiteSpace: 'pre-line' }}>{videoData.description || '신나게 스텝을 밟아보세요!'}</p>
                 </div>
             </div>
+
+            {/* 북마크 메모 입력 모달 */}
+            {bookmarkModal && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                    background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10000, padding: '20px',
+                }} onClick={cancelBookmark}>
+                    <div style={{
+                        background: 'linear-gradient(135deg, #1a1a2e, #16213e)', borderRadius: '20px',
+                        padding: '24px', width: '100%', maxWidth: '340px',
+                        border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+                    }} onClick={e => e.stopPropagation()}>
+                        <h3 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 800, color: '#fff' }}>
+                            🔖 북마크 추가
+                        </h3>
+                        <p style={{ margin: '0 0 16px', fontSize: '13px', color: '#888' }}>
+                            {formatTime(bookmarkModal.time)} 시점에 메모를 입력하세요
+                        </p>
+                        <input
+                            ref={bookmarkInputRef}
+                            type="text"
+                            value={bookmarkLabel}
+                            onChange={e => setBookmarkLabel(e.target.value)}
+                            onKeyDown={e => { if (e.key === 'Enter') confirmBookmark(); if (e.key === 'Escape') cancelBookmark(); }}
+                            placeholder="스텝 포인트"
+                            style={{
+                                width: '100%', padding: '12px 16px', borderRadius: '12px', fontSize: '15px',
+                                border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.08)',
+                                color: '#fff', outline: 'none', boxSizing: 'border-box',
+                            }}
+                        />
+                        <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+                            <button onClick={cancelBookmark} style={{
+                                flex: 1, padding: '12px', borderRadius: '12px', fontSize: '14px', fontWeight: 700,
+                                border: '1px solid rgba(255,255,255,0.1)', background: 'transparent', color: '#888', cursor: 'pointer',
+                            }}>취소</button>
+                            <button onClick={confirmBookmark} style={{
+                                flex: 1, padding: '12px', borderRadius: '12px', fontSize: '14px', fontWeight: 700,
+                                border: 'none', background: 'linear-gradient(135deg, #ff2d55, #ff6b8a)', color: '#fff', cursor: 'pointer',
+                            }}>저장</button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* 공유 토스트 */}
             {shareToast && (

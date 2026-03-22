@@ -2262,25 +2262,26 @@ select {
   box-shadow: var(--shadow-lg);
 }
 
-/* 데스크톱: PlaylistPage 레이아웃 제한 */
+/* 데스크톱: PlaylistPage 레이아웃 */
 @media (min-width: 768px) {
   .playlist-page {
-    max-width: 800px;
+    max-width: 1100px;
     margin: 0 auto;
-    padding: var(--space-md);
+    padding: var(--space-md) var(--space-xl);
     padding-bottom: calc(var(--nav-height) + 32px + var(--safe-area-bottom));
   }
 
   .playlist-video-area {
-    max-height: 70vh;
+    aspect-ratio: 16 / 9;
   }
 
   .playlist-video-area .video-player-wrapper {
-    max-height: 70vh;
+    aspect-ratio: 16 / 9;
   }
 
   .playlist-video-area .video-container {
-    max-height: 70vh;
+    aspect-ratio: 16 / 9;
+    padding-bottom: 0; /* 패딩 트릭 대신 aspect-ratio 사용 */
   }
 }
 

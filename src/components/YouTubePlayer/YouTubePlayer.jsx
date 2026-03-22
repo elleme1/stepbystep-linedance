@@ -63,7 +63,7 @@ const YouTubePlayer = React.forwardRef(function YouTubePlayer({
     enterCinema,
     exitCinema,
     isCinema,
-  }));
+  }), [player, isCinema]);
 
   // ============================
   // 시네마 모드 진입/종료

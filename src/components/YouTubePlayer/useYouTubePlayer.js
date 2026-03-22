@@ -3,6 +3,11 @@ import { useRef, useEffect, useCallback, useState } from 'react';
 /**
  * YouTube IFrame API 로딩, Player 생성/파괴, 영상 전환, 속도/화질 제어를 하나의 훅으로 통합.
  *
+ * 🔑 핵심 원칙: 플레이어는 한 번만 생성하고, 영상만 교체한다.
+ *    - createPlayer는 videoId에 의존하지 않고 최초 1회만 실행
+ *    - videoId 변경 시 loadVideoById / cueVideoById로 영상만 swap
+ *    - isReady가 불필요하게 리셋되지 않아 제어 함수 항상 유효
+ *
  * @param {Object} options
  * @param {React.RefObject} options.containerRef - 플레이어를 렌더링할 DOM ref
  * @param {string} options.videoId - YouTube 영상 ID
@@ -22,14 +27,21 @@ export default function useYouTubePlayer({
   const mountedRef = useRef(true);
   const [isReady, setIsReady] = useState(false);
 
-  // 콜백 refs: 최신 콜백 참조를 유지하면서 useEffect 의존성 배열에서 제거
+  // 최신 콜백/옵션을 ref로 유지 → useEffect 의존성 배열에서 제거
   const onReadyRef = useRef(onReady);
   const onStateChangeRef = useRef(onStateChange);
+  const autoplayRef = useRef(autoplay);
+  const videoIdRef = useRef(videoId);
   onReadyRef.current = onReady;
   onStateChangeRef.current = onStateChange;
+  autoplayRef.current = autoplay;
+  videoIdRef.current = videoId;
 
+  // ============================
+  // 플레이어 생성 (최초 1회만)
+  // ============================
   const createPlayer = useCallback(() => {
-    if (!mountedRef.current || !window.YT?.Player || !containerRef.current || !videoId) return;
+    if (!mountedRef.current || !window.YT?.Player || !containerRef.current) return;
 
     // 기존 플레이어 정리
     if (playerRef.current) {
@@ -37,7 +49,8 @@ export default function useYouTubePlayer({
       playerRef.current = null;
     }
 
-    loadedVideoId.current = videoId;
+    const initialVideoId = videoIdRef.current || '';
+    loadedVideoId.current = initialVideoId;
 
     // 컨테이너 안에 자식 div를 동적 생성 → YT.Player가 이것만 iframe으로 교체
     containerRef.current.innerHTML = '';
@@ -48,12 +61,12 @@ export default function useYouTubePlayer({
     playerRef.current = new window.YT.Player(targetDiv, {
       width: '100%',
       height: '100%',
-      videoId,
+      videoId: initialVideoId,
       playerVars: {
         rel: 0,
         modestbranding: 1,
         playsinline: 1,
-        autoplay: autoplay ? 1 : 0,
+        autoplay: autoplayRef.current ? 1 : 0,
       },
       events: {
         onReady: (e) => {
@@ -79,17 +92,13 @@ export default function useYouTubePlayer({
         },
       },
     });
-  }, [videoId, autoplay]);
+  }, []); // ← 빈 의존성: videoId/autoplay에 의존하지 않음
 
-  // YT API 로딩 + 플레이어 생성
+  // ============================
+  // YT API 로딩 + 플레이어 최초 생성
+  // ============================
   useEffect(() => {
     mountedRef.current = true;
-
-    const initWhenReady = () => {
-      if (window.YT?.Player) {
-        createPlayer();
-      }
-    };
 
     if (!window.YT) {
       const tag = document.createElement('script');
@@ -100,8 +109,8 @@ export default function useYouTubePlayer({
         if (prevCallback) prevCallback();
         if (mountedRef.current) createPlayer();
       };
-    } else {
-      initWhenReady();
+    } else if (window.YT?.Player) {
+      createPlayer();
     }
 
     return () => {
@@ -112,21 +121,27 @@ export default function useYouTubePlayer({
     };
   }, [createPlayer]);
 
-  // videoId 변경 시 영상 전환
+  // ============================
+  // videoId 변경 시 영상만 교체 (플레이어 재생성 없음)
+  // ============================
   useEffect(() => {
     if (!isReady || !playerRef.current || !videoId) return;
     if (videoId === loadedVideoId.current) return;
+
     loadedVideoId.current = videoId;
     try {
-      if (autoplay) {
-        playerRef.current.loadVideoById(videoId);
-      } else {
-        playerRef.current.cueVideoById(videoId);
-      }
+      // 항상 loadVideoById 사용 → 자동 재생 보장
+      // 이전에는 cueVideoById(재생 안함)와 loadVideoById(재생함)를 autoplay prop으로 구분했으나,
+      // 연속재생 등에서 prop이 false로 고정된 경우 재생이 안되는 문제 발생.
+      // 곡 전환 시에는 항상 loadVideoById로 즉시 재생하고,
+      // 재생을 원하지 않는 경우 호출부(PlaylistPage 등)에서 pause()를 사용.
+      playerRef.current.loadVideoById(videoId);
     } catch (e) {}
-  }, [videoId, isReady, autoplay]);
+  }, [videoId, isReady]);
 
+  // ============================
   // 외부에서 사용할 제어 함수들
+  // ============================
   const setSpeed = useCallback((speed) => {
     try { playerRef.current?.setPlaybackRate(speed); } catch (e) {}
   }, []);

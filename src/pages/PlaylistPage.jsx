@@ -31,6 +31,9 @@ export default function PlaylistPage() {
     const stateRef = useRef({});
     stateRef.current = { isAutoPlay, isRepeat, isPlaying, currentIndex, speed, isShuffle, shuffledOrder };
 
+    // 🔑 곡 전환 후 재생을 원하는지 플래그 (ENDED → 다음 곡 전환 → 로드 완료 → play)
+    const wantPlayRef = useRef(false);
+
     const { selectedLocation } = useLocation();
     const speeds = [0.5, 0.75, 1, 1.25];
 
@@ -122,12 +125,15 @@ export default function PlaylistPage() {
                         event.target.playVideo();
                     } catch (e) { }
                 } else if (s.isAutoPlay) {
+                    // 🔑 다음 곡 전환 시 wantPlay 플래그 설정
+                    // → videoId 변경 effect에서 실제 play() 호출
+                    wantPlayRef.current = true;
                     if (s.currentIndex < totalSongs - 1) {
                         setCurrentIndex(s.currentIndex + 1);
-                        setIsPlaying(true);
                     } else {
                         setIsPlaying(false);
                         setCurrentIndex(0);
+                        wantPlayRef.current = false;
                     }
                 } else {
                     setIsPlaying(false);
@@ -136,7 +142,7 @@ export default function PlaylistPage() {
         },
     });
 
-    // 곡 변경 시 스크롤 + 속도 적용
+    // 곡 변경 시 스크롤 + 속도 적용 + 재생 보장
     useEffect(() => {
         if (!player.isReady || !currentSong) return;
 
@@ -166,6 +172,18 @@ export default function PlaylistPage() {
         setCurrentTime(0);
         setDuration(0);
 
+        // 🔑 곡 전환 후 재생 보장
+        // loadVideoById가 영상을 로드하면 자동 재생되지만, 안전장치로 play() 호출
+        if (wantPlayRef.current) {
+            wantPlayRef.current = false;
+            // loadVideoById 후 약간의 딜레이를 두고 play 보장
+            setTimeout(() => {
+                player.play();
+                setIsPlaying(true);
+                startProgressTracking();
+            }, 300);
+        }
+
         // 재생목록 스크롤
         setTimeout(() => {
             const listContainer = playlistRef.current;
@@ -186,6 +204,7 @@ export default function PlaylistPage() {
     // 컨트롤 핸들러
     // =============================
     const handleSongSelect = (idx) => {
+        wantPlayRef.current = true;
         if (isShuffle) {
             const shuffleIdx = shuffledOrder.indexOf(idx);
             setCurrentIndex(shuffleIdx !== -1 ? shuffleIdx : idx);
@@ -199,12 +218,14 @@ export default function PlaylistPage() {
         if (currentTime > 3) {
             player.seekTo(0);
         } else {
+            wantPlayRef.current = true;
             setCurrentIndex(prev => prev > 0 ? prev - 1 : totalSongs - 1);
             setIsPlaying(true);
         }
     };
 
     const handleNext = () => {
+        wantPlayRef.current = true;
         setCurrentIndex(prev => prev < totalSongs - 1 ? prev + 1 : 0);
         setIsPlaying(true);
     };

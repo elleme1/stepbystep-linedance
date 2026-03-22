@@ -2,13 +2,12 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom';
 import songs, { getSongsForLocation } from '../data/songs';
 import { useLocation } from '../context/LocationContext';
-import { useDevice } from '../context/DeviceContext';
+
 import YouTubePlayer from '../components/YouTubePlayer/YouTubePlayer';
 
 export default function VideoDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { isMobile } = useDevice();
     const playerRef = useRef(null);
 
     const [viewMode, setViewMode] = useState('main');
@@ -101,7 +100,7 @@ export default function VideoDetail() {
             player.setPlaybackRate(speed);
             player.setPlaybackQuality(quality);
         } catch (err) {}
-    }, []);
+    }, [speed, quality]);
 
     const handleSpeedChange = (s) => {
         setSpeed(s);
@@ -200,6 +199,7 @@ export default function VideoDetail() {
         return () => {
             clearInterval(abIntervalRef.current);
             clearInterval(countIntervalRef.current);
+            clearTimeout(shareToastTimerRef.current);
         };
     }, []);
 
@@ -226,6 +226,7 @@ export default function VideoDetail() {
     // 공유
     // =============================
     const [shareToast, setShareToast] = useState('');
+    const shareToastTimerRef = useRef(null);
     const handleShare = async () => {
         const shareUrl = `https://stepbystep-linedance.vercel.app/video/${id}`;
         const youtubeUrl = `https://youtu.be/${currentVideoId}`;
@@ -239,7 +240,8 @@ export default function VideoDetail() {
             try {
                 await navigator.clipboard.writeText(shareText);
                 setShareToast('📋 링크가 복사되었습니다! 카톡에 붙여넣기 하세요');
-                setTimeout(() => setShareToast(''), 2500);
+                clearTimeout(shareToastTimerRef.current);
+                shareToastTimerRef.current = setTimeout(() => setShareToast(''), 2500);
             } catch (e) {
                 prompt('아래 링크를 복사하세요:', shareUrl);
             }
@@ -514,10 +516,20 @@ const panelStyle = {
     padding: '16px', marginBottom: '12px', border: '1px solid rgba(255,255,255,0.06)',
 };
 
-const abBtnStyle = (color) => ({
-    padding: '10px 16px', borderRadius: '12px', fontSize: '13px', fontWeight: 700,
-    border: `1px solid ${color}33`, background: `${color}15`, color, cursor: 'pointer',
-});
+const abBtnStyle = (color) => {
+    // hex color를 rgba로 변환
+    const hexToRgb = (hex) => {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `${r},${g},${b}`;
+    };
+    const rgb = hexToRgb(color);
+    return {
+        padding: '10px 16px', borderRadius: '12px', fontSize: '13px', fontWeight: 700,
+        border: `1px solid rgba(${rgb},0.2)`, background: `rgba(${rgb},0.08)`, color, cursor: 'pointer',
+    };
+};
 
 const smallBtnStyle = {
     width: '36px', height: '36px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.15)',

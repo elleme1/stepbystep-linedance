@@ -1093,24 +1093,24 @@ const songSchedule = {
   2: { date: '2026-02-24', location: 'both' },      // 정말 잘해왔어
   4: { date: '2026-02-10', location: 'both' },      // 오늘밤에 만나요
   3: { date: '2026-02-17', location: 'both' },      // This Is My Life
-  8: { date: '2026-01-13', location: 'both' },      // Rose Garden
+  8: { date: '2026-01-13', location: 'both' },      // Rose Garden (우연히)
+  11: { date: '2025-12-30', location: 'both' },     // Samba Do Brasil
+  12: { date: '2025-12-23', location: 'both' },     // Turn It Up
+  13: { date: '2025-12-16', location: 'both' },     // Like an Indian Doll
+  14: { date: '2025-12-09', location: 'both' },     // 복세편살
+  15: { date: '2025-12-02', location: 'both' },     // Save Me
+  16: { date: '2025-11-25', location: 'both' },     // News
+  18: { date: '2025-11-11', location: 'both' },     // Let's Dance With the Music
+  21: { date: '2025-10-21', location: 'both' },     // Cha Cha Tango
+  22: { date: '2025-10-14', location: 'both' },     // Dreams of Rio
 
-  // === 코오롱 전용 (구 양쪽 → 중리에서 제외) ===
+  // === 코오롱 전용 ===
   5: { date: '2026-02-03', location: 'kolon' },     // Dangerous
   7: { date: '2026-01-20', location: 'kolon' },     // Havana Cha
   9: { date: '2026-01-06', location: 'kolon' },     // Just a Kiss
-  11: { date: '2025-12-30', location: 'kolon' },    // Samba Do Brasil
-  12: { date: '2025-12-23', location: 'kolon' },    // Turn It Up
-  13: { date: '2025-12-16', location: 'kolon' },    // Like an Indian Doll
-  14: { date: '2025-12-09', location: 'kolon' },    // 복세편살
-  15: { date: '2025-12-02', location: 'kolon' },    // Save Me
-  16: { date: '2025-11-25', location: 'kolon' },    // News
   17: { date: '2025-11-18', location: 'kolon' },    // 후회없는 춤
-  18: { date: '2025-11-11', location: 'kolon' },    // Let's Dance With the Music
   19: { date: '2025-11-04', location: 'kolon' },    // Love Rumba
   20: { date: '2025-10-28', location: 'kolon' },    // Casablanca 2025
-  21: { date: '2025-10-21', location: 'kolon' },    // Cha Cha Tango
-  22: { date: '2025-10-14', location: 'kolon' },    // Dreams of Rio
   23: { date: '2025-10-07', location: 'kolon' },    // La Noche Mia
   24: { date: '2025-09-30', location: 'kolon' },    // 푸른시절
   25: { date: '2025-09-23', location: 'kolon' },    // 주시고
@@ -1130,6 +1130,35 @@ const songSchedule = {
   39: { date: '2025-06-17', location: 'kolon' },    // 송인
   40: { date: '2025-06-10', location: 'kolon' },    // Dance Jockey Remix
 };
+
+// 📋 중리 행정복지센터 영상 순서 (수업 순서대로)
+const sindunOrder = [
+  43,  // 1. 돈 룩 백 (이번주 수업곡)
+  41,  // 2. 와일드 웨스트 앤
+  44,  // 3. 드링크 샴페인
+  1,   // 4. 와이
+  45,  // 5. 녹여버려요
+  6,   // 6. 러브 포션 666
+  2,   // 7. 정말잘해왔어
+  4,   // 8. 오늘밤에 만나요
+  3,   // 9. 디스 이즈 마이 라이프
+  46,  // 10. 재즈 잇 업 라인댄스
+  47,  // 11. 리듬 라인댄스
+  8,   // 12. 우연히
+  16,  // 13. 뉴스
+  11,  // 14. 삼바 드 브라질
+  12,  // 15. 턴 잇 업
+  13,  // 16. 라이크 언 인디안 인형
+  14,  // 17. 복세편살
+  15,  // 18. 세이브 미
+  18,  // 19. 음악과 함께 춤을 추자
+  48,  // 20. 힐 빌리 디스코 라인댄스
+  49,  // 21. 하늘땅 별땅
+  22,  // 22. 드림오브리오
+  50,  // 23. 고스트 트레인
+  51,  // 24. 날보러와요
+  21,  // 25. 차차 탱고
+];
 
 // 🔄 장소별 최신 곡 자동 계산
 function getLatestDateForLocation(loc) {
@@ -1176,9 +1205,19 @@ export function getThisWeekSong(locationId) {
 // 유틸 함수: 장소별 곡 필터
 export function getSongsForLocation(locationId) {
   if (!locationId) return processedSongs;
-  return processedSongs.filter(s =>
+  const filtered = processedSongs.filter(s =>
     s.location === locationId || s.location === 'both'
   );
+  // 중리 행정복지센터: sindunOrder 순서대로 정렬
+  if (locationId === 'sindun') {
+    const orderMap = new Map(sindunOrder.map((id, idx) => [id, idx]));
+    return [...filtered].sort((a, b) => {
+      const aIdx = orderMap.has(a.id) ? orderMap.get(a.id) : 9999;
+      const bIdx = orderMap.has(b.id) ? orderMap.get(b.id) : 9999;
+      return aIdx - bIdx;
+    });
+  }
+  return filtered;
 }
 
 export default processedSongs;

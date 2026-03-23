@@ -146,7 +146,7 @@ const JiveYouTubePlayer = memo(function JiveYouTubePlayer({ videoId, onPlayerRea
   });
 
   return (
-    <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', backgroundColor: '#000', overflow: 'hidden', borderRadius: '12px' }}>
+    <div style={{ position: 'relative', width: '100%', maxWidth: '100%', aspectRatio: '16/9', maxHeight: '70vh', backgroundColor: '#000', overflow: 'hidden', borderRadius: '12px' }}>
       <div ref={wrapperRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} />
     </div>
   );
@@ -370,6 +370,19 @@ export default function TheoryPage() {
         .jive-expand-btn { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 12px 0; margin-top: 6px; border-radius: 12px; background: rgba(255,255,255,.04); border: 1px dashed rgba(255,255,255,.12); color: #a0a0c0; font-size: .82rem; font-weight: 600; cursor: pointer; transition: all .2s; -webkit-tap-highlight-color: transparent; }
         .jive-expand-btn:active { background: rgba(255,255,255,.08); transform: scale(.98); }
         .jive-footer { text-align: center; margin-top: 32px; padding: 16px; color: #555; font-size: .75rem; border-top: 1px solid rgba(255,255,255,.05); }
+        /* 📱 모바일 가로모드 대응 */
+        @media (orientation: landscape) and (max-height: 500px) {
+          .jive-container { max-width: 100%; padding: 0 12px 80px; }
+          .jive-topnav { display: none !important; }
+          .jive-header { padding: 16px 12px; margin-bottom: 12px; }
+          .jive-header h1 { font-size: 1.2rem; margin-bottom: 4px; }
+          .jive-subtitle { font-size: .75rem; }
+          .jive-count-badge { margin-top: 6px; font-size: .72rem; }
+          .jive-global-btns { gap: 6px; margin-top: 10px; }
+          .jive-float-close { bottom: 16px; width: 44px; height: 44px; font-size: 1.1rem; }
+          .jive-section { margin-bottom: 16px; }
+          .jive-card-body.open { max-height: 800px; }
+        }
       `}</style>
 
       {/* 🔙 상단 고정 네비바 */}

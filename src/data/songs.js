@@ -1,6 +1,85 @@
 // 라인댄스 안무곡 데이터
 const rawSongs = [
   {
+    id: 51,
+    title: "날보러와요 (Come and See Me)",
+    artist: "캔 (Can)",
+    choreographer: "Junghye Yoon (윤정혜)",
+    level: 1,
+    bpm: 120,
+    walls: 4,
+    counts: 64,
+    genre: "가요",
+    youtubeId: "A_toS48i9Bg",
+    tutorialId: "80ZnYsrmamY",
+    thumbnail: "https://img.youtube.com/vi/A_toS48i9Bg/hqdefault.jpg",
+    steps: [
+      { count: "1-16", move: "사이드 스텝 & 터치 (Side Step & Touch)", desc: "오른발 사이드 → 왼발 터치 → 왼발 사이드 → 오른발 터치" },
+      { count: "17-32", move: "바인 & 턴 (Vine & Turn)", desc: "오른쪽 그레이프바인 → 1/4 턴" },
+      { count: "33-48", move: "워크 & 록 스텝 (Walk & Rock Step)", desc: "앞으로 워크 2보 → 앞 록 → 리커버" },
+      { count: "49-64", move: "셔플 & 턴 (Shuffle & Turn)", desc: "오른쪽 셔플 → 1/4 턴 → 왼쪽 셔플" }
+    ]
+  },
+  {
+    id: 50,
+    title: "Ghost Train (고스트 트레인)",
+    artist: "Hank Williams III",
+    choreographer: "Kathy Hunyadi",
+    level: 1,
+    bpm: 120,
+    walls: 4,
+    counts: 32,
+    genre: "컨트리",
+    youtubeId: "YmNhE-u96_o",
+    tutorialId: "",
+    thumbnail: "https://img.youtube.com/vi/YmNhE-u96_o/hqdefault.jpg",
+    steps: [
+      { count: "1-8", move: "트위스트 (Twist)", desc: "양발 트위스트 좌우 → 트위스트" },
+      { count: "9-16", move: "바인 & 터치 (Vine & Touch)", desc: "오른쪽 그레이프바인 → 터치" },
+      { count: "17-24", move: "워크 & 턴 (Walk & Turn)", desc: "앞으로 워크 → 1/4 턴" },
+      { count: "25-32", move: "트위스트 & 스템프 (Twist & Stomp)", desc: "트위스트 좌우 → 스템프" }
+    ]
+  },
+  {
+    id: 49,
+    title: "하늘땅 별땅 (Heaven's Land Star Land)",
+    artist: "비비 (B.B)",
+    choreographer: "정유경",
+    level: 2,
+    bpm: 118,
+    walls: 4,
+    counts: 48,
+    genre: "가요",
+    youtubeId: "moQlYmBoIwk",
+    tutorialId: "b8kHeSMVTFY",
+    thumbnail: "https://img.youtube.com/vi/moQlYmBoIwk/hqdefault.jpg",
+    steps: [
+      { count: "1-16", move: "사이드 스텝 & 록 (Side Step & Rock)", desc: "오른발 사이드 → 록 → 리커버 → 터치" },
+      { count: "17-32", move: "셔플 & 턴 (Shuffle & Turn)", desc: "오른쪽 셔플 → 1/4 턴 → 왼쪽 셔플" },
+      { count: "33-48", move: "바인 & 피봇 (Vine & Pivot)", desc: "오른쪽 그레이프바인 → 1/2 피봇 턴" }
+    ]
+  },
+  {
+    id: 48,
+    title: "Hillbilly Disco (힐빌리 디스코)",
+    artist: "알 수 없음",
+    choreographer: "민트라인댄스",
+    level: 1,
+    bpm: 125,
+    walls: 4,
+    counts: 32,
+    genre: "컨트리",
+    youtubeId: "iuVFCaBLsbc",
+    tutorialId: "",
+    thumbnail: "https://img.youtube.com/vi/iuVFCaBLsbc/hqdefault.jpg",
+    steps: [
+      { count: "1-8", move: "사이드 스텝 & 터치 (Side Step & Touch)", desc: "오른발 사이드 → 왼발 터치 → 왼발 사이드 → 오른발 터치" },
+      { count: "9-16", move: "바인 & 턴 (Vine & Turn)", desc: "오른쪽 그레이프바인 → 1/4 턴" },
+      { count: "17-24", move: "워크 & 록 스텝 (Walk & Rock Step)", desc: "앞으로 워크 2보 → 앞 록 → 리커버" },
+      { count: "25-32", move: "셔플 & 터치 (Shuffle & Touch)", desc: "오른쪽 셔플 → 터치" }
+    ]
+  },
+  {
     id: 47,
     title: "Rhythm (리듬)",
     artist: "Rick Vito",
@@ -996,12 +1075,16 @@ const songSchedule = {
   42: { date: '2026-03-19', location: 'kolon' },  // No.9 (코오롱 센터)
   10: { date: '2026-03-10', location: 'kolon' },   // Everyone Needs a Hero
 
-  // === 중리 행정복지센터 전용 (밴드 게시물 기반, 2026-03-23 등록) ===
+  // === 중리 행정복지센터 전용 (밴드 게시물 기반) ===
   43: { date: '2026-03-23', location: 'sindun' },   // Don't Look Back (★ 이번주 수업곡)
   44: { date: '2026-03-05', location: 'sindun' },   // Drink Champagne
   45: { date: '2026-02-03', location: 'sindun' },   // 녹아버려요 (It's Melts)
   46: { date: '2026-01-20', location: 'sindun' },   // Jazz It Up
   47: { date: '2026-01-06', location: 'sindun' },   // Rhythm
+  48: { date: '2025-12-13', location: 'sindun' },   // Hillbilly Disco
+  49: { date: '2025-11-28', location: 'sindun' },   // 하늘땅 별땅
+  50: { date: '2025-10-11', location: 'sindun' },   // Ghost Train
+  51: { date: '2025-10-04', location: 'sindun' },   // 날보러와요
 
   // === 양쪽 모두 (코오롱 + 중리) ===
   41: { date: '2026-03-12', location: 'both' },     // Wild West & Wicked

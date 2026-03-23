@@ -14,7 +14,7 @@ export default function Layout() {
     const isMainTab = path === '/' || path === '/schedule' || path === '/video' || path === '/theory';
     const isOurSubPage = path.startsWith('/community') || path.startsWith('/search');
 
-    // 📍 장소 전환 함수 (코오롱 ↔ 신둔면 토글)
+    // 📍 장소 전환 함수 (코오롱 ↔ 중리 행정복지센터 토글)
     const toggleLocation = () => {
         const next = selectedLocation === 'kolon' ? 'sindun' : 'kolon';
         setSelectedLocation(next);
@@ -89,7 +89,7 @@ export default function Layout() {
                             title="장소 전환"
                         >
                             <span style={{ fontSize: '14px' }}>{locationInfo?.emoji || '📍'}</span>
-                            <span>{locationInfo ? (locationInfo.id === 'kolon' ? '코오롱' : '신둔면') : ''}</span>
+                            <span>{locationInfo ? (locationInfo.id === 'kolon' ? '코오롱' : '중리') : ''}</span>
                             <span style={{ fontSize: '10px', opacity: 0.6 }}>⇄</span>
                         </button>
                     )}

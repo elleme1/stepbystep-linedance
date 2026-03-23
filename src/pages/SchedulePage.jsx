@@ -49,7 +49,7 @@ export default function SchedulePage() {
                 isToday: false,
                 time: '오전 10:40 ~ 11:50',
                 title: '라인댄스 정규반',
-                location: '신둔면 주민자치센터'
+                location: '중리 행정복지센터'
             },
             {
                 id: 6,
@@ -57,7 +57,7 @@ export default function SchedulePage() {
                 isToday: false,
                 time: '오전 10:40 ~ 11:50',
                 title: '라인댄스 정규반',
-                location: '신둔면 주민자치센터'
+                location: '중리 행정복지센터'
             },
             {
                 id: 7,
@@ -65,7 +65,7 @@ export default function SchedulePage() {
                 isToday: false,
                 time: '오전 10:40 ~ 11:50',
                 title: '라인댄스 정규반',
-                location: '신둔면 주민자치센터'
+                location: '중리 행정복지센터'
             },
             {
                 id: 8,
@@ -73,7 +73,7 @@ export default function SchedulePage() {
                 isToday: false,
                 time: '오전 10:40 ~ 11:50',
                 title: '라인댄스 정규반',
-                location: '신둔면 주민자치센터'
+                location: '중리 행정복지센터'
             }
         ]
     };

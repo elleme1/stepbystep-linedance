@@ -1,6 +1,110 @@
 // 라인댄스 안무곡 데이터
 const rawSongs = [
   {
+    id: 47,
+    title: "Rhythm (리듬)",
+    artist: "Rick Vito",
+    choreographer: "Ria Vos",
+    level: 1,
+    bpm: 120,
+    walls: 4,
+    counts: 32,
+    genre: "팝",
+    youtubeId: "Vsz9hXOCNkk",
+    tutorialId: "vz5LNavVxlU",
+    thumbnail: "https://img.youtube.com/vi/Vsz9hXOCNkk/hqdefault.jpg",
+
+    steps: [
+      { count: "1-8", move: "사이드 스텝 & 터치 (Side Step & Touch)", desc: "오른발 사이드 → 왼발 터치 → 왼발 사이드 → 오른발 터치" },
+      { count: "9-16", move: "바인 & 턴 (Vine & Turn)", desc: "오른쪽 그레이프바인 → 1/4 턴" },
+      { count: "17-24", move: "워크 & 록 스텝 (Walk & Rock Step)", desc: "앞으로 워크 2보 → 앞 록 → 리커버" },
+      { count: "25-32", move: "코스터 스텝 & 터치 (Coaster Step & Touch)", desc: "뒤 코스터 스텝 → 사이드 터치" }
+    ]
+  },
+  {
+    id: 46,
+    title: "Jazz It Up (재즈 잇 업)",
+    artist: "2341studios AI",
+    choreographer: "Rob Fowler",
+    level: 2,
+    bpm: 128,
+    walls: 4,
+    counts: 32,
+    genre: "팝",
+    youtubeId: "OIGYQRofv0o",
+    tutorialId: "DL41tOLjV0M",
+    thumbnail: "https://img.youtube.com/vi/OIGYQRofv0o/hqdefault.jpg",
+
+    steps: [
+      { count: "1-8", move: "사이드 스텝 & 터치 (Side Step & Touch)", desc: "오른발 사이드 → 왼발 터치 → 왼발 사이드 → 오른발 터치" },
+      { count: "9-16", move: "셔플 & 턴 (Shuffle & Turn)", desc: "오른쪽 셔플 → 1/4 턴 → 왼쪽 셔플" },
+      { count: "17-24", move: "록 스텝 & 리커버 (Rock Step & Recover)", desc: "앞 록 → 리커버 → 뒤 록 → 리커버" },
+      { count: "25-32", move: "바인 & 크로스 (Vine & Cross)", desc: "오른쪽 그레이프바인 → 크로스 터치" }
+    ]
+  },
+  {
+    id: 45,
+    title: "녹아버려요 (It's Melts)",
+    artist: "박지현",
+    choreographer: "Monica Choi, Rosa Lee & Chloe Cha",
+    level: 1,
+    bpm: 110,
+    walls: 4,
+    counts: 32,
+    genre: "가요",
+    youtubeId: "YLjfjJR4bPQ",
+    tutorialId: "",
+    thumbnail: "https://img.youtube.com/vi/YLjfjJR4bPQ/hqdefault.jpg",
+
+    steps: [
+      { count: "1-8", move: "사이드 스텝 & 터치 (Side Step & Touch)", desc: "오른발 사이드 → 왼발 터치 → 왼발 사이드 → 오른발 터치" },
+      { count: "9-16", move: "바인 & 턴 (Vine & Turn)", desc: "오른쪽 그레이프바인 → 1/4 턴" },
+      { count: "17-24", move: "워크 & 록 스텝 (Walk & Rock Step)", desc: "앞으로 워크 2보 → 앞 록 → 리커버" },
+      { count: "25-32", move: "힙 범프 & 터치 (Hip Bump & Touch)", desc: "힙 범프 좌우 → 사이드 터치" }
+    ]
+  },
+  {
+    id: 44,
+    title: "Drink Champagne (드링크 샴페인)",
+    artist: "Runaway June",
+    choreographer: "Maddison Glover",
+    level: 2,
+    bpm: 120,
+    walls: 4,
+    counts: 32,
+    genre: "컨트리",
+    youtubeId: "-P3NMElEkkE",
+    tutorialId: "OgomamOmZqo",
+    thumbnail: "https://img.youtube.com/vi/-P3NMElEkkE/hqdefault.jpg",
+
+    steps: [
+      { count: "1-8", move: "사이드 스텝 & 터치 (Side Step & Touch)", desc: "오른발 사이드 → 왼발 터치 → 왼발 사이드 → 오른발 터치" },
+      { count: "9-16", move: "셔플 & 록 스텝 (Shuffle & Rock Step)", desc: "오른쪽 셔플 → 앞 록 → 리커버" },
+      { count: "17-24", move: "바인 & 턴 (Vine & Turn)", desc: "오른쪽 그레이프바인 → 1/4 턴" },
+      { count: "25-32", move: "피봇 턴 & 터치 (Pivot Turn & Touch)", desc: "앞 스텝 → 1/2 피봇 턴 → 터치" }
+    ]
+  },
+  {
+    id: 43,
+    title: "Don't Look Back (돈룩백)",
+    artist: "진미령",
+    choreographer: "Solbi Jeong (정솔비)",
+    level: 2,
+    bpm: 120,
+    walls: 4,
+    counts: 48,
+    genre: "가요",
+    youtubeId: "wzxn8tpaXkg",
+    tutorialId: "tBgTbJLKoY4",
+    thumbnail: "https://img.youtube.com/vi/wzxn8tpaXkg/hqdefault.jpg",
+
+    steps: [
+      { count: "1-16", move: "워크 & 턴 (Walk & Turn)", desc: "앞으로 워크 → 1/4 턴 → 사이드 스텝 → 터치" },
+      { count: "17-32", move: "셔플 & 록 스텝 (Shuffle & Rock Step)", desc: "오른쪽 셔플 → 앞 록 → 리커버 → 왼쪽 셔플" },
+      { count: "33-48", move: "바인 & 피봇 턴 (Vine & Pivot Turn)", desc: "오른쪽 그레이프바인 → 1/2 피봇 턴 → 터치" }
+    ]
+  },
+  {
     id: 42,
     title: "No.9 (넘버나인)",
     artist: "티아라 (T-ara)",
@@ -884,52 +988,64 @@ const rawSongs = [
 
 // ============================================================
 // 📅 곡별 등록일 & 수업장소 매핑
-// location: 'kolon' = 코오롱 스포렉스, 'sindun' = 신둔면, 'both' = 양쪽 모두
+// location: 'kolon' = 코오롱 스포렉스, 'sindun' = 중리 행정복지센터, 'both' = 양쪽 모두
 // 각 장소별로 가장 최근 날짜의 곡이 자동으로 "이번주 수업곡"이 됩니다.
 // ============================================================
 const songSchedule = {
+  // === 코오롱 전용 ===
   42: { date: '2026-03-19', location: 'kolon' },  // No.9 (코오롱 센터)
-  41: { date: '2026-03-12', location: 'both' },       // Wild West & Wicked
   10: { date: '2026-03-10', location: 'kolon' },   // Everyone Needs a Hero
-  1: { date: '2026-03-19', location: 'sindun' },      // Why (신둔면 이번주 곡)
-  2: { date: '2026-02-24', location: 'both' },        // 정말 잘해왔어
-  3: { date: '2026-02-17', location: 'both' },        // This Is My Life
-  4: { date: '2026-02-10', location: 'both' },        // 오늘밤에 만나요
-  5: { date: '2026-02-03', location: 'both' },        // Dangerous
-  6: { date: '2026-01-27', location: 'both' },        // Love Potion 666
-  7: { date: '2026-01-20', location: 'both' },        // Havana Cha
-  8: { date: '2026-01-13', location: 'both' },        // Rose Garden
-  9: { date: '2026-01-06', location: 'both' },        // Just a Kiss
-  11: { date: '2025-12-30', location: 'both' },       // Samba Do Brasil
-  12: { date: '2025-12-23', location: 'both' },       // Turn It Up
-  13: { date: '2025-12-16', location: 'both' },       // Like an Indian Doll
-  14: { date: '2025-12-09', location: 'both' },       // 복세편살
-  15: { date: '2025-12-02', location: 'both' },       // Save Me
-  16: { date: '2025-11-25', location: 'both' },       // News
-  17: { date: '2025-11-18', location: 'both' },       // 후회없는 춤
-  18: { date: '2025-11-11', location: 'both' },       // Let's Dance With the Music
-  19: { date: '2025-11-04', location: 'both' },       // Love Rumba
-  20: { date: '2025-10-28', location: 'both' },       // Casablanca 2025
-  21: { date: '2025-10-21', location: 'both' },       // Cha Cha Tango
-  22: { date: '2025-10-14', location: 'both' },       // Dreams of Rio
-  23: { date: '2025-10-07', location: 'both' },       // La Noche Mia
-  24: { date: '2025-09-30', location: 'both' },       // 푸른시절
-  25: { date: '2025-09-23', location: 'both' },       // 주시고
-  26: { date: '2025-09-16', location: 'both' },       // 사랑찾아 인생찾아
-  27: { date: '2025-09-09', location: 'both' },       // DA Bomb
-  28: { date: '2025-09-02', location: 'both' },       // Woman in Love 2025
-  29: { date: '2025-08-26', location: 'both' },       // 보고싶다 내사랑
-  30: { date: '2025-08-19', location: 'both' },       // 썸머타임
-  31: { date: '2025-08-12', location: 'both' },       // Zumma Dance
-  32: { date: '2025-08-05', location: 'both' },       // 아직도 어두운 밤인가봐
-  33: { date: '2025-07-29', location: 'both' },       // 편지
-  34: { date: '2025-07-22', location: 'both' },       // Womanizer
-  35: { date: '2025-07-15', location: 'both' },       // Let's Get Loud
-  36: { date: '2025-07-08', location: 'both' },       // 가로세로
-  37: { date: '2025-07-01', location: 'both' },       // Pick Me Up
-  38: { date: '2025-06-24', location: 'both' },       // Love Disco Remix
-  39: { date: '2025-06-17', location: 'both' },       // 송인
-  40: { date: '2025-06-10', location: 'both' },       // Dance Jockey Remix
+
+  // === 중리 행정복지센터 전용 (밴드 게시물 기반, 2026-03-23 등록) ===
+  43: { date: '2026-03-23', location: 'sindun' },   // Don't Look Back (★ 이번주 수업곡)
+  44: { date: '2026-03-05', location: 'sindun' },   // Drink Champagne
+  45: { date: '2026-02-03', location: 'sindun' },   // 녹아버려요 (It's Melts)
+  46: { date: '2026-01-20', location: 'sindun' },   // Jazz It Up
+  47: { date: '2026-01-06', location: 'sindun' },   // Rhythm
+
+  // === 양쪽 모두 (코오롱 + 중리) ===
+  41: { date: '2026-03-12', location: 'both' },     // Wild West & Wicked
+  1: { date: '2026-03-02', location: 'both' },      // Why
+  6: { date: '2026-01-27', location: 'both' },      // Love Potion 666
+  2: { date: '2026-02-24', location: 'both' },      // 정말 잘해왔어
+  4: { date: '2026-02-10', location: 'both' },      // 오늘밤에 만나요
+  3: { date: '2026-02-17', location: 'both' },      // This Is My Life
+  8: { date: '2026-01-13', location: 'both' },      // Rose Garden
+
+  // === 코오롱 전용 (구 양쪽 → 중리에서 제외) ===
+  5: { date: '2026-02-03', location: 'kolon' },     // Dangerous
+  7: { date: '2026-01-20', location: 'kolon' },     // Havana Cha
+  9: { date: '2026-01-06', location: 'kolon' },     // Just a Kiss
+  11: { date: '2025-12-30', location: 'kolon' },    // Samba Do Brasil
+  12: { date: '2025-12-23', location: 'kolon' },    // Turn It Up
+  13: { date: '2025-12-16', location: 'kolon' },    // Like an Indian Doll
+  14: { date: '2025-12-09', location: 'kolon' },    // 복세편살
+  15: { date: '2025-12-02', location: 'kolon' },    // Save Me
+  16: { date: '2025-11-25', location: 'kolon' },    // News
+  17: { date: '2025-11-18', location: 'kolon' },    // 후회없는 춤
+  18: { date: '2025-11-11', location: 'kolon' },    // Let's Dance With the Music
+  19: { date: '2025-11-04', location: 'kolon' },    // Love Rumba
+  20: { date: '2025-10-28', location: 'kolon' },    // Casablanca 2025
+  21: { date: '2025-10-21', location: 'kolon' },    // Cha Cha Tango
+  22: { date: '2025-10-14', location: 'kolon' },    // Dreams of Rio
+  23: { date: '2025-10-07', location: 'kolon' },    // La Noche Mia
+  24: { date: '2025-09-30', location: 'kolon' },    // 푸른시절
+  25: { date: '2025-09-23', location: 'kolon' },    // 주시고
+  26: { date: '2025-09-16', location: 'kolon' },    // 사랑찾아 인생찾아
+  27: { date: '2025-09-09', location: 'kolon' },    // DA Bomb
+  28: { date: '2025-09-02', location: 'kolon' },    // Woman in Love 2025
+  29: { date: '2025-08-26', location: 'kolon' },    // 보고싶다 내사랑
+  30: { date: '2025-08-19', location: 'kolon' },    // 썸머타임
+  31: { date: '2025-08-12', location: 'kolon' },    // Zumma Dance
+  32: { date: '2025-08-05', location: 'kolon' },    // 아직도 어두운 밤인가봐
+  33: { date: '2025-07-29', location: 'kolon' },    // 편지
+  34: { date: '2025-07-22', location: 'kolon' },    // Womanizer
+  35: { date: '2025-07-15', location: 'kolon' },    // Let's Get Loud
+  36: { date: '2025-07-08', location: 'kolon' },    // 가로세로
+  37: { date: '2025-07-01', location: 'kolon' },    // Pick Me Up
+  38: { date: '2025-06-24', location: 'kolon' },    // Love Disco Remix
+  39: { date: '2025-06-17', location: 'kolon' },    // 송인
+  40: { date: '2025-06-10', location: 'kolon' },    // Dance Jockey Remix
 };
 
 // 🔄 장소별 최신 곡 자동 계산

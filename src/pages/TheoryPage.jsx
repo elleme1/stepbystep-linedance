@@ -287,7 +287,7 @@ export default function TheoryPage() {
   return (
     <div className="jive-container">
       <style>{`
-        .jive-container { font-family: 'Noto Sans KR', sans-serif; color: #e8e8f0; padding-bottom: calc(120px + env(safe-area-inset-bottom)); box-sizing: border-box; position: relative; z-index: 0; isolation: isolate; }
+        .jive-container { font-family: 'Noto Sans KR', sans-serif; color: #e8e8f0; padding: 0 16px calc(120px + env(safe-area-inset-bottom)); box-sizing: border-box; position: relative; z-index: 0; isolation: isolate; max-width: 800px; margin: 0 auto; }
         .jive-container * { box-sizing: border-box; }
         /* 🔙 상단 고정 네비바 */
         .jive-topnav { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: rgba(10,10,15,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,.08); margin: -16px -16px 16px -16px; }

@@ -259,6 +259,7 @@ const rawSongs = [
     youtubeId: "cmJiGKTb6v4",
     tutorialId: "1-Pm_HFmz10",
     thumbnail: "https://img.youtube.com/vi/cmJiGKTb6v4/hqdefault.jpg",
+    copperknobUrl: "https://www.copperknob.co.uk/stepsheets/173750/why-tiggy",
 
     steps: [
       { count: "1-8", move: "V 스텝 & 차차 (V Step & Cha Cha)", desc: "오른발 앞 대각선 → 왼발 앞 대각선 → 오른발 뒤 → 왼발 모아 → 차차차" },
@@ -364,6 +365,7 @@ const rawSongs = [
     youtubeId: "gAxTZlRztRk",
     tutorialId: "sGWrAVYZYE0",
     thumbnail: "https://img.youtube.com/vi/gAxTZlRztRk/hqdefault.jpg",
+    copperknobUrl: "https://www.copperknob.co.uk/stepsheets/202815/love-potion-666",
 
     steps: [
       { count: "1-8", move: "사이드 터치 & 크로스 (Side Touch & Cross)", desc: "오른발 사이드 → 왼발 터치 → 왼발 크로스 → 오른발 사이드" },
@@ -385,6 +387,7 @@ const rawSongs = [
     youtubeId: "oD1r1UAWObk",
     tutorialId: "wixCZ2dY7gc",
     thumbnail: "https://img.youtube.com/vi/oD1r1UAWObk/hqdefault.jpg",
+    copperknobUrl: "https://www.copperknob.co.uk/stepsheets/120787/havana-cha",
 
     steps: [
       { count: "1-8", move: "사이드 스텝 & 차차 (Side Step & Cha Cha)", desc: "오른발 사이드 → 왼발 모아 → 차차차" },

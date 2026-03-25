@@ -152,9 +152,9 @@ const rawSongs = [
     walls: 4,
     counts: 32,
     genre: "컨트리",
-    youtubeId: "-P3NMElEkkE",
+    youtubeId: "SiTqVYD5Ock",
     tutorialId: "OgomamOmZqo",
-    thumbnail: "https://img.youtube.com/vi/-P3NMElEkkE/hqdefault.jpg",
+    thumbnail: "https://img.youtube.com/vi/SiTqVYD5Ock/hqdefault.jpg",
 
     steps: [
       { count: "1-8", move: "사이드 스텝 & 터치 (Side Step & Touch)", desc: "오른발 사이드 → 왼발 터치 → 왼발 사이드 → 오른발 터치" },

@@ -195,6 +195,7 @@ export default function TheoryPage() {
   const [expandedSections, setExpandedSections] = useState({});
   const [masterclassVideo, setMasterclassVideo] = useState(null);
   const [mcExpandedCats, setMcExpandedCats] = useState({});
+  const [mcSectionOpen, setMcSectionOpen] = useState(false);
 
   // 🔁 A-B 반복구간 상태
   const [pointA, setPointA] = useState(null);
@@ -399,11 +400,14 @@ export default function TheoryPage() {
         .jive-expand-btn:active { background: rgba(255,255,255,.08); transform: scale(.98); }
         .jive-footer { text-align: center; margin-top: 32px; padding: 16px; color: #555; font-size: .75rem; border-top: 1px solid rgba(255,255,255,.05); }
         /* 🎓 마스터클래스 교육영상 */
-        .mc-section { margin-bottom: 28px; }
-        .mc-header { text-align: center; padding: 24px 16px; background: linear-gradient(135deg, #1a0a2e, #2d1b4e); border-radius: 20px; margin-bottom: 16px; border: 1px solid rgba(168,85,247,.2); position: relative; overflow: hidden; }
-        .mc-header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 50%, rgba(168,85,247,.08), transparent 70%); pointer-events: none; }
-        .mc-header h2 { font-size: 1.3rem; font-weight: 900; background: linear-gradient(135deg, #c084fc, #e879f9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0 0 6px 0; position: relative; }
-        .mc-header p { font-size: .82rem; color: #b0a0d0; margin: 0; position: relative; }
+        .mc-section { margin-bottom: 20px; }
+        .mc-toggle-banner { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: linear-gradient(135deg, #1a0a2e, #2d1b4e); border-radius: 14px; border: 1px solid rgba(168,85,247,.2); cursor: pointer; -webkit-tap-highlight-color: transparent; transition: all .2s; margin-bottom: 12px; }
+        .mc-toggle-banner:active { transform: scale(.98); background: linear-gradient(135deg, #22103a, #3a2560); }
+        .mc-toggle-banner h2 { font-size: .95rem; font-weight: 800; background: linear-gradient(135deg, #c084fc, #e879f9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; flex: 1; }
+        .mc-toggle-banner .mc-banner-sub { font-size: .72rem; color: #a78bfa; }
+        .mc-toggle-banner .mc-banner-count { font-size: .7rem; color: #8b5cf6; background: rgba(139,92,246,.12); padding: 2px 8px; border-radius: 10px; }
+        .mc-toggle-banner .mc-banner-arrow { color: #a78bfa; font-size: .75rem; transition: transform .3s; }
+        .mc-toggle-banner .mc-banner-arrow.open { transform: rotate(180deg); }
         .mc-cat-title { display: flex; align-items: center; gap: 8px; padding: 10px 14px; margin-bottom: 10px; border-radius: 12px; background: rgba(168,85,247,.06); border: 1px solid rgba(168,85,247,.12); cursor: pointer; -webkit-tap-highlight-color: transparent; }
         .mc-cat-title:active { background: rgba(168,85,247,.12); }
         .mc-cat-title h3 { font-size: .95rem; font-weight: 700; color: #d8b4fe; margin: 0; flex: 1; }
@@ -466,12 +470,15 @@ export default function TheoryPage() {
 
       {/* 🎓 자이브 교육영상 섹션 */}
       <div className="mc-section">
-        <div className="mc-header">
-          <h2>🎓 자이브 교육영상</h2>
-          <p>미아쌤 · 선샤인 댄스TV</p>
+        <div className="mc-toggle-banner" onClick={() => setMcSectionOpen(prev => !prev)}>
+          <span style={{fontSize:'1.1rem'}}>🎓</span>
+          <h2>자이브 교육영상</h2>
+          <span className="mc-banner-sub">미아쌤</span>
+          <span className="mc-banner-count">10개</span>
+          <span className={`mc-banner-arrow ${mcSectionOpen ? 'open' : ''}`}>▼</span>
         </div>
 
-        {MASTERCLASS_VIDEOS.map((cat, ci) => {
+        {mcSectionOpen && MASTERCLASS_VIDEOS.map((cat, ci) => {
           const isCatExpanded = mcExpandedCats[ci] !== false; // 기본 열림
           return (
             <div key={ci}>

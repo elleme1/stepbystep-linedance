@@ -173,9 +173,9 @@ const rawSongs = [
     walls: 4,
     counts: 48,
     genre: "가요",
-    youtubeId: "wzxn8tpaXkg",
+    youtubeId: "9OgNt6jgcB8",
     tutorialId: "tBgTbJLKoY4",
-    thumbnail: "https://img.youtube.com/vi/wzxn8tpaXkg/hqdefault.jpg",
+    thumbnail: "https://img.youtube.com/vi/9OgNt6jgcB8/hqdefault.jpg",
 
     steps: [
       { count: "1-16", move: "워크 & 턴 (Walk & Turn)", desc: "앞으로 워크 → 1/4 턴 → 사이드 스텝 → 터치" },

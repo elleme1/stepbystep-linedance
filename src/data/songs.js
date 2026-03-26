@@ -1079,7 +1079,7 @@ const songSchedule = {
   10: { date: '2026-03-10', location: 'kolon' },   // Everyone Needs a Hero
 
   // === 중리 행정복지센터 전용 (밴드 게시물 기반) ===
-  43: { date: '2026-03-23', location: 'sindun' },   // Don't Look Back (★ 이번주 수업곡)
+  43: { date: '2026-03-26', location: 'both' },     // Don't Look Back (★ 이번주 수업곡 - 코오롱 + 중리)
   44: { date: '2026-03-05', location: 'sindun' },   // Drink Champagne
   45: { date: '2026-02-03', location: 'sindun' },   // 녹아버려요 (It's Melts)
   46: { date: '2026-01-20', location: 'sindun' },   // Jazz It Up

@@ -173,20 +173,21 @@ const YouTubePlayer = React.forwardRef(function YouTubePlayer({
       return {
         position: 'fixed', top: 0, left: 0, width: '100vw', height: '100dvh',
         zIndex: 9997, backgroundColor: '#000', padding: 0, margin: 0, overflow: 'hidden',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
       };
     }
     if (isFullscreen) {
       return {
         position: 'fixed', top: 0, left: 0, width: '100vw', height: '100dvh',
         zIndex: 9997, backgroundColor: '#000',
-        display: 'flex', flexDirection: 'column',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         touchAction: 'manipulation', padding: 0, margin: 0, overflow: 'hidden',
       };
     }
     if (isMobile) {
       return {
         width: '100%', position: 'relative', backgroundColor: '#000',
-        height: 'calc(100dvh - 140px)', minHeight: '250px',
+        aspectRatio: '16/9',
       };
     }
     // 데스크톱
@@ -200,10 +201,19 @@ const YouTubePlayer = React.forwardRef(function YouTubePlayer({
   // 영상 래퍼 스타일
   const getPlayerWrapperStyle = () => {
     if (isLandscapeCinema) {
-      return { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' };
+      // 가로 시네마: 화면 전체 안에서 16:9 비율 유지, 중앙 정렬
+      return {
+        width: '100%', height: '100%', position: 'relative',
+        maxWidth: 'calc(100dvh * 16 / 9)',  // 높이 기준 최대 너비
+        aspectRatio: '16/9',
+      };
     }
     if (isFullscreen) {
-      return { flex: 1, width: '100%', position: 'relative' };
+      // 세로 시네마: 가로에 맞춰 16:9 비율 유지
+      return {
+        width: '100%', position: 'relative',
+        aspectRatio: '16/9',
+      };
     }
     return { width: '100%', height: '100%', position: 'relative' };
   };

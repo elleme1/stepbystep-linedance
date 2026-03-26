@@ -1,6 +1,26 @@
 // 라인댄스 안무곡 데이터
 const rawSongs = [
   {
+    id: 52,
+    title: "Disco Pizza (디스코 피자)",
+    artist: "The Kolors",
+    choreographer: "Aurora de Jong",
+    level: 1,
+    bpm: 128,
+    walls: 4,
+    counts: 32,
+    genre: "팝",
+    youtubeId: "hOw7QwJNI4M",
+    tutorialId: "ZjUGWLycNxc",
+    thumbnail: "https://img.youtube.com/vi/hOw7QwJNI4M/hqdefault.jpg",
+    steps: [
+      { count: "1-8", move: "사이드 스텝 & 터치 (Side Step & Touch)", desc: "오른발 사이드 → 왼발 터치 → 왼발 사이드 → 오른발 터치" },
+      { count: "9-16", move: "셔플 & 턴 (Shuffle & Turn)", desc: "오른쪽 셔플 → 1/4 턴 → 왼쪽 셔플" },
+      { count: "17-24", move: "록 스텝 & 리커버 (Rock Step & Recover)", desc: "앞 록 → 리커버 → 뒤 록 → 리커버" },
+      { count: "25-32", move: "바인 & 크로스 (Vine & Cross)", desc: "오른쪽 그레이프바인 → 크로스 터치" }
+    ]
+  },
+  {
     id: 51,
     title: "날보러와요 (Come and See Me)",
     artist: "캔 (Can)",
@@ -1079,7 +1099,8 @@ const songSchedule = {
   10: { date: '2026-03-10', location: 'kolon' },   // Everyone Needs a Hero
 
   // === 중리 행정복지센터 전용 (밴드 게시물 기반) ===
-  43: { date: '2026-03-26', location: 'both' },     // Don't Look Back (★ 이번주 수업곡 - 코오롱 + 중리)
+  52: { date: '2026-03-26', location: 'sindun' },    // Disco Pizza (★ 이번주 수업곡 - 중리)
+  43: { date: '2026-03-19', location: 'both' },       // Don't Look Back
   44: { date: '2026-03-05', location: 'sindun' },   // Drink Champagne
   45: { date: '2026-02-03', location: 'sindun' },   // 녹아버려요 (It's Melts)
   46: { date: '2026-01-20', location: 'sindun' },   // Jazz It Up
@@ -1136,9 +1157,10 @@ const songSchedule = {
 
 // 📋 중리 행정복지센터 영상 순서 (수업 순서대로)
 const sindunOrder = [
-  43,  // 1. 돈 룩 백 (이번주 수업곡)
-  41,  // 2. 와일드 웨스트 앤
-  44,  // 3. 드링크 샴페인
+  52,  // 1. 디스코 피자 (이번주 수업곡)
+  43,  // 2. 돈 룩 백
+  41,  // 3. 와일드 웨스트 앤
+  44,  // 4. 드링크 샴페인
   1,   // 4. 와이
   45,  // 5. 녹여버려요
   6,   // 6. 러브 포션 666

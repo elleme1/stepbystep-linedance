@@ -1099,7 +1099,7 @@ const songSchedule = {
 
   // === 중리 행정복지센터 전용 (밴드 게시물 기반) ===
   52: { date: '2026-03-26', location: 'sindun' },    // Disco Pizza (★ 이번주 수업곡 - 중리)
-  43: { date: '2026-03-26', location: 'kolon' },      // Don't Look Back (★ 이번주 수업곡 - 코오롱)
+  43: { date: '2026-03-26', location: 'both' },       // Don't Look Back (★ 이번주 수업곡 - 코오롱 / 중리 수업곡)
   44: { date: '2026-03-05', location: 'sindun' },   // Drink Champagne
   45: { date: '2026-02-03', location: 'sindun' },   // 녹아버려요 (It's Melts)
   46: { date: '2026-01-20', location: 'sindun' },   // Jazz It Up

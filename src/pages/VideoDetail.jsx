@@ -211,17 +211,6 @@ export default function VideoDetail() {
                     </div>
                 )}
 
-                {/* Copperknob 링크 */}
-                <a
-                    href={safeVideoData.copperknobUrl || `https://www.copperknob.co.uk/search?q=${encodeURIComponent((safeVideoData.title || '').replace(/\s*[\(（].*?[\)）]\s*/g, '').trim())}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="copperknob-link"
-                >
-                    📋 Copperknob 댄스시트 보기
-                    <span className="copperknob-link__arrow">↗</span>
-                </a>
-
                 {/* 태그 */}
                 <div className="song-tags">
                     {safeVideoData.tags?.map((tag, idx) => (

@@ -449,31 +449,6 @@
     margin-bottom: 16px;
 }
 
-/* ── Copperknob 링크 ── */
-.copperknob-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    width: 100%;
-    padding: 14px 20px;
-    margin-bottom: 16px;
-    border-radius: 12px;
-    font-size: 15px;
-    font-weight: 700;
-    border: 1px solid rgba(78, 205, 196, 0.25);
-    background: linear-gradient(135deg, rgba(78, 205, 196, 0.08), rgba(78, 205, 196, 0.15));
-    color: #4ecdc4;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-sizing: border-box;
-}
-
-.copperknob-link__arrow {
-    font-size: 12px;
-    opacity: 0.7;
-}
 
 /* ── 태그 ── */
 .song-tags {

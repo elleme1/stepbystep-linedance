@@ -100,17 +100,21 @@ export default function useYouTubePlayer({
   useEffect(() => {
     mountedRef.current = true;
 
-    if (!window.YT) {
-      const tag = document.createElement('script');
-      tag.src = 'https://www.youtube.com/iframe_api';
-      document.head.appendChild(tag);
+    if (window.YT?.Player) {
+      // API 완전 로딩됨 → 바로 플레이어 생성
+      createPlayer();
+    } else {
+      // API 미로딩 또는 로딩 중(YT 존재하지만 Player 미정의) → 콜백 등록
+      if (!window.YT) {
+        const tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api';
+        document.head.appendChild(tag);
+      }
       const prevCallback = window.onYouTubeIframeAPIReady;
       window.onYouTubeIframeAPIReady = () => {
         if (prevCallback) prevCallback();
         if (mountedRef.current) createPlayer();
       };
-    } else if (window.YT?.Player) {
-      createPlayer();
     }
 
     return () => {

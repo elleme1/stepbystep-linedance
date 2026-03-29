@@ -208,15 +208,9 @@ export default function TheoryPage() {
   const lastSeekTimeRef = useRef(0);        // 중복 seek 방지용
 
   // ====================================
-  // 📡 YouTube IFrame API 로드 (최초 1회)
+  // 🧹 A-B 루프 타이머 정리 (언마운트 시)
   // ====================================
   useEffect(() => {
-    if (!window.YT) {
-      const tag = document.createElement('script');
-      tag.src = 'https://www.youtube.com/iframe_api';
-      const first = document.getElementsByTagName('script')[0];
-      first.parentNode.insertBefore(tag, first);
-    }
     return () => {
       if (abIntervalRef.current) { clearInterval(abIntervalRef.current); abIntervalRef.current = null; }
     };

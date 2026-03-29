@@ -152,7 +152,7 @@ const rawSongs = [
     counts: 32,
     genre: "가요",
     youtubeId: "20uxLxU0PX0",
-    tutorialId: "",
+    tutorialId: "Y7csERIFY5w",
     thumbnail: "https://img.youtube.com/vi/20uxLxU0PX0/hqdefault.jpg",
 
     steps: [

@@ -1115,7 +1115,7 @@ const rawSongs = [
 const songSchedule = {
   // === 코오롱 전용 ===
   53: { date: '2026-04-02', location: 'kolon' },  // Funky Groove (★ 이번주 수업곡 - 코오롱)
-  42: { date: '2026-03-19', location: 'kolon' },  // No.9 (코오롱 센터)
+  42: { date: '2026-04-02', location: 'both' },   // No.9 (★ 이번주 수업곡 - 코오롱 / 중리)
   10: { date: '2026-03-10', location: 'kolon' },   // Everyone Needs a Hero
 
   // === 중리 행정복지센터 전용 (밴드 게시물 기반) ===

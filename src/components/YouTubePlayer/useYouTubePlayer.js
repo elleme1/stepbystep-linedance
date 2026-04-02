@@ -19,6 +19,7 @@ export default function useYouTubePlayer({
   containerRef,
   videoId,
   autoplay = false,
+  playerVars: externalPlayerVars,
   onReady,
   onStateChange,
 }) {
@@ -32,10 +33,12 @@ export default function useYouTubePlayer({
   const onStateChangeRef = useRef(onStateChange);
   const autoplayRef = useRef(autoplay);
   const videoIdRef = useRef(videoId);
+  const externalPlayerVarsRef = useRef(externalPlayerVars);
   onReadyRef.current = onReady;
   onStateChangeRef.current = onStateChange;
   autoplayRef.current = autoplay;
   videoIdRef.current = videoId;
+  externalPlayerVarsRef.current = externalPlayerVars;
 
   // ============================
   // 플레이어 생성 (최초 1회만)
@@ -67,6 +70,7 @@ export default function useYouTubePlayer({
         modestbranding: 1,
         playsinline: 1,
         autoplay: autoplayRef.current ? 1 : 0,
+        ...externalPlayerVarsRef.current,
       },
       events: {
         onReady: (e) => {

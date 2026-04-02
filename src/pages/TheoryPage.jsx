@@ -166,14 +166,15 @@ const JiveYouTubePlayer = memo(function JiveYouTubePlayer({ videoId, onPlayerRea
     containerRef: wrapperRef,
     videoId,
     autoplay: true,
+    playerVars: { playsinline: 1 },
     onReady: (event) => {
       if (onPlayerReady) onPlayerReady(event.target);
     },
   });
 
   return (
-    <div style={{ position: 'relative', width: '100%', maxWidth: '100%', aspectRatio: '16/9', maxHeight: '70vh', backgroundColor: '#000', overflow: 'hidden', borderRadius: '12px' }}>
-      <div ref={wrapperRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} />
+    <div className="jive-video-embed" style={{ borderRadius: '12px', maxHeight: '70vh' }}>
+      <div ref={wrapperRef} />
     </div>
   );
 });

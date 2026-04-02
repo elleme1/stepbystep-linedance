@@ -1,6 +1,25 @@
 // 라인댄스 안무곡 데이터
 const rawSongs = [
   {
+    id: 53,
+    title: "Funky Groove (펑키 그루브)",
+    artist: "Unknown",
+    choreographer: "Anny AP, Ria Lolong & Eric Rinaldi",
+    level: 1,
+    bpm: 120,
+    walls: 4,
+    counts: 32,
+    genre: "팝",
+    youtubeId: "kk0JeDPB7po",
+    thumbnail: "https://img.youtube.com/vi/kk0JeDPB7po/hqdefault.jpg",
+    steps: [
+      { count: "1-8", move: "스텝 터치 & 사이드 (Step Touch & Side)", desc: "오른발 사이드 → 왼발 터치 → 왼발 사이드 → 오른발 터치" },
+      { count: "9-16", move: "그레이프바인 & 터치 (Grapevine & Touch)", desc: "오른쪽 그레이프바인 → 터치 → 왼쪽 그레이프바인 → 터치" },
+      { count: "17-24", move: "워크 & 피벗 턴 (Walk & Pivot Turn)", desc: "앞으로 워크 2보 → 1/2 피벗 턴 → 워크 2보" },
+      { count: "25-32", move: "힙 범프 & 스텝 (Hip Bump & Step)", desc: "힙 범프 오른쪽 2회 → 힙 범프 왼쪽 2회" }
+    ]
+  },
+  {
     id: 52,
     title: "Disco Pizza (디스코 피자)",
     artist: "The Kolors",
@@ -1094,6 +1113,7 @@ const rawSongs = [
 // ============================================================
 const songSchedule = {
   // === 코오롱 전용 ===
+  53: { date: '2026-04-02', location: 'kolon' },  // Funky Groove (★ 이번주 수업곡 - 코오롱)
   42: { date: '2026-03-19', location: 'kolon' },  // No.9 (코오롱 센터)
   10: { date: '2026-03-10', location: 'kolon' },   // Everyone Needs a Hero
 

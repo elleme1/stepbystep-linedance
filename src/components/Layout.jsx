@@ -18,9 +18,6 @@ export default function Layout() {
     const toggleLocation = () => {
         const next = selectedLocation === 'kolon' ? 'sindun' : 'kolon';
         setSelectedLocation(next);
-        // localStorage에 즉시 저장 후 리로드하여 모든 데이터 확실히 반영
-        try { localStorage.setItem('stepbystep-location', next); } catch {}
-        window.location.reload();
     };
 
     // 🚨 서브 페이지 레이아웃

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // 🚨 [핵심!] 가짜 마네킹을 버리고, 원장님의 40곡 진짜 보물창고(songs.js)를 드디어 연결합니다!
 import songs from '../data/songs';
-import { levelStars } from '../data/constants';
+import { levelStars, levelText } from '../data/constants';
 
 export default function SearchPage() {
     const navigate = useNavigate();
@@ -19,8 +19,8 @@ export default function SearchPage() {
             const matchChoreographer = song.choreographer?.toLowerCase().includes(term);
             const matchGenre = song.genre?.toLowerCase().includes(term);
             // 레벨 매칭 (입문, 초급, 중급 등)
-            const levelText = levelStars[song.level]?.text?.toLowerCase() || '';
-            const matchLevel = levelText.includes(term);
+            const levelLabel = levelText[song.level]?.toLowerCase() || '';
+            const matchLevel = levelLabel.includes(term);
 
             return matchTitle || matchArtist || matchChoreographer || matchGenre || matchLevel;
         });
@@ -129,7 +129,7 @@ export default function SearchPage() {
                                         )}
                                         {levelStars[song.level] && (
                                             <span style={{ fontSize: '10px', color: '#60a5fa', backgroundColor: 'rgba(96,165,250,0.15)', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold' }}>
-                                                {levelStars[song.level].text}
+                                                {levelStars[song.level]}
                                             </span>
                                         )}
                                     </div>

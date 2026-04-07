@@ -11,7 +11,7 @@ const rawSongs = [
     counts: 32,
     genre: "가요",
     youtubeId: "6nDUAT73JpI",
-    tutorialId: "",
+    tutorialId: "Bkjuti6BcBc",
     thumbnail: "https://img.youtube.com/vi/6nDUAT73JpI/hqdefault.jpg",
     steps: [
       { count: "1-8", move: "사이드 스텝 & 터치 (Side Step & Touch)", desc: "오른발 사이드 → 왼발 터치 → 왼발 사이드 → 오른발 터치" },

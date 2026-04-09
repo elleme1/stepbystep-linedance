@@ -1,11 +1,9 @@
 /* --- src/pages/HomePage.css --- */
 
 .home-container {
-    padding: 24px 20px 100px 20px;
-    /* 맨 아래 100px은 하단 탭바와 겹치지 않게 넉넉한 여백 */
-    background-color: #0a0a0f;
-    color: #ffffff;
-    min-height: 100vh;
+    padding: 24px 20px 0 20px;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
     box-sizing: border-box;
 }
 

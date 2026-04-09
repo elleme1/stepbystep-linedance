@@ -124,7 +124,7 @@ export default function Layout() {
                 position: 'relative',
                 zIndex: 1,
                 isolation: 'isolate',
-                paddingBottom: 'calc(120px + env(safe-area-inset-bottom))'
+                paddingBottom: 'calc(80px + env(safe-area-inset-bottom))'
             }}>
                 <Outlet />
             </main>

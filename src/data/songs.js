@@ -1,6 +1,46 @@
 // 라인댄스 안무곡 데이터
 const rawSongs = [
   {
+    id: 56,
+    title: "Love at First Sight (첫눈에 반해버린 사람아)",
+    artist: "박서진 (Park Seo Jin)",
+    choreographer: "윤은희 (Eunhee Yoon)",
+    level: 2,
+    bpm: 128,
+    walls: 4,
+    counts: 32,
+    genre: "트로트",
+    youtubeId: "H_88xkq8XPQ",
+    tutorialId: "yHL9zB5kPb0",
+    thumbnail: "https://img.youtube.com/vi/H_88xkq8XPQ/hqdefault.jpg",
+    steps: [
+      { count: "1-8", move: "사이드 스텝 & 터치 (Side Step & Touch)", desc: "오른발 사이드 → 왼발 터치 → 왼발 사이드 → 오른발 터치" },
+      { count: "9-16", move: "그레이프바인 & 턴 (Vine & Turn)", desc: "오른쪽 그레이프바인 → 1/4 턴 → 왼쪽 그레이프바인" },
+      { count: "17-24", move: "록 스텝 & 셔플 (Rock Step & Shuffle)", desc: "앞 록 → 리커버 → 셔플 백" },
+      { count: "25-32", move: "코스터 스텝 & 피벗 턴 (Coaster Step & Pivot Turn)", desc: "코스터 스텝 → 워크 2보 → 1/2 피벗 턴" }
+    ]
+  },
+  {
+    id: 55,
+    title: "Electro Shake (일렉트로 쉐이크)",
+    artist: "Loredana Errore",
+    choreographer: "Jamie Barnfield (제이미 반필드)",
+    level: 3,
+    bpm: 130,
+    walls: 4,
+    counts: 32,
+    genre: "팝",
+    youtubeId: "Qrb59Gt_5PM",
+    tutorialId: "Jlnn6nBA10E",
+    thumbnail: "https://img.youtube.com/vi/Qrb59Gt_5PM/hqdefault.jpg",
+    steps: [
+      { count: "1-8", move: "사이드 록 & 셔플 (Side Rock & Shuffle)", desc: "사이드 록 → 리커버 → 크로스 셔플" },
+      { count: "9-16", move: "록 스텝 & 1/2 턴 (Rock Step & 1/2 Turn)", desc: "앞 록 → 리커버 → 1/2 턴 셔플" },
+      { count: "17-24", move: "재즈 박스 & 크로스 (Jazz Box & Cross)", desc: "재즈 박스 → 크로스 → 사이드 → 비하인드" },
+      { count: "25-32", move: "몽크 워크 & 힙 범프 (Monterey Turn & Hip Bump)", desc: "몬테레이 1/4 턴 → 힙 범프 좌우" }
+    ]
+  },
+  {
     id: 54,
     title: "돌아와요 부산항에 (Return To Busan Port)",
     artist: "미스미스터 (Miss Mister)",
@@ -1134,13 +1174,15 @@ const rawSongs = [
 // ============================================================
 const songSchedule = {
   // === 코오롱 전용 ===
-  54: { date: '2026-04-07', location: 'kolon' },  // 돌아와요 부산항에 (★ 이번주 수업곡 - 코오롱)
+  55: { date: '2026-04-09', location: 'kolon' },  // Electro Shake (★ 이번주 수업곡 - 코오롱)
+  54: { date: '2026-04-07', location: 'kolon' },  // 돌아와요 부산항에
   53: { date: '2026-04-02', location: 'kolon' },  // Funky Groove
-  42: { date: '2026-04-02', location: 'both' },   // No.9 (★ 이번주 수업곡 - 코오롱 / 중리)
+  42: { date: '2026-04-02', location: 'both' },   // No.9
   10: { date: '2026-03-10', location: 'kolon' },   // Everyone Needs a Hero
 
   // === 중리 행정복지센터 전용 (밴드 게시물 기반) ===
-  52: { date: '2026-03-26', location: 'sindun' },    // Disco Pizza (★ 이번주 수업곡 - 중리)
+  56: { date: '2026-04-09', location: 'sindun' },    // Love at First Sight (★ 이번주 수업곡 - 중리)
+  52: { date: '2026-03-26', location: 'sindun' },    // Disco Pizza
   43: { date: '2026-03-26', location: 'both' },       // Don't Look Back (★ 이번주 수업곡 - 코오롱 / 중리 수업곡)
   44: { date: '2026-03-05', location: 'sindun' },   // Drink Champagne
   45: { date: '2026-02-03', location: 'sindun' },   // 녹아버려요 (It's Melts)
@@ -1198,7 +1240,8 @@ const songSchedule = {
 
 // 📋 중리 행정복지센터 영상 순서 (수업 순서대로)
 const sindunOrder = [
-  52,  // 1. 디스코 피자 (이번주 수업곡)
+  56,  // 1. Love at First Sight (이번주 수업곡)
+  52,  // 2. 디스코 피자
   43,  // 2. 돈 룩 백
   41,  // 3. 와일드 웨스트 앤
   44,  // 4. 드링크 샴페인

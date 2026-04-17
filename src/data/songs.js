@@ -1,6 +1,26 @@
 // 라인댄스 안무곡 데이터
 const rawSongs = [
   {
+    id: 57,
+    title: "Accept (체념)",
+    artist: "Unknown",
+    choreographer: "Heejin K., Misun Y. & Daha P",
+    level: 1,
+    bpm: 120,
+    walls: 4,
+    counts: 32,
+    genre: "가요",
+    youtubeId: "Hx5-NyEki-Q",
+    tutorialId: "MA3871CHxpI",
+    thumbnail: "https://img.youtube.com/vi/Hx5-NyEki-Q/hqdefault.jpg",
+    steps: [
+      { count: "1-8", move: "사이드 스텝 & 터치 (Side Step & Touch)", desc: "오른발 사이드 → 왼발 터치 → 왼발 사이드 → 오른발 터치" },
+      { count: "9-16", move: "바인 & 턴 (Vine & Turn)", desc: "오른쪽 그레이프바인 → 1/4 턴" },
+      { count: "17-24", move: "워크 & 록 스텝 (Walk & Rock Step)", desc: "앞으로 워크 2보 → 앞 록 → 리커버" },
+      { count: "25-32", move: "힙 범프 & 터치 (Hip Bump & Touch)", desc: "힙 범프 좌우 → 사이드 터치" }
+    ]
+  },
+  {
     id: 56,
     title: "Love at First Sight (첫눈에 반해버린 사람아)",
     artist: "박서진 (Park Seo Jin)",
@@ -1174,13 +1194,14 @@ const rawSongs = [
 // ============================================================
 const songSchedule = {
   // === 코오롱 전용 ===
-  55: { date: '2026-04-09', location: 'kolon' },  // Electro Shake (★ 이번주 수업곡 - 코오롱)
+  55: { date: '2026-04-17', location: 'kolon' },  // Electro Shake (★ 이번주 수업곡 - 코오롱)
   54: { date: '2026-04-07', location: 'kolon' },  // 돌아와요 부산항에
   53: { date: '2026-04-02', location: 'kolon' },  // Funky Groove
   42: { date: '2026-04-02', location: 'both' },   // No.9
   10: { date: '2026-03-10', location: 'kolon' },   // Everyone Needs a Hero
 
   // === 중리 행정복지센터 전용 (밴드 게시물 기반) ===
+  57: { date: '2026-04-16', location: 'sindun' },    // Accept (★ 이번주 수업곡 - 중리)
   56: { date: '2026-04-09', location: 'sindun' },    // Love at First Sight (★ 이번주 수업곡 - 중리)
   52: { date: '2026-03-26', location: 'sindun' },    // Disco Pizza
   43: { date: '2026-03-26', location: 'both' },       // Don't Look Back (★ 이번주 수업곡 - 코오롱 / 중리 수업곡)
@@ -1240,6 +1261,7 @@ const songSchedule = {
 
 // 📋 중리 행정복지센터 영상 순서 (수업 순서대로)
 const sindunOrder = [
+  57,  // 0. Accept (체념) (이번주 수업곡)
   56,  // 1. Love at First Sight (이번주 수업곡)
   42,  // 2. No.9 넘버나인
   52,  // 3. 디스코 피자
@@ -1285,19 +1307,21 @@ const latestByLocation = {
 
 const processedSongs = rawSongs.map(s => {
   const schedule = songSchedule[s.id] || { date: '2025-01-01', location: 'both' };
+  const isThisWeekKolonFlag = (schedule.location === 'kolon' || schedule.location === 'both') && schedule.date === latestByLocation.kolon;
+  const isThisWeekSindunFlag = (schedule.location === 'sindun' || schedule.location === 'both') && schedule.date === latestByLocation.sindun;
+
   return {
     ...s,
     addedDate: schedule.date,
     location: schedule.location,
-    // 장소별 isThisWeek 플래그
-    isThisWeekKolon: (schedule.location === 'kolon' || schedule.location === 'both')
-      && schedule.date === latestByLocation.kolon,
-    isThisWeekSindun: (schedule.location === 'sindun' || schedule.location === 'both')
-      && schedule.date === latestByLocation.sindun,
+    youtubeId: isThisWeekKolonFlag ? "2lO2Cb3OUgI" : s.youtubeId, // 코오롱 이번 주 수업곡인 경우 유튜브 ID 할당
+    thumbnail: isThisWeekKolonFlag ? "https://img.youtube.com/vi/2lO2Cb3OUgI/hqdefault.jpg" : s.thumbnail,
+    isThisWeekKolon: isThisWeekKolonFlag,
+    isThisWeekSindun: isThisWeekSindunFlag,
     // 하위 호환: 전체 기준 최신
-    isThisWeek: schedule.date === Math.max(latestByLocation.kolon, latestByLocation.sindun)
-      ? true : false,
+    isThisWeek: schedule.date === Math.max(latestByLocation.kolon, latestByLocation.sindun) ? true : false,
   };
+
 });
 
 // 유틸 함수: 장소별 이번주 곡 가져오기

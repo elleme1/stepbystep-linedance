@@ -1316,6 +1316,7 @@ const processedSongs = rawSongs.map(s => {
     location: schedule.location,
     youtubeId: isThisWeekKolonFlag ? "2lO2Cb3OUgI" : s.youtubeId, // 코오롱 이번 주 수업곡인 경우 유튜브 ID 할당
     thumbnail: isThisWeekKolonFlag ? "https://img.youtube.com/vi/2lO2Cb3OUgI/hqdefault.jpg" : s.thumbnail,
+    tutorialId: isThisWeekKolonFlag ? "wBV7u8Iv0p4" : s.tutorialId, // 코오롱 이번 주 튜토리얼 영상
     isThisWeekKolon: isThisWeekKolonFlag,
     isThisWeekSindun: isThisWeekSindunFlag,
     // 하위 호환: 전체 기준 최신

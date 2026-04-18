@@ -27,6 +27,15 @@ import SearchPage from './pages/SearchPage';
 import VideoDetail from './pages/VideoDetail';
 import PlaylistPage from './pages/PlaylistPage';
 
+// 🚀 State Reset (충돌 방지 버전 관리)
+const APP_VERSION = 'v1.1';
+const currentVersion = localStorage.getItem('app_version');
+if (currentVersion !== APP_VERSION) {
+  localStorage.clear(); // 기존 데이터 모두 초기화
+  localStorage.setItem('app_version', APP_VERSION);
+  console.log(`[App] Version updated to ${APP_VERSION}. LocalStorage cleared.`);
+}
+
 function AppContent() {
   const [showSplash, setShowSplash] = useState(true);
   const handleSplashFinish = useCallback(() => setShowSplash(false), []);

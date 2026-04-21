@@ -328,3 +328,91 @@
     font-size: 13px;
     color: #888899;
 }
+
+/* ===== 라이트 모드 대비(contrast) 보정 ===== */
+[data-theme="light"] .home-container {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+[data-theme="light"] .notice-banner {
+    background-color: rgba(255, 51, 102, 0.08);
+}
+
+[data-theme="light"] .notice-text {
+    color: #9a1b3e;
+}
+
+[data-theme="light"] .greeting-card {
+    background: linear-gradient(135deg, rgba(255, 51, 102, 0.09) 0%, rgba(255, 153, 204, 0.05) 100%);
+    border-color: rgba(255, 51, 102, 0.35);
+}
+
+[data-theme="light"] .greeting-author {
+    color: #1a1a2e;
+}
+
+[data-theme="light"] .greeting-date {
+    color: #9a1b3e;
+}
+
+[data-theme="light"] .greeting-toggle {
+    color: #c0255a;
+}
+
+[data-theme="light"] .greeting-body p {
+    color: #2a2a35;
+}
+
+[data-theme="light"] .greeting-preview {
+    color: #555566;
+}
+
+[data-theme="light"] .vip-card {
+    background-color: #ffffff;
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .video-title-kor {
+    color: #4a4a55;
+}
+
+[data-theme="light"] .director-tip {
+    background-color: rgba(212, 168, 83, 0.14);
+}
+
+[data-theme="light"] .tip-content strong {
+    color: #946100;
+}
+
+[data-theme="light"] .tip-content span {
+    color: #2a2a35;
+}
+
+[data-theme="light"] .quick-title {
+    color: #1a1a2e;
+}
+
+[data-theme="light"] .action-btn {
+    background-color: #ffffff;
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .action-btn:active {
+    background-color: #f0ece5;
+}
+
+[data-theme="light"] .btn-text strong {
+    color: #1a1a2e;
+}
+
+[data-theme="light"] .btn-text span {
+    color: #555566;
+}
+
+[data-theme="light"] .level-badge {
+    background-color: #ece8e1;
+    color: #2a2a35;
+}

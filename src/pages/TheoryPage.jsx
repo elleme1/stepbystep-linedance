@@ -326,8 +326,8 @@ export default function TheoryPage() {
         .jive-header h1 { font-size: 1.6rem; font-weight: 900; background: linear-gradient(135deg, #f7d794, #f19066); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; margin-top: 0; }
         .jive-subtitle { font-size: .85rem; color: #a0a0c0; line-height: 1.6; }
         .jive-count-badge { display: inline-block; background: rgba(247,215,148,.15); color: #f7d794; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 600; margin-top: 10px; }
-        .jive-global-btns { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 16px; }
-        .jive-global-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 12px; font-size: .78rem; font-weight: 600; border: 1px solid rgba(255,255,255,.1); cursor: pointer; transition: all .3s; background: none; }
+        .jive-global-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px; }
+        .jive-global-btn { display: inline-flex; align-items: center; justify-content: center; gap: 4px; padding: 10px 6px; border-radius: 12px; font-size: .75rem; font-weight: 700; border: 1px solid rgba(255,255,255,.1); cursor: pointer; transition: all .3s; background: none; text-align: center; white-space: nowrap; }
         .jive-global-btn:active { transform: scale(.95); }
         .jive-global-btn.red { background: rgba(239,68,68,.12); color: #f87171; border-color: rgba(239,68,68,.2); }
         .jive-global-btn.blue { background: rgba(99,102,241,.12); color: #818cf8; border-color: rgba(99,102,241,.2); }

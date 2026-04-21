@@ -1,8 +1,8 @@
 /* --- src/pages/SchedulePage.css --- */
 
 .schedule-container {
-    background-color: #0a0a0f;
-    color: #ffffff;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
     min-height: 100vh;
     padding: 24px 20px 100px 20px;
 }
@@ -195,4 +195,99 @@
     100% {
         transform: scale(1);
     }
+}
+
+/* ===== ⏳ 지난 수업 (마감) — 흐리게 표시 ===== */
+.timeline-item.is-past .timeline-card {
+    opacity: 0.55;
+    filter: grayscale(0.4);
+}
+
+.timeline-item.is-past .timeline-dot {
+    background-color: #4a4a55;
+    opacity: 0.6;
+}
+
+.past-badge {
+    background-color: #4a4a55;
+    color: #d0d0d8;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 4px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+}
+
+/* ===== 라이트 모드 대비(contrast) 보정 ===== */
+[data-theme="light"] .schedule-title {
+    color: #1a1a2e;
+}
+
+[data-theme="light"] .schedule-subtitle {
+    color: #4a5568;
+}
+
+[data-theme="light"] .info-box {
+    background-color: rgba(255, 51, 102, 0.08);
+    border-color: rgba(255, 51, 102, 0.4);
+}
+
+[data-theme="light"] .info-box p {
+    color: #2a2a35;
+}
+
+[data-theme="light"] .timeline-dot {
+    background-color: #c0c0cc;
+}
+
+[data-theme="light"] .timeline-line {
+    background-color: #d4d4dc;
+}
+
+[data-theme="light"] .timeline-card {
+    background-color: #ffffff;
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .date-text {
+    color: #4a5568;
+}
+
+[data-theme="light"] .class-time {
+    color: #1a1a2e;
+}
+
+[data-theme="light"] .class-title {
+    color: #2a2a35;
+}
+
+[data-theme="light"] .card-footer {
+    border-top-color: #d4d4dc;
+}
+
+[data-theme="light"] .class-location {
+    color: #555566;
+}
+
+[data-theme="light"] .map-btn {
+    background-color: #ece8e1;
+    color: #2a2a35;
+}
+
+[data-theme="light"] .map-btn:active {
+    background-color: #d4d0c8;
+}
+
+[data-theme="light"] .timeline-item.is-today .date-text {
+    color: #1a1a2e;
+}
+
+[data-theme="light"] .timeline-item.is-past .timeline-dot {
+    background-color: #b8b8c0;
+}
+
+[data-theme="light"] .past-badge {
+    background-color: #d4d4dc;
+    color: #4a4a55;
 }

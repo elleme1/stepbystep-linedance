@@ -91,22 +91,37 @@ export default function Layout() {
                         </button>
                     )}
 
-                    {/* 테마 토글 버튼 (오른쪽) */}
+                    {/* 테마 토글 버튼 (오른쪽) — 현재 모드 아이콘을 보여줌 */}
                     <button
                         onClick={toggleTheme}
                         style={{
                             position: 'absolute',
-                            right: '16px',
-                            background: 'none',
-                            border: 'none',
-                            fontSize: '20px',
+                            right: '12px',
+                            background: theme === 'dark'
+                                ? 'rgba(99, 102, 241, 0.18)'
+                                : 'rgba(245, 158, 11, 0.18)',
+                            border: `1px solid ${theme === 'dark' ? 'rgba(99, 102, 241, 0.45)' : 'rgba(245, 158, 11, 0.45)'}`,
+                            borderRadius: '20px',
+                            fontSize: '16px',
                             cursor: 'pointer',
-                            padding: '4px',
-                            transition: 'transform 0.3s ease',
+                            padding: '4px 10px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            transition: 'all 0.3s ease',
                         }}
-                        title={theme === 'dark' ? '라이트 모드' : '다크 모드'}
+                        title={theme === 'dark' ? '라이트 모드로 전환' : '다크 모드로 전환'}
+                        aria-label={theme === 'dark' ? '라이트 모드로 전환' : '다크 모드로 전환'}
                     >
-                        {theme === 'dark' ? '☀️' : '🌙'}
+                        <span>{theme === 'dark' ? '🌙' : '☀️'}</span>
+                        <span style={{
+                            fontSize: '11px',
+                            fontWeight: '700',
+                            color: theme === 'dark' ? '#a5b4fc' : '#d97706',
+                            letterSpacing: '0.3px',
+                        }}>
+                            {theme === 'dark' ? '다크' : '라이트'}
+                        </span>
                     </button>
 
                     <h1 style={{ margin: 0, fontSize: '16px', fontWeight: '800', color: 'var(--text-primary)', padding: '0 90px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>

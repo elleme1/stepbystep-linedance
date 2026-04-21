@@ -80,6 +80,25 @@ export default function SchedulePage() {
 
     const scheduleData = allScheduleData[selectedLocation] || allScheduleData.kolon;
 
+    // 🕒 오늘 요일 기준으로 지난 수업/오늘/예정 자동 판정
+    const dayMap = { '월': 1, '화': 2, '수': 3, '목': 4, '금': 5, '토': 6, '일': 7 };
+    const todayDayIdx = (() => {
+        const d = new Date().getDay(); // 일=0, 월=1, ... 토=6
+        return d === 0 ? 7 : d;
+    })();
+
+    const getStatus = (dateStr) => {
+        const m = dateStr.match(/(월|화|수|목|금|토|일)요일/);
+        if (!m) return 'future';
+        const itemDayIdx = dayMap[m[1]];
+        if (dateStr.includes('이번 주')) {
+            if (itemDayIdx < todayDayIdx) return 'past';
+            if (itemDayIdx === todayDayIdx) return 'today';
+            return 'future';
+        }
+        return 'future';
+    };
+
     const getMapLink = (loc) => {
         if (loc.includes('코오롱')) {
             return 'https://map.naver.com/p/search/%EC%BD%94%EB%A1%9C%EB%A1%B1%EC%8A%A4%ED%8F%AC%EB%A0%89%EC%8A%A4';
@@ -111,8 +130,12 @@ export default function SchedulePage() {
 
             {/* 2. 세로 타임라인 리스트 */}
             <div className="timeline-wrapper">
-                {scheduleData.map((item, index) => (
-                    <div key={item.id} className={`timeline-item ${item.isToday ? 'is-today' : ''}`}>
+                {scheduleData.map((item, index) => {
+                    const status = getStatus(item.date);
+                    const isToday = status === 'today';
+                    const isPast = status === 'past';
+                    return (
+                    <div key={item.id} className={`timeline-item ${isToday ? 'is-today' : ''} ${isPast ? 'is-past' : ''}`}>
 
                         {/* 왼쪽 연결선과 동그라미 기둥 */}
                         <div className="timeline-indicator">
@@ -123,10 +146,11 @@ export default function SchedulePage() {
                         {/* 오른쪽 수업 정보 카드 */}
                         <div className="timeline-card">
 
-                            {/* 날짜와 '오늘' 뱃지 */}
+                            {/* 날짜와 '오늘'/'마감' 뱃지 */}
                             <div className="card-header">
                                 <span className="date-text">{item.date}</span>
-                                {item.isToday && <span className="today-badge">오늘</span>}
+                                {isToday && <span className="today-badge">오늘</span>}
+                                {isPast && <span className="past-badge">마감</span>}
                             </div>
 
                             {/* 시간과 수업 이름 */}
@@ -146,7 +170,8 @@ export default function SchedulePage() {
 
                         </div>
                     </div>
-                ))}
+                    );
+                })}
             </div>
 
         </div>

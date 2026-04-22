@@ -1333,9 +1333,9 @@ const processedSongs = rawSongs.map(s => {
     ...s,
     addedDate: schedule.date,
     location: schedule.location,
-    youtubeId: isThisWeekKolonFlag ? "2lO2Cb3OUgI" : s.youtubeId, // 코오롱 이번 주 수업곡인 경우 유튜브 ID 할당
-    thumbnail: isThisWeekKolonFlag ? "https://img.youtube.com/vi/2lO2Cb3OUgI/hqdefault.jpg" : s.thumbnail,
-    tutorialId: isThisWeekKolonFlag ? "wBV7u8Iv0p4" : isThisWeekSindunFlag ? "08QxXkpCza8" : s.tutorialId, // 장소별 이번 주 튜토리얼 영상
+    youtubeId: s.youtubeId,
+    thumbnail: s.thumbnail,
+    tutorialId: s.tutorialId,
     isThisWeekKolon: isThisWeekKolonFlag,
     isThisWeekSindun: isThisWeekSindunFlag,
     // 하위 호환: 전체 기준 최신

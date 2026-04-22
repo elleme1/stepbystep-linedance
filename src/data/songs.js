@@ -1,6 +1,23 @@
 // 라인댄스 안무곡 데이터
 const rawSongs = [
   {
+    id: 58,
+    title: "Delight (환희)",
+    artist: "정수라",
+    choreographer: "Unknown",
+    level: 1,
+    bpm: 130,
+    walls: 4,
+    counts: 32,
+    genre: "가요",
+    youtubeId: "A6DFS5eGAKQ",
+    tutorialId: "a9ir8ZWKCVQ",
+    thumbnail: "https://img.youtube.com/vi/A6DFS5eGAKQ/hqdefault.jpg",
+    steps: [
+      { count: "1-8", move: "기본 스텝 (Basic Step)", desc: "음악에 맞춰 기본 스텝 진행" }
+    ]
+  },
+  {
     id: 57,
     title: "Accept (체념)",
     artist: "Unknown",
@@ -1201,6 +1218,7 @@ const songSchedule = {
   10: { date: '2026-03-10', location: 'kolon' },   // Everyone Needs a Hero
 
   // === 중리 행정복지센터 전용 (밴드 게시물 기반) ===
+  58: { date: '2026-04-23', location: 'sindun' },    // Delight (★ 이번주 수업곡 - 중리)
   57: { date: '2026-04-17', location: 'sindun' },    // Accept (★ 이번주 수업곡 - 중리)
   56: { date: '2026-04-09', location: 'sindun' },    // Love at First Sight (★ 이번주 수업곡 - 중리)
   52: { date: '2026-03-26', location: 'sindun' },    // Disco Pizza
@@ -1261,6 +1279,7 @@ const songSchedule = {
 
 // 📋 중리 행정복지센터 영상 순서 (수업 순서대로)
 const sindunOrder = [
+  58,  // Delight (환희) (이번주 수업곡)
   57,  // 0. Accept (체념) (이번주 수업곡)
   56,  // 1. Love at First Sight (이번주 수업곡)
   42,  // 2. No.9 넘버나인

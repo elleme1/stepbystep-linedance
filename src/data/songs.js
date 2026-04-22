@@ -28,7 +28,7 @@ const rawSongs = [
     counts: 32,
     genre: "가요",
     youtubeId: "Hx5-NyEki-Q",
-    tutorialId: "MA3871CHxpI",
+    tutorialId: "08QxXkpCza8",
     thumbnail: "https://img.youtube.com/vi/Hx5-NyEki-Q/hqdefault.jpg",
     steps: [
       { count: "1-8", move: "사이드 스텝 & 터치 (Side Step & Touch)", desc: "오른발 사이드 → 왼발 터치 → 왼발 사이드 → 오른발 터치" },

@@ -1,6 +1,26 @@
 // 라인댄스 안무곡 데이터
 const rawSongs = [
   {
+    id: 59,
+    title: "Accept (체념)",
+    artist: "Unknown",
+    choreographer: "Heejin K., Misun Y. & Daha P",
+    level: 1,
+    bpm: 120,
+    walls: 4,
+    counts: 32,
+    genre: "가요",
+    youtubeId: "Hx5-NyEki-Q",
+    tutorialId: "08QxXkpCza8",
+    thumbnail: "https://img.youtube.com/vi/Hx5-NyEki-Q/hqdefault.jpg",
+    steps: [
+      { count: "1-8", move: "사이드 스텝 & 터치 (Side Step & Touch)", desc: "오른발 사이드 → 왼발 터치 → 왼발 사이드 → 오른발 터치" },
+      { count: "9-16", move: "바인 & 턴 (Vine & Turn)", desc: "오른쪽 그레이프바인 → 1/4 턴" },
+      { count: "17-24", move: "워크 & 록 스텝 (Walk & Rock Step)", desc: "앞으로 워크 2보 → 앞 록 → 리커버" },
+      { count: "25-32", move: "힙 범프 & 터치 (Hip Bump & Touch)", desc: "힙 범프 좌우 → 사이드 터치" }
+    ]
+  },
+  {
     id: 58,
     title: "Delight (환희)",
     artist: "정수라",
@@ -1211,6 +1231,7 @@ const rawSongs = [
 // ============================================================
 const songSchedule = {
   // === 코오롱 전용 ===
+  59: { date: '2026-04-23', location: 'kolon' },  // Accept (★ 이번주 수업곡 - 코오롱)
   55: { date: '2026-04-17', location: 'kolon' },  // Electro Shake (★ 이번주 수업곡 - 코오롱)
   54: { date: '2026-04-07', location: 'kolon' },  // 돌아와요 부산항에
   53: { date: '2026-04-02', location: 'kolon' },  // Funky Groove
@@ -1219,7 +1240,7 @@ const songSchedule = {
 
   // === 중리 행정복지센터 전용 (밴드 게시물 기반) ===
   58: { date: '2026-04-23', location: 'sindun' },    // Delight (★ 이번주 수업곡 - 중리)
-  56: { date: '2026-04-09', location: 'sindun' },    // Love at First Sight (★ 이번주 수업곡 - 중리)
+  57: { date: '2026-04-17', location: 'sindun' },    // Accept (★ 이번주 수업곡 - 중리)
   52: { date: '2026-03-26', location: 'sindun' },    // Disco Pizza
   43: { date: '2026-03-26', location: 'both' },       // Don't Look Back (★ 이번주 수업곡 - 코오롱 / 중리 수업곡)
   44: { date: '2026-03-05', location: 'sindun' },   // Drink Champagne
@@ -1232,7 +1253,6 @@ const songSchedule = {
   51: { date: '2025-10-04', location: 'sindun' },   // 날보러와요
 
   // === 양쪽 모두 (코오롱 + 중리) ===
-  57: { date: '2026-04-23', location: 'both' },     // Accept (★ 이번주 수업곡 - 코오롱 / 중리)
   41: { date: '2026-03-12', location: 'both' },     // Wild West & Wicked
   1: { date: '2026-03-02', location: 'both' },      // Why
   6: { date: '2026-01-27', location: 'both' },      // Love Potion 666

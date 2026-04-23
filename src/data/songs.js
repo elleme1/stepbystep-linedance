@@ -1345,8 +1345,16 @@ const latestByLocation = {
   sindun: getLatestDateForLocation('sindun'),
 };
 
+// ⚠️ [안전장치 1] 스케줄 누락 데이터 경고 (개발자 콘솔)
+rawSongs.forEach(s => {
+  if (!songSchedule[s.id]) {
+    console.warn(`[주의] 곡 ID ${s.id} ('${s.title}')의 스케줄 데이터가 songSchedule에 누락되었습니다. 화면에 노출되지 않도록 unassigned 처리됩니다.`);
+  }
+});
+
 const processedSongs = rawSongs.map(s => {
-  const schedule = songSchedule[s.id] || { date: '2025-01-01', location: 'both' };
+  // 🛡️ [안전장치 2] 누락 데이터 발생 시 'both' 대신 'unassigned'로 자동 격리 처리
+  const schedule = songSchedule[s.id] || { date: '2025-01-01', location: 'unassigned' };
   const isThisWeekKolonFlag = (schedule.location === 'kolon' || schedule.location === 'both') && schedule.date === latestByLocation.kolon;
   const isThisWeekSindunFlag = (schedule.location === 'sindun' || schedule.location === 'both') && schedule.date === latestByLocation.sindun;
 

@@ -1,26 +1,6 @@
 // 라인댄스 안무곡 데이터
 const rawSongs = [
   {
-    id: 59,
-    title: "Accept (체념)",
-    artist: "Unknown",
-    choreographer: "Heejin K., Misun Y. & Daha P",
-    level: 1,
-    bpm: 120,
-    walls: 4,
-    counts: 32,
-    genre: "가요",
-    youtubeId: "Hx5-NyEki-Q",
-    tutorialId: "08QxXkpCza8",
-    thumbnail: "https://img.youtube.com/vi/Hx5-NyEki-Q/hqdefault.jpg",
-    steps: [
-      { count: "1-8", move: "사이드 스텝 & 터치 (Side Step & Touch)", desc: "오른발 사이드 → 왼발 터치 → 왼발 사이드 → 오른발 터치" },
-      { count: "9-16", move: "바인 & 턴 (Vine & Turn)", desc: "오른쪽 그레이프바인 → 1/4 턴" },
-      { count: "17-24", move: "워크 & 록 스텝 (Walk & Rock Step)", desc: "앞으로 워크 2보 → 앞 록 → 리커버" },
-      { count: "25-32", move: "힙 범프 & 터치 (Hip Bump & Touch)", desc: "힙 범프 좌우 → 사이드 터치" }
-    ]
-  },
-  {
     id: 58,
     title: "Delight (환희)",
     artist: "정수라",
@@ -35,6 +15,27 @@ const rawSongs = [
     thumbnail: "https://img.youtube.com/vi/A6DFS5eGAKQ/hqdefault.jpg",
     steps: [
       { count: "1-8", move: "기본 스텝 (Basic Step)", desc: "음악에 맞춰 기본 스텝 진행" }
+    ]
+  },
+  {
+    id: 60,
+    title: "Moonbay Rumba (문베이 룸바)",
+    artist: "Paselhits",
+    choreographer: "Junghye Yoon & Solbi Jeong",
+    level: 3,
+    bpm: 120,
+    walls: 4,
+    counts: 32,
+    genre: "라틴",
+    youtubeId: "2lO2Cb3OUgI",
+    tutorialId: "ClBKWZm8J0k",
+    thumbnail: "https://img.youtube.com/vi/2lO2Cb3OUgI/hqdefault.jpg",
+
+    steps: [
+      { count: "1-8", move: "기본 룸바 스텝", desc: "사이드 → 모아 → 앞 → 사이드 → 모아 → 뒤" },
+      { count: "9-16", move: "힙 스웨이 & 터치", desc: "힙 스웨이 좌우 → 사이드 터치" },
+      { count: "17-24", move: "워크 & 록 스텝", desc: "앞으로 워크 2보 → 앞 록 → 리커버" },
+      { count: "25-32", move: "턴 & 터치", desc: "1/4 턴하며 사이드 → 모아 → 터치" }
     ]
   },
   {
@@ -95,27 +96,6 @@ const rawSongs = [
       { count: "9-16", move: "록 스텝 & 1/2 턴 (Rock Step & 1/2 Turn)", desc: "앞 록 → 리커버 → 1/2 턴 셔플" },
       { count: "17-24", move: "재즈 박스 & 크로스 (Jazz Box & Cross)", desc: "재즈 박스 → 크로스 → 사이드 → 비하인드" },
       { count: "25-32", move: "몽크 워크 & 힙 범프 (Monterey Turn & Hip Bump)", desc: "몬테레이 1/4 턴 → 힙 범프 좌우" }
-    ]
-  },
-  {
-    id: 60,
-    title: "Moonbay Rumba (문베이 룸바)",
-    artist: "Paselhits",
-    choreographer: "Junghye Yoon & Solbi Jeong",
-    level: 3,
-    bpm: 120,
-    walls: 4,
-    counts: 32,
-    genre: "라틴",
-    youtubeId: "2lO2Cb3OUgI",
-    tutorialId: "ClBKWZm8J0k",
-    thumbnail: "https://img.youtube.com/vi/2lO2Cb3OUgI/hqdefault.jpg",
-
-    steps: [
-      { count: "1-8", move: "기본 룸바 스텝", desc: "사이드 → 모아 → 앞 → 사이드 → 모아 → 뒤" },
-      { count: "9-16", move: "힙 스웨이 & 터치", desc: "힙 스웨이 좌우 → 사이드 터치" },
-      { count: "17-24", move: "워크 & 록 스텝", desc: "앞으로 워크 2보 → 앞 록 → 리커버" },
-      { count: "25-32", move: "턴 & 터치", desc: "1/4 턴하며 사이드 → 모아 → 터치" }
     ]
   },
   {
@@ -1252,7 +1232,6 @@ const rawSongs = [
 // ============================================================
 const songSchedule = {
   // === 코오롱 전용 ===
-  59: { date: '2026-04-23', location: 'kolon' },  // Accept (★ 이번주 수업곡 - 코오롱)
   60: { date: '2026-04-20', location: 'kolon' },  // Moonbay Rumba (문베이 룸바)
   55: { date: '2026-04-17', location: 'kolon' },  // Electro Shake
   54: { date: '2026-04-07', location: 'kolon' },  // 돌아와요 부산항에
@@ -1261,7 +1240,7 @@ const songSchedule = {
   10: { date: '2026-03-10', location: 'kolon' },   // Everyone Needs a Hero
 
   // === 중리 행정복지센터 전용 (밴드 게시물 기반) ===
-  58: { date: '2026-04-23', location: 'sindun' },    // Delight (★ 이번주 수업곡 - 중리)
+  58: { date: '2026-04-23', location: 'both' },      // Delight (★ 이번주 수업곡 - 양쪽)
   57: { date: '2026-04-17', location: 'sindun' },    // Accept (★ 이번주 수업곡 - 중리)
   56: { date: '2026-04-09', location: 'sindun' },    // Love at First Sight (★ 이번주 수업곡 - 중리)
   52: { date: '2026-03-26', location: 'sindun' },    // Disco Pizza

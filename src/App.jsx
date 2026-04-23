@@ -27,6 +27,8 @@ import SearchPage from './pages/SearchPage';
 import VideoDetail from './pages/VideoDetail';
 import PlaylistPage from './pages/PlaylistPage';
 
+import ReloadPrompt from './ReloadPrompt';
+
 // 🚀 State Reset (충돌 방지 버전 관리)
 const APP_VERSION = 'v1.2';
 const currentVersion = localStorage.getItem('app_version');
@@ -43,6 +45,7 @@ function AppContent() {
 
   return (
     <>
+      <ReloadPrompt />
       {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
 
       {/* 📍 장소 미선택 시 선택 화면 표시 */}

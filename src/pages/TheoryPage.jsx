@@ -108,22 +108,6 @@ const YT = {
   full_73_slow: 'FVKnAdqoMjo',
 };
 
-// 📥 Google Drive 다운로드 매핑 (원장님이 업로드한 영상)
-const DRIVE_FILES = [
-  { id: '19nDeGg96U3Q_qPo3A7sALr9HiNb7kBwV', label: '초급 시범영상', range: [1, 8] },
-  // 추후 추가: { id: 'XXXXXX', label: '1~30번 배우기', range: [1, 30] },
-  // 추후 추가: { id: 'XXXXXX', label: '31~60번 배우기', range: [31, 60] },
-];
-
-function getDriveDownload(n) {
-  const num = typeof n === 'string' ? parseInt(n) : n;
-  return DRIVE_FILES.find(f => num >= f.range[0] && num <= f.range[1]);
-}
-
-function driveDownloadUrl(fileId) {
-  return `https://drive.google.com/uc?export=download&id=${fileId}`;
-}
-
 function getVideos(n) {
   const num = typeof n === 'string' ? parseInt(n) : n;
   if (num <= 8) return {
@@ -194,7 +178,6 @@ export default function TheoryPage() {
   const [openCardId, setOpenCardId] = useState(null);
   const [activeVideo, setActiveVideo] = useState(null);
   const [expandedSections, setExpandedSections] = useState({});
-  const [masterclassVideo, setMasterclassVideo] = useState(null);
   const [mcExpandedCats, setMcExpandedCats] = useState({});
   const [mcSectionOpen, setMcSectionOpen] = useState(false);
 
@@ -223,7 +206,7 @@ export default function TheoryPage() {
   useEffect(() => {
     setPointA(null); setPointB(null); setAbLoopActive(false);
     activePlayerRef.current = null;
-  }, [activeVideo?.videoId, activeVideo?.cardN, masterclassVideo]);
+  }, [activeVideo?.videoId, activeVideo?.cardN]);
 
   // ✅ 독립 컴포넌트에서 플레이어 인스턴스를 받는 콜백
   const handlePlayerReady = useCallback((player) => {
@@ -486,17 +469,15 @@ export default function TheoryPage() {
               {isCatExpanded && (
                 <div className="mc-grid">
                   {cat.videos.map((v, vi) => {
-                    const isPlaying = masterclassVideo === v.id;
+                    const isPlaying = activeVideo?.cardN === `mc-${v.id}`;
                     return (
                       <React.Fragment key={v.id}>
                         <div
                           className={`mc-card ${isPlaying ? 'playing' : ''}`}
                           onClick={() => {
                             if (isPlaying) {
-                              setMasterclassVideo(null);
                               setActiveVideo(null);
                             } else {
-                              setMasterclassVideo(v.id);
                               setActiveVideo({ cardN: `mc-${v.id}`, videoId: v.id });
                             }
                           }}
@@ -526,7 +507,7 @@ export default function TheoryPage() {
                                   <span style={{color:'#888',fontSize:'14px'}}>→</span>
                                   <button className="jive-ab-btn b-btn" onClick={handleSetB}>B {pointB !== null ? formatTime(pointB) : '설정'}</button>
                                   {abLoopActive && <button className="jive-ab-btn clear-btn" onClick={handleClearAB}>✕</button>}
-                                  <button className="jive-ab-btn clear-btn" onClick={() => { setMasterclassVideo(null); setActiveVideo(null); }} style={{marginLeft:'auto'}}>✕ 닫기</button>
+                                  <button className="jive-ab-btn clear-btn" onClick={() => setActiveVideo(null)} style={{marginLeft:'auto'}}>✕ 닫기</button>
                                 </div>
                               </div>
                             </div>

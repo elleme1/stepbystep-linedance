@@ -28,7 +28,7 @@ import VideoDetail from './pages/VideoDetail';
 import PlaylistPage from './pages/PlaylistPage';
 
 // 🚀 State Reset (충돌 방지 버전 관리)
-const APP_VERSION = 'v1.1';
+const APP_VERSION = 'v1.2';
 const currentVersion = localStorage.getItem('app_version');
 if (currentVersion !== APP_VERSION) {
   localStorage.clear(); // 기존 데이터 모두 초기화

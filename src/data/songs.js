@@ -1241,6 +1241,7 @@ const songSchedule = {
   // === 중리 행정복지센터 전용 (밴드 게시물 기반) ===
   58: { date: '2026-04-23', location: 'sindun' },    // Delight (★ 이번주 수업곡 - 중리)
   57: { date: '2026-04-17', location: 'sindun' },    // Accept (★ 이번주 수업곡 - 중리)
+  56: { date: '2026-04-09', location: 'sindun' },    // Love at First Sight (★ 이번주 수업곡 - 중리)
   52: { date: '2026-03-26', location: 'sindun' },    // Disco Pizza
   43: { date: '2026-03-26', location: 'both' },       // Don't Look Back (★ 이번주 수업곡 - 코오롱 / 중리 수업곡)
   44: { date: '2026-03-05', location: 'sindun' },   // Drink Champagne

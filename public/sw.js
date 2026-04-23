@@ -1,5 +1,5 @@
 // 구양희 STEP-BY-STEP Service Worker - Graceful 업데이트 + SPA 라우팅 지원
-const CACHE_NAME = 'stepbystep-v16';
+const CACHE_NAME = 'stepbystep-v17';
 const OFFLINE_URL = '/';
 
 // Install: 사용자가 '업데이트' 버튼을 누를 때까지 대기

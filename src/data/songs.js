@@ -98,6 +98,27 @@ const rawSongs = [
     ]
   },
   {
+    id: 60,
+    title: "Moonbay Rumba (문베이 룸바)",
+    artist: "Paselhits",
+    choreographer: "Junghye Yoon & Solbi Jeong",
+    level: 3,
+    bpm: 120,
+    walls: 4,
+    counts: 32,
+    genre: "라틴",
+    youtubeId: "2lO2Cb3OUgI",
+    tutorialId: "ClBKWZm8J0k",
+    thumbnail: "https://img.youtube.com/vi/2lO2Cb3OUgI/hqdefault.jpg",
+
+    steps: [
+      { count: "1-8", move: "기본 룸바 스텝", desc: "사이드 → 모아 → 앞 → 사이드 → 모아 → 뒤" },
+      { count: "9-16", move: "힙 스웨이 & 터치", desc: "힙 스웨이 좌우 → 사이드 터치" },
+      { count: "17-24", move: "워크 & 록 스텝", desc: "앞으로 워크 2보 → 앞 록 → 리커버" },
+      { count: "25-32", move: "턴 & 터치", desc: "1/4 턴하며 사이드 → 모아 → 터치" }
+    ]
+  },
+  {
     id: 54,
     title: "돌아와요 부산항에 (Return To Busan Port)",
     artist: "미스미스터 (Miss Mister)",
@@ -1220,27 +1241,6 @@ const rawSongs = [
       { count: "9-16", move: "셔플 & 턴 (Shuffle & Turn)", desc: "오른쪽 셔플 → 1/4 턴 → 왼쪽 셔플" },
       { count: "17-24", move: "록 스텝 & 리커버 (Rock Step & Recover)", desc: "앞 록 → 리커버 → 뒤 록 → 리커버" },
       { count: "25-32", move: "힙 범프 & 터치 (Hip Bump & Touch)", desc: "힙 범프 좌우 → 사이드 터치" }
-    ]
-  },
-  {
-    id: 60,
-    title: "Moonbay Rumba (문베이 룸바)",
-    artist: "Paselhits",
-    choreographer: "Junghye Yoon & Solbi Jeong",
-    level: 3,
-    bpm: 120,
-    walls: 4,
-    counts: 32,
-    genre: "라틴",
-    youtubeId: "2lO2Cb3OUgI",
-    tutorialId: "ClBKWZm8J0k",
-    thumbnail: "https://img.youtube.com/vi/2lO2Cb3OUgI/hqdefault.jpg",
-
-    steps: [
-      { count: "1-8", move: "기본 룸바 스텝", desc: "사이드 → 모아 → 앞 → 사이드 → 모아 → 뒤" },
-      { count: "9-16", move: "힙 스웨이 & 터치", desc: "힙 스웨이 좌우 → 사이드 터치" },
-      { count: "17-24", move: "워크 & 록 스텝", desc: "앞으로 워크 2보 → 앞 록 → 리커버" },
-      { count: "25-32", move: "턴 & 터치", desc: "1/4 턴하며 사이드 → 모아 → 터치" }
     ]
   }
 ];

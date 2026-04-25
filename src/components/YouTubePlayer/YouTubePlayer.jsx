@@ -203,9 +203,11 @@ const YouTubePlayer = React.forwardRef(function YouTubePlayer({
     if (isLandscapeCinema) {
       // 가로 시네마: 화면 전체 안에서 16:9 비율 유지, 중앙 정렬
       return {
-        width: '100%', height: '100%', position: 'relative',
+        width: '100vw', height: '100dvh', position: 'relative',
         maxWidth: 'calc(100dvh * 16 / 9)',  // 높이 기준 최대 너비
+        maxHeight: 'calc(100vw * 9 / 16)',  // 너비 기준 최대 높이
         aspectRatio: '16/9',
+        margin: 'auto',
       };
     }
     if (isFullscreen) {

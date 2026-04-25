@@ -189,7 +189,7 @@ const rawSongs = [
     counts: 32,
     genre: "컨트리",
     youtubeId: "YmNhE-u96_o",
-    tutorialId: "",
+    tutorialId: "2CfJic2PPm8",
     thumbnail: "https://img.youtube.com/vi/YmNhE-u96_o/hqdefault.jpg",
     steps: [
       { count: "1-8", move: "트위스트 (Twist)", desc: "양발 트위스트 좌우 → 트위스트" },
@@ -228,7 +228,7 @@ const rawSongs = [
     counts: 32,
     genre: "컨트리",
     youtubeId: "iuVFCaBLsbc",
-    tutorialId: "",
+    tutorialId: "1GuYuFKD5OQ",
     thumbnail: "https://img.youtube.com/vi/iuVFCaBLsbc/hqdefault.jpg",
     steps: [
       { count: "1-8", move: "사이드 스텝 & 터치 (Side Step & Touch)", desc: "오른발 사이드 → 왼발 터치 → 왼발 사이드 → 오른발 터치" },

@@ -46,7 +46,7 @@ export default function PlaylistPage() {
 
     const playlistSongs = useMemo(() => {
         const locationSongs = getSongsForLocation(selectedLocation);
-        if (mode === 'archive') return locationSongs.filter(s => !isThisWeekForLocation(s));
+        if (mode === 'archive') return locationSongs; // 전체곡 재생이므로 필터링 없이 모두 반환
         const thisWeekSongs = locationSongs.filter(s => isThisWeekForLocation(s));
         return thisWeekSongs.length > 0 ? thisWeekSongs : [locationSongs[0] || songs[0]];
     }, [mode, selectedLocation]);

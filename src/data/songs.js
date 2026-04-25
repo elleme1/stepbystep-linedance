@@ -1240,7 +1240,7 @@ const songSchedule = {
   10: { date: '2026-03-10', location: 'kolon' },   // Everyone Needs a Hero
 
   // === 중리 행정복지센터 전용 (밴드 게시물 기반) ===
-  58: { date: '2026-04-23', location: 'sindun' },    // Delight (★ 이번주 수업곡 - 중리)
+  58: { date: '2026-04-23', location: 'both' },    // Delight (★ 이번주 수업곡 - 중리 / 코오롱)
   57: { date: '2026-04-23', location: 'both' },      // Accept (★ 이번주 수업곡 - 코오롱 / 중리 재학습)
   56: { date: '2026-04-09', location: 'sindun' },    // Love at First Sight (★ 이번주 수업곡 - 중리)
   52: { date: '2026-03-26', location: 'sindun' },    // Disco Pizza
@@ -1298,6 +1298,59 @@ const songSchedule = {
   39: { date: '2025-06-17', location: 'kolon' },    // 송인
   40: { date: '2025-06-10', location: 'kolon' },    // Dance Jockey Remix
 };
+
+// 📋 코오롱 스포렉스 영상 순서 (수업 순서대로)
+const kolonOrder = [
+  58,  // Delight (환희)
+  60,  // Moonbay Rumba (문베이 룸바)
+  55,  // Electro Shake
+  57,  // Accept (체념)
+  54,  // 돌아와요 부산항에
+  53,  // Funky Groove
+  42,  // No.9
+  43,  // Don't Look Back
+  41,  // Wild West & Wicked
+  10,  // Everyone Needs a Hero
+  1,   // Why
+  6,   // Love Potion 666
+  2,   // 정말 잘해왔어
+  4,   // 오늘밤에 만나요
+  3,   // This Is My Life
+  5,   // Dangerous
+  7,   // Havana Cha
+  8,   // Rose Garden (우연히)
+  9,   // Just a Kiss
+  11,  // Samba Do Brasil
+  12,  // Turn It Up
+  13,  // Like an Indian Doll
+  14,  // 복세편살
+  15,  // Save Me
+  16,  // News
+  17,  // 후회없는 춤
+  18,  // Let's Dance With the Music
+  19,  // Love Rumba
+  20,  // Casablanca 2025
+  21,  // Cha Cha Tango
+  22,  // Dreams of Rio
+  23,  // La Noche Mia
+  24,  // 푸른시절
+  25,  // 주시고
+  26,  // 사랑찾아 인생찾아
+  27,  // DA Bomb
+  28,  // Woman in Love 2025
+  29,  // 보고싶다 내사랑
+  30,  // 썸머타임
+  31,  // Zumma Dance
+  32,  // 아직도 어두운 밤인가봐
+  33,  // 편지
+  34,  // Womanizer
+  35,  // Let's Get Loud
+  36,  // 가로세로
+  37,  // Pick Me Up
+  38,  // Love Disco Remix
+  39,  // 송인
+  40,  // Dance Jockey Remix
+];
 
 // 📋 중리 행정복지센터 영상 순서 (수업 순서대로)
 const sindunOrder = [
@@ -1392,6 +1445,17 @@ export function getSongsForLocation(locationId) {
   const filtered = processedSongs.filter(s =>
     s.location === locationId || s.location === 'both'
   );
+  
+  // 코오롱 스포렉스: kolonOrder 순서대로 정렬
+  if (locationId === 'kolon') {
+    const orderMap = new Map(kolonOrder.map((id, idx) => [id, idx]));
+    return [...filtered].sort((a, b) => {
+      const aIdx = orderMap.has(a.id) ? orderMap.get(a.id) : 9999;
+      const bIdx = orderMap.has(b.id) ? orderMap.get(b.id) : 9999;
+      return aIdx - bIdx;
+    });
+  }
+
   // 중리 행정복지센터: sindunOrder 순서대로 정렬
   if (locationId === 'sindun') {
     const orderMap = new Map(sindunOrder.map((id, idx) => [id, idx]));

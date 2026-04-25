@@ -1240,7 +1240,7 @@ const songSchedule = {
   10: { date: '2026-03-10', location: 'kolon' },   // Everyone Needs a Hero
 
   // === 중리 행정복지센터 전용 (밴드 게시물 기반) ===
-  58: { date: '2026-04-23', location: 'both' },    // Delight (★ 이번주 수업곡 - 중리 / 코오롱)
+  58: { date: '2026-04-23', location: 'sindun' },    // Delight (★ 이번주 수업곡 - 중리)
   57: { date: '2026-04-23', location: 'both' },      // Accept (★ 이번주 수업곡 - 코오롱 / 중리 재학습)
   56: { date: '2026-04-09', location: 'sindun' },    // Love at First Sight (★ 이번주 수업곡 - 중리)
   52: { date: '2026-03-26', location: 'sindun' },    // Disco Pizza
@@ -1301,10 +1301,9 @@ const songSchedule = {
 
 // 📋 코오롱 스포렉스 영상 순서 (수업 순서대로)
 const kolonOrder = [
-  58,  // Delight (환희)
+  57,  // Accept (체념) (이번주 수업곡)
   60,  // Moonbay Rumba (문베이 룸바)
   55,  // Electro Shake
-  57,  // Accept (체념)
   54,  // 돌아와요 부산항에
   53,  // Funky Groove
   42,  // No.9

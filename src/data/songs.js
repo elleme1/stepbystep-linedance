@@ -1,6 +1,22 @@
 // 라인댄스 안무곡 데이터
 const rawSongs = [
   {
+    id: 63,
+    title: "찔레꽃 (Wild Rose)",
+    artist: "Unknown",
+    choreographer: "Unknown",
+    level: 1,
+    bpm: 120,
+    walls: 4,
+    counts: 32,
+    genre: "트로트",
+    youtubeId: "mJV_0iOQuWY",
+    tutorialId: "",
+    thumbnail: "https://img.youtube.com/vi/mJV_0iOQuWY/hqdefault.jpg",
+    mp3Url: "/mp3/mJV_0iOQuWY.mp3",
+    steps: []
+  },
+  {
     id: 62,
     title: "한잔해 (Han Jan Hae)",
     artist: "박군",

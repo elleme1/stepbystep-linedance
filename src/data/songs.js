@@ -13,6 +13,7 @@ const rawSongs = [
     youtubeId: "oIv0xmzSJuA",
     tutorialId: "",
     thumbnail: "https://img.youtube.com/vi/oIv0xmzSJuA/hqdefault.jpg",
+    mp3Url: "/mp3/oIv0xmzSJuA.mp3",
     steps: []
   },
   {
@@ -28,6 +29,7 @@ const rawSongs = [
     youtubeId: "NedFc7LvHE8",
     tutorialId: "",
     thumbnail: "https://img.youtube.com/vi/NedFc7LvHE8/hqdefault.jpg",
+    mp3Url: "/mp3/NedFc7LvHE8.mp3",
     steps: []
   },
   {
@@ -80,6 +82,7 @@ const rawSongs = [
     youtubeId: "2lO2Cb3OUgI",
     tutorialId: "ClBKWZm8J0k",
     thumbnail: "https://img.youtube.com/vi/2lO2Cb3OUgI/hqdefault.jpg",
+    mp3Url: "/mp3/2lO2Cb3OUgI.mp3",
 
     steps: [
       { count: "1-8", move: "기본 룸바 스텝", desc: "사이드 → 모아 → 앞 → 사이드 → 모아 → 뒤" },
@@ -101,6 +104,7 @@ const rawSongs = [
     youtubeId: "H_88xkq8XPQ",
     tutorialId: "yHL9zB5kPb0",
     thumbnail: "https://img.youtube.com/vi/H_88xkq8XPQ/hqdefault.jpg",
+    mp3Url: "/mp3/H_88xkq8XPQ.mp3",
     steps: [
       { count: "1-8", move: "사이드 스텝 & 터치 (Side Step & Touch)", desc: "오른발 사이드 → 왼발 터치 → 왼발 사이드 → 오른발 터치" },
       { count: "9-16", move: "그레이프바인 & 턴 (Vine & Turn)", desc: "오른쪽 그레이프바인 → 1/4 턴 → 왼쪽 그레이프바인" },

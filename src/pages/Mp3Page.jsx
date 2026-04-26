@@ -1,12 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import songs from '../data/songs';
 import { levelText } from '../data/constants';
 import './Mp3Page.css';
 
 export default function Mp3Page() {
-    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('트로트'); // '트로트' or '자이브'
+    const [playingId, setPlayingId] = useState(null);
 
     // 현재 선택된 장르에 맞는 곡 필터링
     const displaySongs = useMemo(() => {
@@ -21,6 +20,10 @@ export default function Mp3Page() {
         if (level <= 1) return 'level-easy';
         if (level === 2) return 'level-medium';
         return 'level-hard';
+    };
+
+    const handlePlay = (id) => {
+        setPlayingId(playingId === id ? null : id);
     };
 
     return (
@@ -57,26 +60,44 @@ export default function Mp3Page() {
                     displaySongs.map(song => (
                         <div
                             key={song.id}
-                            className="mp3-list-item"
-                            onClick={() => navigate(`/video/${song.id}`)}
+                            className={`mp3-list-item ${playingId === song.id ? 'playing' : ''}`}
+                            onClick={() => handlePlay(song.id)}
                         >
                             {/* 썸네일 및 재생 오버레이 */}
                             <div className="mp3-thumbnail">
                                 <img src={song.thumbnail} alt={song.title} />
-                                <div className="mp3-play-overlay">▶</div>
+                                <div className="mp3-play-overlay">
+                                    {playingId === song.id ? '⏸' : '▶'}
+                                </div>
                             </div>
 
                             {/* 곡 정보 */}
-                            <div className="mp3-info">
-                                <h3 className="mp3-title">{song.title}</h3>
-                                <p className="mp3-artist">{song.artist} {song.choreographer !== 'Unknown' && `· ${song.choreographer}`}</p>
-                                
-                                <div className="mp3-badges">
-                                    <span className="mp3-badge-genre">{song.genre}</span>
-                                    <span className={`mp3-badge-level ${getLevelClass(song.level)}`}>
-                                        {levelText[song.level]}
-                                    </span>
+                            <div className="mp3-info-wrapper">
+                                <div className="mp3-info">
+                                    <h3 className="mp3-title">{song.title}</h3>
+                                    <p className="mp3-artist">{song.artist} {song.choreographer !== 'Unknown' && `· ${song.choreographer}`}</p>
+                                    
+                                    <div className="mp3-badges">
+                                        <span className="mp3-badge-genre">{song.genre}</span>
+                                        <span className={`mp3-badge-level ${getLevelClass(song.level)}`}>
+                                            {levelText[song.level]}
+                                        </span>
+                                    </div>
                                 </div>
+
+                                {/* 인라인 오디오 플레이어 */}
+                                {playingId === song.id && song.mp3Url && (
+                                    <div className="mp3-audio-player" onClick={(e) => e.stopPropagation()}>
+                                        <audio controls autoPlay src={song.mp3Url} style={{ width: '100%', marginTop: '12px' }}>
+                                            브라우저가 오디오 재생을 지원하지 않습니다.
+                                        </audio>
+                                    </div>
+                                )}
+                                {playingId === song.id && !song.mp3Url && (
+                                    <div className="mp3-audio-error" style={{ color: '#ff4b4b', fontSize: '0.85rem', marginTop: '8px' }}>
+                                        ⚠️ 준비된 MP3 파일이 없습니다.
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))

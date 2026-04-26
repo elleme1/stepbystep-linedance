@@ -11,7 +11,7 @@ export default function Layout() {
     const { theme, toggleTheme } = useTheme();
     const { selectedLocation, setSelectedLocation, locationInfo } = useLocationCtx();
 
-    const isMainTab = path === '/' || path === '/schedule' || path === '/video' || path === '/theory';
+    const isMainTab = path === '/' || path === '/schedule' || path === '/video' || path === '/theory' || path === '/mp3';
     const isOurSubPage = path.startsWith('/community') || path.startsWith('/search');
 
     // 📍 장소 전환 함수 (코오롱 ↔ 중리 행정복지센터 토글)
@@ -38,6 +38,7 @@ export default function Layout() {
         if (path === '/schedule') return '수업 일정';
         if (path === '/video') return '영상 보관함';
         if (path === '/theory') return '마스터 클래스';
+        if (path === '/mp3') return 'MP3 모음';
         if (path.startsWith('/community')) return '회원 소통방';
         if (path.startsWith('/search')) return '통합 검색';
         return '';

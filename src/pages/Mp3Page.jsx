@@ -26,6 +26,24 @@ export default function Mp3Page() {
         setPlayingId(playingId === id ? null : id);
     };
 
+    const handleAudioEnded = (currentId) => {
+        const currentIndex = displaySongs.findIndex(song => song.id === currentId);
+        if (currentIndex !== -1 && currentIndex < displaySongs.length - 1) {
+            // mp3Url이 있는 다음 곡을 찾아서 재생
+            let nextId = null;
+            for (let i = currentIndex + 1; i < displaySongs.length; i++) {
+                if (displaySongs[i].mp3Url) {
+                    nextId = displaySongs[i].id;
+                    break;
+                }
+            }
+            setPlayingId(nextId);
+        } else {
+            // 마지막 곡이거나 다음 곡이 없으면 재생 중지
+            setPlayingId(null);
+        }
+    };
+
     return (
         <div className="mp3-container">
             {/* 상단 헤더 및 필터 탭 */}
@@ -88,7 +106,13 @@ export default function Mp3Page() {
                                 {/* 인라인 오디오 플레이어 */}
                                 {playingId === song.id && song.mp3Url && (
                                     <div className="mp3-audio-player" onClick={(e) => e.stopPropagation()}>
-                                        <audio controls autoPlay src={song.mp3Url} style={{ width: '100%', marginTop: '12px' }}>
+                                        <audio 
+                                            controls 
+                                            autoPlay 
+                                            src={song.mp3Url} 
+                                            style={{ width: '100%', marginTop: '12px' }}
+                                            onEnded={() => handleAudioEnded(song.id)}
+                                        >
                                             브라우저가 오디오 재생을 지원하지 않습니다.
                                         </audio>
                                     </div>

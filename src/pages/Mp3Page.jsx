@@ -16,6 +16,10 @@ export default function Mp3Page() {
         });
     }, [activeTab]);
 
+    const currentSong = useMemo(() => {
+        return playingId ? songs.find(s => s.id === playingId) : null;
+    }, [playingId]);
+
     const getLevelClass = (level) => {
         if (level <= 1) return 'level-easy';
         if (level === 2) return 'level-medium';
@@ -102,21 +106,7 @@ export default function Mp3Page() {
                                         </span>
                                     </div>
                                 </div>
-
-                                {/* 인라인 오디오 플레이어 */}
-                                {playingId === song.id && song.mp3Url && (
-                                    <div className="mp3-audio-player" onClick={(e) => e.stopPropagation()}>
-                                        <audio 
-                                            controls 
-                                            autoPlay 
-                                            src={song.mp3Url} 
-                                            style={{ width: '100%', marginTop: '12px' }}
-                                            onEnded={() => handleAudioEnded(song.id)}
-                                        >
-                                            브라우저가 오디오 재생을 지원하지 않습니다.
-                                        </audio>
-                                    </div>
-                                )}
+                                
                                 {playingId === song.id && !song.mp3Url && (
                                     <div className="mp3-audio-error" style={{ color: '#ff4b4b', fontSize: '0.85rem', marginTop: '8px' }}>
                                         ⚠️ 준비된 MP3 파일이 없습니다.
@@ -127,6 +117,25 @@ export default function Mp3Page() {
                     ))
                 )}
             </div>
+
+            {/* 하단 고정 스티키 플레이어 (단일 audio 태그 재사용으로 모바일 자동재생 제한 회피) */}
+            {currentSong && currentSong.mp3Url && (
+                <div className="mp3-sticky-player">
+                    <div className="mp3-sticky-info">
+                        <span className="mp3-sticky-title">{currentSong.title}</span>
+                        <span className="mp3-sticky-artist">{currentSong.artist}</span>
+                    </div>
+                    <audio 
+                        controls 
+                        autoPlay 
+                        src={currentSong.mp3Url} 
+                        style={{ width: '100%', height: '40px', outline: 'none' }}
+                        onEnded={() => handleAudioEnded(currentSong.id)}
+                    >
+                        브라우저가 오디오 재생을 지원하지 않습니다.
+                    </audio>
+                </div>
+            )}
         </div>
     );
 }

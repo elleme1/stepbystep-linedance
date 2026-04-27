@@ -58,9 +58,9 @@ const rawSongs = [
     walls: 4,
     counts: 32,
     genre: "가요",
-    youtubeId: "A6DFS5eGAKQ",
+    youtubeId: "WPv-cmrO5rY",
     tutorialId: "a9ir8ZWKCVQ",
-    thumbnail: "https://img.youtube.com/vi/A6DFS5eGAKQ/hqdefault.jpg",
+    thumbnail: "https://img.youtube.com/vi/WPv-cmrO5rY/hqdefault.jpg",
     steps: [
       { count: "1-8", move: "기본 스텝 (Basic Step)", desc: "음악에 맞춰 기본 스텝 진행" }
     ]

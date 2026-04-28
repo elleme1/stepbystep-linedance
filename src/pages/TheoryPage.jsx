@@ -327,6 +327,7 @@ export default function TheoryPage() {
         .jive-global-btn.red { background: rgba(239,68,68,.12); color: #f87171; border-color: rgba(239,68,68,.2); }
         .jive-global-btn.blue { background: rgba(99,102,241,.12); color: #818cf8; border-color: rgba(99,102,241,.2); }
         .jive-global-btn.green { background: rgba(16,185,129,.12); color: #6ee7b7; border-color: rgba(16,185,129,.2); }
+        .jive-global-btn.orange { background: rgba(249,115,22,.12); color: #fb923c; border-color: rgba(249,115,22,.2); }
         .jive-section { margin-bottom: 28px; }
         .jive-section-title { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 14px; margin-bottom: 14px; border: 1px solid rgba(255,255,255,.1); }
         .jive-emoji { font-size: 1.3rem; }
@@ -449,7 +450,11 @@ export default function TheoryPage() {
             <button className="jive-global-btn red" onClick={() => setActiveVideo({cardN:'global',videoId:YT.full_73})}>▶ 전체 연속동작</button>
             <button className="jive-global-btn blue" onClick={() => setActiveVideo({cardN:'global',videoId:YT.full_73_slow})}>🐢 전체 슬로모션</button>
             <button className="jive-global-btn green" onClick={() => setActiveVideo({cardN:'global',videoId:YT.beginner_explain})}>📖 초급 상세설명</button>
-            <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'RrRl_FMgvrI'})} style={{ backgroundColor: '#f97316' }}>▶ 자이브 1-50번 스탭</button>
+            <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'RrRl_FMgvrI'})}>▶ 1-50번 스탭</button>
+            <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'F8ZoZSDZUY4'})}>▶ 1-2번 스탭</button>
+            <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'bmgscBOBWQ0'})}>▶ 3-5번 스탭</button>
+            <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'873NOf9d8z4'})}>▶ 6-11번 스탭</button>
+            <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'99PUY1gfBWk'})}>▶ 12-20번 스탭</button>
           </div>
         </div>
       )}

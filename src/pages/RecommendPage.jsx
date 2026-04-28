@@ -29,18 +29,6 @@ const recommendSongs = [
         level: 1,
     },
     {
-        id: 'recommend_accept',
-        title: 'Accept (체념)',
-        choreographer: 'Heejin K., Misun Y. & Daha P',
-        description: '강렬한 비트와 감성적인 멜로디에 맞춰 스텝을 밟아보세요! 전체적인 안무 흐름을 파악하기 좋은 본 영상입니다.',
-        genre: '가요',
-        tags: ['⭐ 금주의 추천영상', '가요'],
-        mainVideoId: 'Hx5-NyEki-Q',
-        tutorialVideoId: '08QxXkpCza8',
-        hasTutorial: true,
-        level: 1,
-    },
-    {
         id: 'recommend_lanochemia',
         title: 'La Noche Mia (라 노체미아)',
         choreographer: 'Unknown',

@@ -38,6 +38,16 @@ export default function RecommendPage() {
             mainVideoId: 'dVW1chyRreE',
             tutorialVideoId: '68vA4Ir_Xh4',
             hasTutorial: true,
+        },
+        {
+            id: 'recommend_new_3',
+            title: '신규 추천 영상',
+            choreographer: 'Unknown',
+            description: '신나는 라인댄스 스텝을 즐겨보세요!',
+            tags: ['⭐ 금주의 추천영상'],
+            mainVideoId: 'KtJ7QJ9evJU',
+            tutorialVideoId: '',
+            hasTutorial: false,
         }
     ];
 

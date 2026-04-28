@@ -82,6 +82,9 @@ export default function RecommendPage() {
     const navigate = useNavigate();
     const [selectedVideoId, setSelectedVideoId] = useState(null);
 
+    // --- 연속 재생 상태 ---
+    const [autoPlayNext, setAutoPlayNext] = useState(true);
+
     // --- 리스트 화면 상태 ---
     const [activeTab, setActiveTab] = useState('전체');
     const [showScrollTop, setShowScrollTop] = useState(false);
@@ -135,6 +138,13 @@ export default function RecommendPage() {
         id: currentSong?.id || '',
         videoData: currentSong || {},
     });
+
+    const handleStateChange = useCallback((e) => {
+        // e.data === 0 은 영상 종료(YT.PlayerState.ENDED)
+        if (e.data === 0 && autoPlayNext && nextSong) {
+            setSelectedVideoId(nextSong.id);
+        }
+    }, [autoPlayNext, nextSong]);
 
     // --- 렌더링: 리스트 화면 ---
     if (!selectedVideoId) {
@@ -221,7 +231,9 @@ export default function RecommendPage() {
                 mirror={vd.isMirror}
                 brightness={vd.brightness}
                 contrast={vd.contrast}
+                autoplay={true}
                 onReady={vd.handlePlayerReady}
+                onStateChange={handleStateChange}
                 onBack={() => setSelectedVideoId(null)}
             >
                 {vd.showCount && (
@@ -256,6 +268,23 @@ export default function RecommendPage() {
                 <div className="view-toggle">
                     <button className={`view-toggle__btn ${vd.viewMode === 'main' ? 'view-toggle__btn--active' : ''}`} onClick={() => vd.setViewMode('main')}>🎵 음악 맞춰 실전</button>
                     <button className={`view-toggle__btn ${vd.viewMode === 'tutorial' ? 'view-toggle__btn--active' : ''}`} onClick={() => vd.setViewMode('tutorial')}>👣 친절한 스텝 설명</button>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', marginBottom: '20px' }}>
+                    <span style={{ fontSize: '0.95rem', fontWeight: 'bold', color: '#fff' }}>▶️ 연속 재생 (끝나면 다음 곡으로)</span>
+                    <label style={{ position: 'relative', display: 'inline-block', width: '50px', height: '28px' }}>
+                        <input type="checkbox" checked={autoPlayNext} onChange={(e) => setAutoPlayNext(e.target.checked)} style={{ opacity: 0, width: 0, height: 0 }} />
+                        <span style={{
+                            position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0,
+                            backgroundColor: autoPlayNext ? '#ff2d55' : 'rgba(255,255,255,0.2)', borderRadius: '34px', transition: '.4s'
+                        }}>
+                            <span style={{
+                                position: 'absolute', height: '20px', width: '20px', left: '4px', bottom: '4px',
+                                backgroundColor: 'white', borderRadius: '50%', transition: '.4s',
+                                transform: autoPlayNext ? 'translateX(22px)' : 'none'
+                            }} />
+                        </span>
+                    </label>
                 </div>
 
                 {vd.viewMode === 'tutorial' && !currentSong.hasTutorial && (

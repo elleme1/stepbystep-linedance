@@ -80,15 +80,15 @@ export default function RecommendPage() {
             {/* 상단 고정 네비바 */}
             <div className="recommend-topnav">
                 <button className="recommend-topnav-btn" onClick={() => navigate(-1)}>← 뒤로</button>
-                <span className="recommend-topnav-title">추천곡</span>
+                <span className="recommend-topnav-title">영상모음</span>
                 <button className="recommend-topnav-btn" onClick={() => navigate('/')}>🏠 홈</button>
             </div>
 
             {/* 헤더 */}
             <div className="recommend-header">
-                <h1>⭐ 이번 주 강력 추천곡</h1>
+                <h1>⭐ 이번 주 강력 영상모음</h1>
                 <div className="recommend-subtitle">
-                    수강생 여러분을 위한 특별한 추천곡!<br/>
+                    수강생 여러분을 위한 특별한 영상 모음!<br/>
                     본 안무 영상과 상세한 튜토리얼을 함께 준비했어요.
                 </div>
             </div>
@@ -106,7 +106,7 @@ export default function RecommendPage() {
                 <div className="recommend-video-embed">
                     <iframe
                         src="https://www.youtube.com/embed/gTcqjNCsU64"
-                        title="Havana Cha 추천곡"
+                        title="Havana Cha 본 안무"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
                     ></iframe>

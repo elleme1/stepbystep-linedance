@@ -17,6 +17,18 @@ import './VideoDetail.css';
 // ── 여러 추천곡을 담은 배열 ──
 const recommendSongs = [
     {
+        id: 'recommend_cestlavie',
+        title: "C'est La Vie (쎄라비)",
+        choreographer: 'Ria Vos',
+        description: '신나는 음악에 맞춰 경쾌한 스텝을 밟아보세요!',
+        genre: '팝',
+        tags: ['⭐ 금주의 추천영상', '팝'],
+        mainVideoId: 'Y4-JZIlOpe8',
+        tutorialVideoId: '',
+        hasTutorial: false,
+        level: 2,
+    },
+    {
         id: 'recommend_havana',
         title: 'Havana Cha (하바나 차)',
         choreographer: 'Ria Vos',

@@ -96,6 +96,5 @@ export default function RecommendWidget() {
         </div>
       )}
     </>
-    </>
   );
 }

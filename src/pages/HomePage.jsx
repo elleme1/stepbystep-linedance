@@ -142,6 +142,9 @@ export default function HomePage() {
                 </div>
             </section>
 
+            {/* 하단 우측 추천곡 플로팅 위젯 -> 인라인 섹션으로 변경됨 */}
+            <RecommendWidget />
+
             {/* 3. 🚀 하단 퀵 메뉴 */}
             <section className="quick-actions">
                 <h2 className="quick-title">무엇을 찾으시나요?</h2>
@@ -165,8 +168,6 @@ export default function HomePage() {
 
                 </div>
             </section>
-            {/* 하단 우측 추천곡 플로팅 위젯 추가 */}
-            <RecommendWidget />
         </div>
     );
 }

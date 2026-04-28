@@ -9,6 +9,13 @@ const jive375Data = [
     choreographer: '구향회',
     genre: '자이브',
     mainVideoId: 'NYS5m4T9jw0',
+  },
+  {
+    id: '375_2',
+    title: '자이브 375 (2)',
+    choreographer: '구향회',
+    genre: '자이브',
+    mainVideoId: '0S-yMpfzurY',
   }
 ];
 

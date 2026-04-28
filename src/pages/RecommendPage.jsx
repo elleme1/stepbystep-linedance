@@ -17,6 +17,18 @@ import './VideoDetail.css';
 // ── 여러 추천곡을 담은 배열 ──
 const recommendSongs = [
     {
+        id: 'recommend_sway',
+        title: 'Sway (스웨이)',
+        choreographer: 'Hà Nguyễn',
+        description: '매혹적인 라틴 리듬 Sway에 맞춰 우아하게 스텝을 밟아보세요!',
+        genre: '라틴',
+        tags: ['⭐ 금주의 추천영상', '라틴'],
+        mainVideoId: 'bxqoATR6LDw',
+        tutorialVideoId: '',
+        hasTutorial: false,
+        level: 2,
+    },
+    {
         id: 'recommend_summer_night_cha_cha',
         title: 'Summer Night Cha Cha',
         choreographer: 'Unknown',

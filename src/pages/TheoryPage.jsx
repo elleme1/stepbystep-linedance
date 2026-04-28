@@ -23,6 +23,13 @@ const jive375Data = [
     choreographer: '',
     genre: '자이브',
     mainVideoId: 'CkGNQOWZRBo',
+  },
+  {
+    id: '375_4',
+    title: 'Advanced Jive Kick Combo | International Jive Practice Routine',
+    choreographer: '',
+    genre: '자이브',
+    mainVideoId: 'shyvzAnA-yc',
   }
 ];
 

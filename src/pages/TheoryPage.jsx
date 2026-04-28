@@ -1,5 +1,16 @@
 import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './VideoPage.css';
+
+const jive375Data = [
+  {
+    id: '375_1',
+    title: '자이브 375',
+    choreographer: '구향회',
+    genre: '자이브',
+    mainVideoId: 'NYS5m4T9jw0',
+  }
+];
 
 // 📚 자이브 57개 동작 데이터 + 유튜브 영상 매핑
 const jiveData = [
@@ -416,8 +427,29 @@ export default function TheoryPage() {
 
       {activeTab === '375' && (
         <div className="jive-header" style={{ paddingTop: '0', borderTop: 'none', marginTop: '-16px' }}>
-          <div className="jive-global-btns">
-            <button className="jive-global-btn red" onClick={() => setActiveVideo({cardN:'global',videoId:'NYS5m4T9jw0'})}>▶ 자이브 375 재생</button>
+          <div className="video-list" style={{ marginTop: '16px' }}>
+            {jive375Data.map(video => (
+              <div
+                key={video.id}
+                className="video-list-item"
+                onClick={() => {
+                  setActiveVideo({ cardN: 'global', videoId: video.mainVideoId });
+                  window.scrollTo(0, 0);
+                }}
+              >
+                <div className="list-thumbnail">
+                  <img src={`https://img.youtube.com/vi/${video.mainVideoId}/mqdefault.jpg`} alt={video.title} />
+                  <div className="list-play-icon">▶</div>
+                </div>
+                <div className="list-info">
+                  <div className="info-top">
+                    <span className="info-date">{video.genre}</span>
+                  </div>
+                  <h3 className="info-title-eng">{video.title}</h3>
+                  <p className="info-title-kor">{video.choreographer}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}

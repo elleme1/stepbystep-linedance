@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useVideoDetail from '../hooks/useVideoDetail';
 
@@ -17,27 +17,44 @@ export default function RecommendPage() {
     const navigate = useNavigate();
     const playerRef = useRef(null);
 
-    // ── 추천곡 하드코딩 데이터 ──
-    const recommendData = {
-        id: 'recommend_accept',
-        title: 'Accept (체념)',
-        choreographer: 'Heejin K., Misun Y. & Daha P',
-        description: '강렬한 비트와 감성적인 멜로디에 맞춰 스텝을 밟아보세요! 전체적인 안무 흐름을 파악하기 좋은 본 영상입니다.',
-        tags: ['⭐ 금주의 추천영상', '가요'],
-    };
+    // ── 여러 추천곡을 담은 배열 ──
+    const recommendSongs = [
+        {
+            id: 'recommend_accept',
+            title: 'Accept (체념)',
+            choreographer: 'Heejin K., Misun Y. & Daha P',
+            description: '강렬한 비트와 감성적인 멜로디에 맞춰 스텝을 밟아보세요! 전체적인 안무 흐름을 파악하기 좋은 본 영상입니다.',
+            tags: ['⭐ 금주의 추천영상', '가요'],
+            mainVideoId: 'Hx5-NyEki-Q',
+            tutorialVideoId: '08QxXkpCza8',
+            hasTutorial: true,
+        },
+        {
+            id: 'recommend_lanochemia',
+            title: 'La Noche Mia (라 노체미아)',
+            choreographer: 'Unknown',
+            description: '매혹적인 라틴 리듬에 맞춰 스텝을 밟아보세요!',
+            tags: ['⭐ 금주의 추천영상', '라틴'],
+            mainVideoId: 'dVW1chyRreE',
+            tutorialVideoId: '68vA4Ir_Xh4',
+            hasTutorial: true,
+        }
+    ];
 
-    const mainVideoId = 'Hx5-NyEki-Q';
-    const tutorialVideoId = '08QxXkpCza8';
-    const hasTutorial = true;
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const currentSong = recommendSongs[currentIndex];
+
+    const prevSong = currentIndex > 0 ? recommendSongs[currentIndex - 1] : null;
+    const nextSong = currentIndex < recommendSongs.length - 1 ? recommendSongs[currentIndex + 1] : null;
 
     // ── 커스텀 훅 ──
     const vd = useVideoDetail({
         playerRef,
-        mainVideoId,
-        tutorialVideoId,
-        hasTutorial,
-        id: recommendData.id,
-        videoData: recommendData,
+        mainVideoId: currentSong.mainVideoId,
+        tutorialVideoId: currentSong.tutorialVideoId,
+        hasTutorial: currentSong.hasTutorial,
+        id: currentSong.id,
+        videoData: currentSong,
     });
 
     return (
@@ -65,7 +82,7 @@ export default function RecommendPage() {
             <YouTubePlayer
                 ref={playerRef}
                 videoId={vd.currentVideoId}
-                title={recommendData.title}
+                title={currentSong.title}
                 mirror={vd.isMirror}
                 brightness={vd.brightness}
                 contrast={vd.contrast}
@@ -153,7 +170,11 @@ export default function RecommendPage() {
 
                 {/* 이전곡 / 전체화면 / 다음곡 */}
                 <div className="nav-bar">
-                    <button className="nav-bar__btn nav-bar__btn--disabled" disabled>
+                    <button 
+                        className={`nav-bar__btn ${!prevSong ? 'nav-bar__btn--disabled' : ''}`}
+                        onClick={() => prevSong && setCurrentIndex(currentIndex - 1)}
+                        disabled={!prevSong}
+                    >
                         ⏮ 이전 곡
                     </button>
                     <div className="nav-bar__divider" />
@@ -164,7 +185,11 @@ export default function RecommendPage() {
                         🎬 전체 화면
                     </button>
                     <div className="nav-bar__divider" />
-                    <button className="nav-bar__btn nav-bar__btn--disabled" disabled>
+                    <button 
+                        className={`nav-bar__btn ${!nextSong ? 'nav-bar__btn--disabled' : ''}`}
+                        onClick={() => nextSong && setCurrentIndex(currentIndex + 1)}
+                        disabled={!nextSong}
+                    >
                         다음 곡 ⏭
                     </button>
                 </div>
@@ -186,7 +211,7 @@ export default function RecommendPage() {
                 </div>
 
                 {/* 튜토리얼 없음 안내 */}
-                {vd.viewMode === 'tutorial' && !hasTutorial && (
+                {vd.viewMode === 'tutorial' && !currentSong.hasTutorial && (
                     <div className="tutorial-notice">
                         👣 스텝 설명 영상이 준비 중입니다
                     </div>
@@ -194,18 +219,18 @@ export default function RecommendPage() {
 
                 {/* 태그 */}
                 <div className="song-tags">
-                    {recommendData.tags?.map((tag, idx) => (
+                    {currentSong.tags?.map((tag, idx) => (
                         <span key={idx} className="song-tag" style={{ background: '#ff2d55', color: '#fff', border: 'none' }}>{tag}</span>
                     ))}
                 </div>
 
                 {/* 곡 정보 */}
-                <h1 className="song-title">{recommendData.title}</h1>
-                <p className="song-choreographer">안무가: {recommendData.choreographer}</p>
+                <h1 className="song-title">{currentSong.title}</h1>
+                <p className="song-choreographer">안무가: {currentSong.choreographer}</p>
 
                 <div className="song-note">
                     <h3 className="song-note__title">📝 영상 노트</h3>
-                    <p className="song-note__text">{recommendData.description}</p>
+                    <p className="song-note__text">{currentSong.description}</p>
                 </div>
             </div>
 

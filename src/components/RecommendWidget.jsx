@@ -69,7 +69,7 @@ export default function RecommendWidget() {
                   position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
                   border: 'none'
                 }}
-                src="https://www.youtube.com/embed/WPv-cmrO5rY" // 최근 업데이트된 '환희' 영상 추천
+                src="https://www.youtube.com/embed/gTcqjNCsU64" 
                 title="추천 영상"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen

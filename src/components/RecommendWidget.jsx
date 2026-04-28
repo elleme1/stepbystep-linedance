@@ -69,8 +69,8 @@ export default function RecommendWidget() {
                   position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
                   border: 'none'
                 }}
-                src="https://www.youtube.com/embed/gTcqjNCsU64" 
-                title="추천 영상"
+                src="https://www.youtube.com/embed/wixCZ2dY7gc" 
+                title="추천 영상 (Havana Cha 튜토리얼)"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               ></iframe>

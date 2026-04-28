@@ -31,8 +31,8 @@ export default function RecommendWidget() {
         }}>
           <div style={{
             backgroundColor: '#1e1e1e',
-            color: 'white', padding: '30px', borderRadius: '20px',
-            width: '90%', maxWidth: '420px', textAlign: 'center',
+            color: 'white', padding: '20px', borderRadius: '20px',
+            width: '95%', maxWidth: '800px', textAlign: 'center',
             position: 'relative', boxShadow: '0 20px 40px rgba(0,0,0,0.6)',
             border: '1px solid rgba(255, 64, 129, 0.3)'
           }}>

@@ -152,6 +152,7 @@ export default function TheoryPage() {
   const [openCardId, setOpenCardId] = useState(null);
   const [activeVideo, setActiveVideo] = useState(null);
   const [expandedSections, setExpandedSections] = useState({});
+  const [activeTab, setActiveTab] = useState('sequence');
 
   // 🔁 A-B 반복구간 상태
   const [pointA, setPointA] = useState(null);
@@ -378,17 +379,49 @@ export default function TheoryPage() {
         </button>
       )}
 
-      {/* 헤더 */}
-      <div className="jive-header">
-        <h1>🕺 자이브 통합루틴 진행교본</h1>
-        <div className="jive-subtitle">기본 카운트: 1-2, QaQ, QaQ<br/>(Slow-Slow, Quick·and·Quick, Quick·and·Quick)</div>
-        <div className="jive-count-badge">총 57개 동작 · 초급 8 · 중급 13 · 상급A~D 36</div>
-        <div className="jive-global-btns">
-          <button className="jive-global-btn red" onClick={() => setActiveVideo({cardN:'global',videoId:YT.full_73})}>▶ 전체 연속동작</button>
-          <button className="jive-global-btn blue" onClick={() => setActiveVideo({cardN:'global',videoId:YT.full_73_slow})}>🐢 전체 슬로모션</button>
-          <button className="jive-global-btn green" onClick={() => setActiveVideo({cardN:'global',videoId:YT.beginner_explain})}>📖 초급 상세설명</button>
+      {/* 탭 네비게이션 */}
+      <div className="jive-header" style={{ paddingBottom: '0' }}>
+        <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '16px' }}>
+          <button 
+              onClick={() => setActiveTab('sequence')}
+              style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: activeTab === 'sequence' ? 'var(--primary-color, #ef4444)' : 'var(--bg-secondary, rgba(0,0,0,0.05))', color: activeTab === 'sequence' ? '#fff' : 'var(--text-secondary, #888)', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
+          >자이브 순서</button>
+          <button 
+              onClick={() => setActiveTab('375')}
+              style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: activeTab === '375' ? 'var(--primary-color, #ef4444)' : 'var(--bg-secondary, rgba(0,0,0,0.05))', color: activeTab === '375' ? '#fff' : 'var(--text-secondary, #888)', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
+          >자이브 375</button>
+          <button 
+              onClick={() => setActiveTab('education')}
+              style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: activeTab === 'education' ? 'var(--primary-color, #ef4444)' : 'var(--bg-secondary, rgba(0,0,0,0.05))', color: activeTab === 'education' ? '#fff' : 'var(--text-secondary, #888)', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
+          >자이브 교육영상</button>
         </div>
       </div>
+
+      {activeTab === 'sequence' && (
+        <div className="jive-header" style={{ paddingTop: '0', borderTop: 'none', marginTop: '-16px' }}>
+          <div className="jive-subtitle">기본 카운트: 1-2, QaQ, QaQ<br/>(Slow-Slow, Quick·and·Quick, Quick·and·Quick)</div>
+          <div className="jive-count-badge">총 57개 동작 · 초급 8 · 중급 13 · 상급A~D 36</div>
+        </div>
+      )}
+
+      {activeTab === 'education' && (
+        <div className="jive-header" style={{ paddingTop: '0', borderTop: 'none', marginTop: '-16px' }}>
+          <div className="jive-global-btns">
+            <button className="jive-global-btn red" onClick={() => setActiveVideo({cardN:'global',videoId:YT.full_73})}>▶ 전체 연속동작</button>
+            <button className="jive-global-btn blue" onClick={() => setActiveVideo({cardN:'global',videoId:YT.full_73_slow})}>🐢 전체 슬로모션</button>
+            <button className="jive-global-btn green" onClick={() => setActiveVideo({cardN:'global',videoId:YT.beginner_explain})}>📖 초급 상세설명</button>
+          </div>
+        </div>
+      )}
+
+      {activeTab === '375' && (
+        <div className="jive-header" style={{ paddingTop: '0', borderTop: 'none', marginTop: '-16px', textAlign: 'center' }}>
+          <div style={{ padding: '40px 0', color: '#888' }}>
+            <span style={{ fontSize: '2rem', display: 'block', marginBottom: '12px' }}>🚧</span>
+            준비 중입니다.
+          </div>
+        </div>
+      )}
 
       {/* 글로벌 플레이어 */}
       {activeVideo && activeVideo.cardN === 'global' && (
@@ -411,7 +444,7 @@ export default function TheoryPage() {
       )}
 
       {/* 레벨별 섹션 */}
-      {levelSections.map(sec => (
+      {activeTab === 'sequence' && levelSections.map(sec => (
         <div className="jive-section" key={sec.id}>
           <div className={`jive-section-title ${sec.cls}`}>
             <span className="jive-emoji">{sec.emoji}</span>
@@ -488,7 +521,7 @@ export default function TheoryPage() {
       ))}
 
       <div className="jive-footer">
-        구향회 스텝바이스텝 · 자이브 통합루틴 진행교본<br/>
+        구향회 스텝바이스텝 · 자이브<br/>
         영상 출처: 와이트리댄스스쿨 YouTube
       </div>
     </div>

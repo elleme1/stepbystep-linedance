@@ -16,6 +16,13 @@ const jive375Data = [
     choreographer: '',
     genre: '자이브',
     mainVideoId: '0S-yMpfzurY',
+  },
+  {
+    id: '375_3',
+    title: 'Beginner International Jive Solo Practice Routine',
+    choreographer: '',
+    genre: '자이브',
+    mainVideoId: 'CkGNQOWZRBo',
   }
 ];
 

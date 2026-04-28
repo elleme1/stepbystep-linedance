@@ -5,15 +5,15 @@ import './VideoPage.css';
 const jive375Data = [
   {
     id: '375_1',
-    title: '자이브 375',
-    choreographer: '구향회',
+    title: 'International Jive Technique',
+    choreographer: '',
     genre: '자이브',
     mainVideoId: 'NYS5m4T9jw0',
   },
   {
     id: '375_2',
-    title: '자이브 375 (2)',
-    choreographer: '구향회',
+    title: 'Jive Tutorial: Kicks and Flicks',
+    choreographer: '',
     genre: '자이브',
     mainVideoId: '0S-yMpfzurY',
   }

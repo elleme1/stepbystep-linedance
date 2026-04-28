@@ -202,8 +202,38 @@ export default function RecommendPage() {
                     <h1 className="video-page-title">🎬 영상 모음</h1>
                     <p className="video-page-subtitle">추천하는 멋진 안무들을 감상해보세요.</p>
 
+                    {/* 전체 연속 재생 버튼 */}
+                    <button 
+                        onClick={() => {
+                            if (displayVideos.length > 0) {
+                                setSelectedVideoId(displayVideos[0].id);
+                                setAutoPlayNext(true);
+                                window.scrollTo(0, 0);
+                            }
+                        }}
+                        style={{
+                            width: '100%',
+                            padding: '14px',
+                            marginTop: '20px',
+                            backgroundColor: '#ff2d55',
+                            color: '#fff',
+                            border: 'none',
+                            borderRadius: '12px',
+                            fontSize: '1.05rem',
+                            fontWeight: 'bold',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '8px',
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 12px rgba(255, 45, 85, 0.4)'
+                        }}
+                    >
+                        ▶️ 전체 연속 재생 시작
+                    </button>
+
                     {/* 가로 스크롤 필터 탭 */}
-                    <div className="tab-scroll-container" style={{ marginTop: '16px' }}>
+                    <div className="tab-scroll-container" style={{ marginTop: '20px' }}>
                         {tabs.map(tab => (
                             <button
                                 key={tab}

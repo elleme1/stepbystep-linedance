@@ -449,6 +449,7 @@ export default function TheoryPage() {
             <button className="jive-global-btn red" onClick={() => setActiveVideo({cardN:'global',videoId:YT.full_73})}>▶ 전체 연속동작</button>
             <button className="jive-global-btn blue" onClick={() => setActiveVideo({cardN:'global',videoId:YT.full_73_slow})}>🐢 전체 슬로모션</button>
             <button className="jive-global-btn green" onClick={() => setActiveVideo({cardN:'global',videoId:YT.beginner_explain})}>📖 초급 상세설명</button>
+            <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'RrRl_FMgvrI'})} style={{ backgroundColor: '#f97316' }}>▶ 자이브 1-50번 스탭</button>
           </div>
         </div>
       )}

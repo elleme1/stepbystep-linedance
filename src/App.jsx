@@ -20,6 +20,7 @@ import HomePage from './pages/HomePage';
 import SchedulePage from './pages/SchedulePage';
 import VideoPage from './pages/VideoPage';
 import TheoryPage from './pages/TheoryPage';
+import RecommendPage from './pages/RecommendPage';
 
 // 📄 서브 화면들
 import CommunityPage from './pages/CommunityPage';
@@ -62,6 +63,7 @@ function AppContent() {
             <Route path="/schedule" element={<SchedulePage />} />
             <Route path="/video" element={<VideoPage />} />
             <Route path="/theory" element={<TheoryPage />} />
+            <Route path="/recommend" element={<RecommendPage />} />
 
             {/* 서브 경로 */}
             <Route path="/community" element={<CommunityPage />} />

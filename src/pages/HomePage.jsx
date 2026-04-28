@@ -5,7 +5,6 @@ import songs, { getThisWeekSong } from '../data/songs';
 import { useLocation } from '../context/LocationContext';
 import LocationBadge from '../components/LocationBadge';
 import InstallBanner from '../components/InstallBanner';
-import RecommendWidget from '../components/RecommendWidget';
 export default function HomePage() {
     const navigate = useNavigate();
     const [greetingOpen, setGreetingOpen] = useState(false);
@@ -142,8 +141,7 @@ export default function HomePage() {
                 </div>
             </section>
 
-            {/* 하단 우측 추천곡 플로팅 위젯 -> 인라인 섹션으로 변경됨 */}
-            <RecommendWidget />
+            {/* 하단 퀵 메뉴 이동 */}
 
             {/* 3. 🚀 하단 퀵 메뉴 */}
             <section className="quick-actions">

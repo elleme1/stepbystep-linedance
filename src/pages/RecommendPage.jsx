@@ -17,6 +17,18 @@ import './VideoDetail.css';
 // ── 여러 추천곡을 담은 배열 ──
 const recommendSongs = [
     {
+        id: 'recommend_mambo_italiano',
+        title: 'Mambo Italiano (맘보 이탈리아노)',
+        choreographer: 'Unknown',
+        description: '매혹적인 맘보 리듬에 맞춰 스텝을 밟아보세요!',
+        genre: '맘보',
+        tags: ['⭐ 금주의 추천영상', '맘보'],
+        mainVideoId: 'yvjRWSDLFlk',
+        tutorialVideoId: '',
+        hasTutorial: false,
+        level: 2,
+    },
+    {
         id: 'recommend_cardio_jive',
         title: 'Cardio Jive (카디오 자이브)',
         choreographer: 'Carlene Carter',

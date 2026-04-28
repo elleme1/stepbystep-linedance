@@ -17,6 +17,18 @@ import './VideoDetail.css';
 // ── 여러 추천곡을 담은 배열 ──
 const recommendSongs = [
     {
+        id: 'recommend_pinocchio',
+        title: 'Pinocchio (피노키오)',
+        choreographer: 'Unknown',
+        description: '아름다운 샹송 멜로디에 맞춰 스텝을 밟아보세요!',
+        genre: '팝',
+        tags: ['⭐ 금주의 추천영상', '초급'],
+        mainVideoId: 'J3JZydyYUFA',
+        tutorialVideoId: '',
+        hasTutorial: false,
+        level: 1,
+    },
+    {
         id: 'recommend_cestlavie',
         title: "C'est La Vie (쎄라비)",
         choreographer: 'Ria Vos',

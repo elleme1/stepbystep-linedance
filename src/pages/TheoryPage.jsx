@@ -30,6 +30,13 @@ const jive375Data = [
     choreographer: '',
     genre: '자이브',
     mainVideoId: 'shyvzAnA-yc',
+  },
+  {
+    id: '375_5',
+    title: 'Advanced International Jive Solo Practice Routine | 375 Dance Studio Tutorial',
+    choreographer: '',
+    genre: '자이브',
+    mainVideoId: 'bBf0W_sLWog',
   }
 ];
 

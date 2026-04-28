@@ -61,6 +61,7 @@ const rawSongs = [
     youtubeId: "WPv-cmrO5rY",
     tutorialId: "a9ir8ZWKCVQ",
     thumbnail: "https://img.youtube.com/vi/WPv-cmrO5rY/hqdefault.jpg",
+    mp3Url: "/mp3/WPv-cmrO5rY.mp3",
     steps: [
       { count: "1-8", move: "기본 스텝 (Basic Step)", desc: "음악에 맞춰 기본 스텝 진행" }
     ]
@@ -78,6 +79,7 @@ const rawSongs = [
     youtubeId: "Hx5-NyEki-Q",
     tutorialId: "08QxXkpCza8",
     thumbnail: "https://img.youtube.com/vi/Hx5-NyEki-Q/hqdefault.jpg",
+    mp3Url: "/mp3/Hx5-NyEki-Q.mp3",
     steps: [
       { count: "1-8", move: "사이드 스텝 & 터치 (Side Step & Touch)", desc: "오른발 사이드 → 왼발 터치 → 왼발 사이드 → 오른발 터치" },
       { count: "9-16", move: "바인 & 턴 (Vine & Turn)", desc: "오른쪽 그레이프바인 → 1/4 턴" },
@@ -141,6 +143,7 @@ const rawSongs = [
     youtubeId: "Qrb59Gt_5PM",
     tutorialId: "Jlnn6nBA10E",
     thumbnail: "https://img.youtube.com/vi/Qrb59Gt_5PM/hqdefault.jpg",
+    mp3Url: "/mp3/Qrb59Gt_5PM.mp3",
     steps: [
       { count: "1-8", move: "사이드 록 & 셔플 (Side Rock & Shuffle)", desc: "사이드 록 → 리커버 → 크로스 셔플" },
       { count: "9-16", move: "록 스텝 & 1/2 턴 (Rock Step & 1/2 Turn)", desc: "앞 록 → 리커버 → 1/2 턴 셔플" },
@@ -161,6 +164,7 @@ const rawSongs = [
     youtubeId: "6nDUAT73JpI",
     tutorialId: "Bkjuti6BcBc",
     thumbnail: "https://img.youtube.com/vi/6nDUAT73JpI/hqdefault.jpg",
+    mp3Url: "/mp3/6nDUAT73JpI.mp3",
     steps: [
       { count: "1-8", move: "사이드 스텝 & 터치 (Side Step & Touch)", desc: "오른발 사이드 → 왼발 터치 → 왼발 사이드 → 오른발 터치" },
       { count: "9-16", move: "그레이프바인 & 터치 (Grapevine & Touch)", desc: "오른쪽 그레이프바인 → 터치 → 왼쪽 그레이프바인 → 터치" },

@@ -17,6 +17,18 @@ import './VideoDetail.css';
 // ── 여러 추천곡을 담은 배열 ──
 const recommendSongs = [
     {
+        id: 'recommend_everyone_needs_a_hero',
+        title: 'Everyone Needs a Hero',
+        choreographer: 'Roy Verdonk',
+        description: '열정적이고 힘찬 리듬에 맞춰 스텝을 밟아보세요!',
+        genre: '팝',
+        tags: ['⭐ 금주의 추천영상', '고급'],
+        mainVideoId: 'ooJ8nB37RnE',
+        tutorialVideoId: '',
+        hasTutorial: false,
+        level: 3,
+    },
+    {
         id: 'recommend_sway',
         title: 'Sway (스웨이)',
         choreographer: 'Hà Nguyễn',

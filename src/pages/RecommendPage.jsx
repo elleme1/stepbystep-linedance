@@ -17,6 +17,18 @@ import './VideoDetail.css';
 // ── 여러 추천곡을 담은 배열 ──
 const recommendSongs = [
     {
+        id: 'recommend_summer_night_cha_cha',
+        title: 'Summer Night Cha Cha',
+        choreographer: 'Unknown',
+        description: '여름 밤의 시원함을 담은 차차차 리듬에 맞춰 스텝을 밟아보세요!',
+        genre: '차차차',
+        tags: ['⭐ 금주의 추천영상', '초급'],
+        mainVideoId: 'ZIyCGCSJ93w',
+        tutorialVideoId: '',
+        hasTutorial: false,
+        level: 1,
+    },
+    {
         id: 'recommend_mambo_italiano',
         title: 'Mambo Italiano (맘보 이탈리아노)',
         choreographer: 'Unknown',

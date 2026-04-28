@@ -1,33 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// 🎓 마스터클래스 자이브 교육영상 (미아쌤 · 선샤인 댄스TV)
-const MASTERCLASS_VIDEOS = [
-  {
-    category: '기초 특강',
-    categoryEmoji: '🎯',
-    videos: [
-      { id: '2vdaUW0xjks', title: '스윙과 스웨이', subtitle: '자이브 기초 특강 01', emoji: '🌊' },
-      { id: 'H38uRzeH_Pg', title: '락 동작', subtitle: '자이브 기초 특강 02', emoji: '🪨' },
-    ]
-  },
-  {
-    category: '레슨 & 복습',
-    categoryEmoji: '📖',
-    videos: [
-      { id: 'FgtOWnCOI2A', title: '베이직 기초 총 복습', subtitle: '기본 동작 총정리', emoji: '🔄' },
-      { id: 'DWK6SyfEPDM', title: '초급 통합루틴 (1~7) 통편집', subtitle: '루틴 1~7번 연속 레슨', emoji: '📋' },
-      { id: 'SRVCJDyr1Qs', title: '기본 베이직 루틴 5번까지 복습', subtitle: '루틴 복습 영상', emoji: '✅' },
-      { id: 'trHqV4c3VpY', title: '심플스핀 정석', subtitle: '스핀 테크닉 완전정복', emoji: '💫' },
-      { id: 'd7OhQ86TC0Q', title: '윕/윕 쓰로어웨이/스탑 앤 고', subtitle: '중급 동작 레슨', emoji: '🎪' },
-      { id: 'YFQ8Drh_VVE', title: '컬리윕', subtitle: '나선형 턴 테크닉', emoji: '🌀' },
-      { id: 'y8vEqOkskks', title: '기초 베이직의 중요성', subtitle: '기본기 강화 특강', emoji: '💎' },
-      { id: '67FdLaUekDo', title: '자이브 춤의 성격 이해하기', subtitle: '자이브 음악성과 표현', emoji: '🎵' },
-    ]
-  }
-];
-
-// 📚 자이브 57개 동작 데이터 + 유튜브 영상 매칭
+// 📚 자이브 57개 동작 데이터 + 유튜브 영상 매핑
 const jiveData = [
   // ===== 초급 (크루즈) =====
   {n:1,t:"팔러웨이 락",e:"Fallaway Rock",d:"파트너와 V자로 물러나며 락 스텝",lv:"beginner",feel:"파트너와 함께 V자로 살짝 벌어지며 뒤로 물러나는 동작",count:"QQ QaQ QaQ",steps:["1-2: 왼발 뒤로 락 → 오른발 리커버","3&4: 샤세 (왼쪽)","5&6: 샤세 (오른쪽)"],tip:"뒤로 물러날 때 파트너와의 텐션(연결감)을 유지하세요"},
@@ -178,8 +152,6 @@ export default function TheoryPage() {
   const [openCardId, setOpenCardId] = useState(null);
   const [activeVideo, setActiveVideo] = useState(null);
   const [expandedSections, setExpandedSections] = useState({});
-  const [mcExpandedCats, setMcExpandedCats] = useState({});
-  const [mcSectionOpen, setMcSectionOpen] = useState(false);
 
   // 🔁 A-B 반복구간 상태
   const [pointA, setPointA] = useState(null);
@@ -377,34 +349,6 @@ export default function TheoryPage() {
         .jive-expand-btn { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 12px 0; margin-top: 6px; border-radius: 12px; background: rgba(255,255,255,.04); border: 1px dashed rgba(255,255,255,.12); color: #a0a0c0; font-size: .82rem; font-weight: 600; cursor: pointer; transition: all .2s; -webkit-tap-highlight-color: transparent; }
         .jive-expand-btn:active { background: rgba(255,255,255,.08); transform: scale(.98); }
         .jive-footer { text-align: center; margin-top: 32px; padding: 16px; color: #555; font-size: .75rem; border-top: 1px solid rgba(255,255,255,.05); }
-        /* 🎓 마스터클래스 교육영상 */
-        .mc-section { margin-bottom: 20px; }
-        .mc-toggle-banner { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: linear-gradient(135deg, #1a0a2e, #2d1b4e); border-radius: 14px; border: 1px solid rgba(168,85,247,.2); cursor: pointer; -webkit-tap-highlight-color: transparent; transition: all .2s; margin-bottom: 12px; }
-        .mc-toggle-banner:active { transform: scale(.98); background: linear-gradient(135deg, #22103a, #3a2560); }
-        .mc-toggle-banner h2 { font-size: .95rem; font-weight: 800; background: linear-gradient(135deg, #c084fc, #e879f9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; flex: 1; }
-        .mc-toggle-banner .mc-banner-sub { font-size: .72rem; color: #a78bfa; }
-        .mc-toggle-banner .mc-banner-count { font-size: .7rem; color: #8b5cf6; background: rgba(139,92,246,.12); padding: 2px 8px; border-radius: 10px; }
-        .mc-toggle-banner .mc-banner-arrow { color: #a78bfa; font-size: .75rem; transition: transform .3s; }
-        .mc-toggle-banner .mc-banner-arrow.open { transform: rotate(180deg); }
-        .mc-cat-title { display: flex; align-items: center; gap: 8px; padding: 10px 14px; margin-bottom: 10px; border-radius: 12px; background: rgba(168,85,247,.06); border: 1px solid rgba(168,85,247,.12); cursor: pointer; -webkit-tap-highlight-color: transparent; }
-        .mc-cat-title:active { background: rgba(168,85,247,.12); }
-        .mc-cat-title h3 { font-size: .95rem; font-weight: 700; color: #d8b4fe; margin: 0; flex: 1; }
-        .mc-cat-badge { font-size: .72rem; color: #a78bfa; background: rgba(139,92,246,.12); padding: 2px 10px; border-radius: 20px; }
-        .mc-cat-arrow { color: #a78bfa; font-size: .8rem; transition: transform .3s; }
-        .mc-cat-arrow.open { transform: rotate(180deg); }
-        .mc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
-        @media (max-width: 400px) { .mc-grid { grid-template-columns: 1fr; } }
-        .mc-card { position: relative; border-radius: 14px; overflow: hidden; cursor: pointer; transition: all .25s; border: 1px solid rgba(168,85,247,.12); background: rgba(168,85,247,.04); -webkit-tap-highlight-color: transparent; }
-        .mc-card:active { transform: scale(.97); }
-        .mc-card.playing { border-color: rgba(168,85,247,.4); box-shadow: 0 0 20px rgba(168,85,247,.15); }
-        .mc-thumb { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; background: #111; }
-        .mc-play-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 40px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.3); opacity: 0; transition: opacity .2s; }
-        .mc-card:hover .mc-play-overlay, .mc-card:active .mc-play-overlay { opacity: 1; }
-        .mc-play-icon { width: 44px; height: 44px; border-radius: 50%; background: rgba(168,85,247,.9); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: #fff; box-shadow: 0 4px 16px rgba(168,85,247,.4); }
-        .mc-card-info { padding: 8px 10px; }
-        .mc-card-title { font-size: .82rem; font-weight: 700; color: #e8e8f0; margin: 0 0 2px 0; display: flex; align-items: center; gap: 5px; }
-        .mc-card-sub { font-size: .72rem; color: #a0a0c0; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .mc-player-wrap { grid-column: 1 / -1; margin-bottom: 6px; position: relative; }
         /* 📱 모바일 가로모드 대응 */
         @media (orientation: landscape) and (max-height: 500px) {
           .jive-container { max-width: 100%; padding: 0 12px 80px; }
@@ -444,83 +388,6 @@ export default function TheoryPage() {
           <button className="jive-global-btn blue" onClick={() => setActiveVideo({cardN:'global',videoId:YT.full_73_slow})}>🐢 전체 슬로모션</button>
           <button className="jive-global-btn green" onClick={() => setActiveVideo({cardN:'global',videoId:YT.beginner_explain})}>📖 초급 상세설명</button>
         </div>
-      </div>
-
-      {/* 🎓 자이브 교육영상 섹션 */}
-      <div className="mc-section">
-        <div className="mc-toggle-banner" onClick={() => setMcSectionOpen(prev => !prev)}>
-          <span style={{fontSize:'1.1rem'}}>🎓</span>
-          <h2>자이브 교육영상</h2>
-          <span className="mc-banner-sub">미아쌤</span>
-          <span className="mc-banner-count">10개</span>
-          <span className={`mc-banner-arrow ${mcSectionOpen ? 'open' : ''}`}>▼</span>
-        </div>
-
-        {mcSectionOpen && MASTERCLASS_VIDEOS.map((cat, ci) => {
-          const isCatExpanded = mcExpandedCats[ci] !== false; // 기본 열림
-          return (
-            <div key={ci}>
-              <div className="mc-cat-title" onClick={() => setMcExpandedCats(prev => ({...prev, [ci]: !isCatExpanded}))}>
-                <span style={{fontSize:'1.1rem'}}>{cat.categoryEmoji}</span>
-                <h3>{cat.category}</h3>
-                <span className="mc-cat-badge">{cat.videos.length}개</span>
-                <span className={`mc-cat-arrow ${isCatExpanded ? 'open' : ''}`}>▼</span>
-              </div>
-              {isCatExpanded && (
-                <div className="mc-grid">
-                  {cat.videos.map((v, vi) => {
-                    const isPlaying = activeVideo?.cardN === `mc-${v.id}`;
-                    return (
-                      <React.Fragment key={v.id}>
-                        <div
-                          className={`mc-card ${isPlaying ? 'playing' : ''}`}
-                          onClick={() => {
-                            if (isPlaying) {
-                              setActiveVideo(null);
-                            } else {
-                              setActiveVideo({ cardN: `mc-${v.id}`, videoId: v.id });
-                            }
-                          }}
-                        >
-                          <img
-                            className="mc-thumb"
-                            src={`https://img.youtube.com/vi/${v.id}/mqdefault.jpg`}
-                            alt={v.title}
-                            loading="lazy"
-                          />
-                          <div className="mc-play-overlay">
-                            <div className="mc-play-icon">▶</div>
-                          </div>
-                          <div className="mc-card-info">
-                            <p className="mc-card-title">{v.emoji} {v.title}</p>
-                            <p className="mc-card-sub">{v.subtitle}</p>
-                          </div>
-                        </div>
-                        {isPlaying && (
-                          <div className="mc-player-wrap" onClick={(e) => e.stopPropagation()}>
-                            <div style={{ position: 'relative' }}>
-                              {abLoopActive && <div className="jive-ab-badge">🔁 {formatTime(pointA)} → {formatTime(pointB)}</div>}
-                              <JiveYouTubePlayer videoId={v.id} onPlayerReady={handlePlayerReady} />
-                              <div style={{ position:'absolute', bottom:0, left:0, right:0, background:'linear-gradient(transparent, rgba(0,0,0,0.85))', padding:'24px 10px 8px', borderRadius:'0 0 12px 12px', zIndex:5 }}>
-                                <div style={{ display:'flex', gap:'6px', alignItems:'center', justifyContent:'center', flexWrap:'wrap' }}>
-                                  <button className="jive-ab-btn a-btn" onClick={handleSetA}>A {pointA !== null ? formatTime(pointA) : '설정'}</button>
-                                  <span style={{color:'#888',fontSize:'14px'}}>→</span>
-                                  <button className="jive-ab-btn b-btn" onClick={handleSetB}>B {pointB !== null ? formatTime(pointB) : '설정'}</button>
-                                  {abLoopActive && <button className="jive-ab-btn clear-btn" onClick={handleClearAB}>✕</button>}
-                                  <button className="jive-ab-btn clear-btn" onClick={() => setActiveVideo(null)} style={{marginLeft:'auto'}}>✕ 닫기</button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </React.Fragment>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          );
-        })}
       </div>
 
       {/* 글로벌 플레이어 */}
@@ -578,19 +445,6 @@ export default function TheoryPage() {
 
                 <div className="jive-card-body">
                   <div className="jive-card-body-inner">
-                    <div className="jive-feel">🎯 <strong>{x.t}</strong> ({x.e})<br/>{x.feel}</div>
-                    <div className="jive-count-info">🎵 카운트: <strong>{x.count}</strong></div>
-                    <div className="jive-steps">
-                      {x.steps.map((s, idx) => {
-                        const match = s.match(/^([^:]+):(.*)/);
-                        return match
-                          ? <div key={idx}><span className="num">{match[1]}:</span>{match[2]}</div>
-                          : <div key={idx}>{s}</div>;
-                      })}
-                    </div>
-                    <div className="jive-tip">{x.tip}</div>
-                    {x.memo && <div className="jive-memo">{x.memo}</div>}
-
                     {/* 🎬 유튜브 영상 버튼 */}
                     <div className="jive-video-btns">
                       <button className="jive-vbtn primary" onClick={(e) => playVideo(x.n, vids.main.id, e)}>{vids.main.label}</button>

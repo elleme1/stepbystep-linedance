@@ -415,10 +415,9 @@ export default function TheoryPage() {
       )}
 
       {activeTab === '375' && (
-        <div className="jive-header" style={{ paddingTop: '0', borderTop: 'none', marginTop: '-16px', textAlign: 'center' }}>
-          <div style={{ padding: '40px 0', color: '#888' }}>
-            <span style={{ fontSize: '2rem', display: 'block', marginBottom: '12px' }}>🚧</span>
-            준비 중입니다.
+        <div className="jive-header" style={{ paddingTop: '0', borderTop: 'none', marginTop: '-16px' }}>
+          <div className="jive-global-btns">
+            <button className="jive-global-btn red" onClick={() => setActiveVideo({cardN:'global',videoId:'NYS5m4T9jw0'})}>▶ 자이브 375 재생</button>
           </div>
         </div>
       )}

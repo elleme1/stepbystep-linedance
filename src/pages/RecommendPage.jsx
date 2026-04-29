@@ -147,6 +147,18 @@ const recommendSongs = [
         tutorialVideoId: '',
         hasTutorial: false,
         level: 2,
+    },
+    {
+        id: 'recommend_jive_all_night',
+        title: '자이브 올 나이트 라인댄스  Jive All Night Line Dance',
+        choreographer: 'Mark Furnell & Chris Godden',
+        description: '신나는 라인댄스 스텝을 즐겨보세요!',
+        genre: '팝',
+        tags: ['⭐ 금주의 추천영상'],
+        mainVideoId: '5heR5qh5Hi0',
+        tutorialVideoId: '',
+        hasTutorial: false,
+        level: 1,
     }
 ];
 

@@ -84,8 +84,8 @@ const recommendSongs = [
         genre: '자이브',
         tags: ['⭐ 금주의 추천영상', '자이브'],
         mainVideoId: 'i05t5vJXvxo',
-        tutorialVideoId: '',
-        hasTutorial: false,
+        tutorialVideoId: 'zs1K3ZQTxqc',
+        hasTutorial: true,
         level: 2,
     },
     {

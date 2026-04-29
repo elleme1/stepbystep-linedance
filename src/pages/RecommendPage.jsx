@@ -156,8 +156,8 @@ const recommendSongs = [
         genre: '팝',
         tags: ['⭐ 금주의 추천영상'],
         mainVideoId: '5heR5qh5Hi0',
-        tutorialVideoId: '',
-        hasTutorial: false,
+        tutorialVideoId: '6We7VJ9dAKQ',
+        hasTutorial: true,
         level: 1,
     }
 ];

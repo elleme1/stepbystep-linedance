@@ -1,6 +1,22 @@
 // 라인댄스 안무곡 데이터
 const rawSongs = [
   {
+    id: 64,
+    title: "Old Time Rock and Roll (올드 타임 락 앤 롤)",
+    artist: "Unknown",
+    choreographer: "Unknown",
+    level: 2,
+    bpm: 120,
+    walls: 4,
+    counts: 32,
+    genre: "팝",
+    youtubeId: "ZwF2R__eCOM",
+    tutorialId: "TcNXyIaS_P4",
+    thumbnail: "https://img.youtube.com/vi/ZwF2R__eCOM/hqdefault.jpg",
+    mp3Url: "",
+    steps: []
+  },
+  {
     id: 63,
     title: "찔레꽃 (Wild Rose)",
     artist: "Unknown",
@@ -1407,8 +1423,9 @@ const kolonOrder = [
 
 // 📋 중리 행정복지센터 영상 순서 (수업 순서대로)
 const sindunOrder = [
-  58,  // Delight (환희) (이번주 수업곡)
-  57,  // 0. Accept (체념) (이번주 수업곡)
+  64,  // Old Time Rock and Roll (이번주 수업곡)
+  58,  // Delight (환희) (이전 수업곡)
+  57,  // 0. Accept (체념) (이전 수업곡)
   56,  // 1. Love at First Sight (이번주 수업곡)
   42,  // 2. No.9 넘버나인
   52,  // 3. 디스코 피자

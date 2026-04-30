@@ -17,6 +17,18 @@ import './VideoDetail.css';
 // ── 여러 추천곡을 담은 배열 ──
 const recommendSongs = [
     {
+        id: 'recommend_its_a_heartache_remix',
+        title: "It's a Heartache Remix (이츠 어 하트에이크 리믹스)",
+        choreographer: 'W.L.D.',
+        description: '신나는 라인댄스 스텝을 즐겨보세요!',
+        genre: '팝',
+        tags: ['⭐ 금주의 추천영상'],
+        mainVideoId: 'zZJv9-ed0vM',
+        tutorialVideoId: 'V04RLuiltOQ',
+        hasTutorial: true,
+        level: 2,
+    },
+    {
         id: 'recommend_jive_all_night',
         title: '자이브 올 나이트 라인댄스  Jive All Night Line Dance',
         choreographer: 'Mark Furnell & Chris Godden',

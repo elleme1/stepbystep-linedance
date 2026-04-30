@@ -1,6 +1,22 @@
 // 라인댄스 안무곡 데이터
 const rawSongs = [
   {
+    id: 65,
+    title: "You Have to Go Crazy (유 해브 투 고 크레이지)",
+    artist: "Unknown",
+    choreographer: "Unknown",
+    level: 2,
+    bpm: 120,
+    walls: 4,
+    counts: 32,
+    genre: "팝",
+    youtubeId: "muu-iK3zJpQ",
+    tutorialId: "3Nfor0GC6ns",
+    thumbnail: "https://img.youtube.com/vi/muu-iK3zJpQ/hqdefault.jpg",
+    mp3Url: "",
+    steps: []
+  },
+  {
     id: 64,
     title: "Old Time Rock and Roll (올드 타임 락 앤 롤)",
     artist: "Unknown",
@@ -1302,6 +1318,7 @@ const rawSongs = [
 // ============================================================
 const songSchedule = {
   // === 코오롱 전용 ===
+  65: { date: '2026-04-30', location: 'kolon' },  // You Have to Go Crazy (★ 이번주 수업곡 - 코오롱)
   60: { date: '2026-04-20', location: 'kolon' },  // Moonbay Rumba (문베이 룸바)
   55: { date: '2026-04-17', location: 'kolon' },  // Electro Shake
   54: { date: '2026-04-07', location: 'kolon' },  // 돌아와요 부산항에
@@ -1372,7 +1389,8 @@ const songSchedule = {
 
 // 📋 코오롱 스포렉스 영상 순서 (수업 순서대로)
 const kolonOrder = [
-  57,  // Accept (체념) (이번주 수업곡)
+  65,  // You Have to Go Crazy (이번주 수업곡)
+  57,  // Accept (체념) (이전 수업곡)
   60,  // Moonbay Rumba (문베이 룸바)
   55,  // Electro Shake
   54,  // 돌아와요 부산항에

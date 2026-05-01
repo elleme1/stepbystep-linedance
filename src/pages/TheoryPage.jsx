@@ -445,20 +445,77 @@ export default function TheoryPage() {
       )}
 
       {activeTab === 'education' && (
-        <div className="jive-header" style={{ paddingTop: '0', borderTop: 'none', marginTop: '-16px' }}>
-          <div className="jive-global-btns">
-            <button className="jive-global-btn red" onClick={() => setActiveVideo({cardN:'global',videoId:YT.full_73})}>▶ 전체 연속동작</button>
-            <button className="jive-global-btn blue" onClick={() => setActiveVideo({cardN:'global',videoId:YT.full_73_slow})}>🐢 전체 슬로모션</button>
-            <button className="jive-global-btn green" onClick={() => setActiveVideo({cardN:'global',videoId:YT.beginner_explain})}>📖 초급 상세설명</button>
-            <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'RrRl_FMgvrI'})}>▶ 1-50번 스탭</button>
-            <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'F8ZoZSDZUY4'})}>▶ 1-2번 스탭</button>
-            <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'bmgscBOBWQ0'})}>▶ 3-5번 스탭</button>
-            <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'873NOf9d8z4'})}>▶ 6-11번 스탭</button>
-            <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'99PUY1gfBWk'})}>▶ 12-20번 스탭</button>
-            <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'j1u5dECISR0'})}>▶ 9번 윕(Whip)</button>
-            <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'cDgoTb_q5y0'})}>▶ 10번 윕 쓰루웨이</button>
+        <>
+          {/* 섹션 1: 스탭 범위별 영상 */}
+          <div className="jive-header" style={{ paddingTop: '0', borderTop: 'none', marginTop: '-16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+              <span style={{ fontSize: '1.1rem' }}>📋</span>
+              <span style={{ fontSize: '.9rem', fontWeight: 700, color: '#f7d794' }}>스탭 범위별 영상</span>
+              <span style={{ fontSize: '.7rem', color: '#888', marginLeft: 'auto' }}>와이트리댄스스쿨</span>
+            </div>
+            <div className="jive-global-btns">
+              <button className="jive-global-btn red" onClick={() => setActiveVideo({cardN:'global',videoId:YT.full_73})}>▶ 전체 연속동작</button>
+              <button className="jive-global-btn blue" onClick={() => setActiveVideo({cardN:'global',videoId:YT.full_73_slow})}>🐢 전체 슬로모션</button>
+              <button className="jive-global-btn green" onClick={() => setActiveVideo({cardN:'global',videoId:YT.beginner_explain})}>📖 초급 상세설명</button>
+              <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'RrRl_FMgvrI'})}>▶ 1-50번 스탭</button>
+              <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'F8ZoZSDZUY4'})}>▶ 1-2번 스탭</button>
+              <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'bmgscBOBWQ0'})}>▶ 3-5번 스탭</button>
+              <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'873NOf9d8z4'})}>▶ 6-11번 스탭</button>
+              <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'99PUY1gfBWk'})}>▶ 12-20번 스탭</button>
+            </div>
           </div>
-        </div>
+
+          {/* 섹션 2: 개별 스탭 교육영상 */}
+          <div className="jive-section" style={{ marginTop: '8px' }}>
+            <div className="jive-section-title lv-silver" style={{ marginBottom: '12px' }}>
+              <span className="jive-emoji">🎓</span>
+              <h2 style={{ fontSize: '1rem' }}>개별 스탭 교육영상</h2>
+              <span className="jive-badge">은선생의 댄스클리닉</span>
+            </div>
+            {[
+              { id: 'j1u5dECISR0', num: 9, title: '윕', eng: 'The Whip', desc: '채찍처럼 여성을 당겨 1회전' },
+              { id: 'cDgoTb_q5y0', num: 10, title: '윕 쓰루웨이', eng: 'Whip Throwaway', desc: '휩 후 여성을 밖으로 밀어냄' },
+            ].map(v => (
+              <div
+                key={v.id}
+                onClick={() => { setActiveVideo({cardN:'global', videoId: v.id}); window.scrollTo(0, 0); }}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '12px',
+                  padding: '12px 14px', marginBottom: '8px',
+                  background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)',
+                  borderRadius: '14px', cursor: 'pointer', transition: 'all .2s',
+                }}
+              >
+                {/* 썸네일 */}
+                <div style={{ position: 'relative', flexShrink: 0, width: '100px', aspectRatio: '16/9', borderRadius: '10px', overflow: 'hidden', background: '#111' }}>
+                  <img
+                    src={`https://img.youtube.com/vi/${v.id}/mqdefault.jpg`}
+                    alt={v.title}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                  <div style={{
+                    position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    background: 'rgba(0,0,0,.3)', color: '#fff', fontSize: '1.2rem'
+                  }}>▶</div>
+                </div>
+                {/* 정보 */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                    <span style={{
+                      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                      width: '26px', height: '26px', borderRadius: '50%',
+                      background: 'rgba(99,102,241,.15)', color: '#818cf8',
+                      fontSize: '.75rem', fontWeight: 700, flexShrink: 0
+                    }}>{v.num}</span>
+                    <span style={{ fontSize: '.95rem', fontWeight: 700, color: '#fff' }}>{v.title}</span>
+                  </div>
+                  <div style={{ fontSize: '.76rem', color: '#a0a0c0' }}>{v.eng}</div>
+                  <div style={{ fontSize: '.73rem', color: '#777', marginTop: '2px' }}>{v.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
       {activeTab === '375' && (

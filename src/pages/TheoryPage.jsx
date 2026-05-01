@@ -491,6 +491,7 @@ export default function TheoryPage() {
               { id: 'e19bTTO04fg', num: 20, title: '쉐도우 스토킹 웍', eng: 'Shadow Stalking Walk', desc: '그림자처럼 따라 걷기 (현우·현아쌤)' },
               { id: 'qiFhBwNl7lY', num: 21, title: '무치', eng: 'Mooch', desc: '느릿한 리듬의 제자리 스텝 (현우·현아쌤)' },
               { id: '8Hs1ve0xjaY', num: 22, title: '프레아 홉스', eng: 'Flea Hops', desc: '벼룩처럼 가볍게 뛰기 (현우·현아쌤)' },
+              { id: '-BB6bBYh96I', num: 23, title: '스탑 앤 고', eng: 'Stop And Go', desc: '엔딩 투 스탑 앤 고 (현우·현아쌤)' },
 
             ].map(v => (
               <div

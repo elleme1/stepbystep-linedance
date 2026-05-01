@@ -486,6 +486,7 @@ export default function TheoryPage() {
               { id: 'j1u5dECISR0', num: 9, title: '윕', eng: 'The Whip', desc: '채찍처럼 여성을 당겨 1회전' },
               { id: 'cDgoTb_q5y0', num: 10, title: '윕 쓰루웨이', eng: 'Whip Throwaway', desc: '휩 후 여성을 밖으로 밀어냄' },
               { id: '_8Or-ODndKw', num: 17, title: '치킨웍 & 더블 치킨웍', eng: 'Chicken Walk', desc: '닭처럼 톡톡 튀며 걷기 + 손동작·치마 활용' },
+              { id: '7q6HtVIjra8', num: 18, title: '토 힐 스위블', eng: 'Toe Heel Swivel', desc: '발끝·뒤꿈치 번갈아 비틀기 (현우·현아쌤)' },
 
             ].map(v => (
               <div

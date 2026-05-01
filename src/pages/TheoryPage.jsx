@@ -461,6 +461,7 @@ export default function TheoryPage() {
               <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'F8ZoZSDZUY4'})}>▶ 1-2번 스탭</button>
               <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'bmgscBOBWQ0'})}>▶ 3-5번 스탭</button>
               <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'873NOf9d8z4'})}>▶ 6-11번 스탭</button>
+              <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'eOsPZUWs0Ek'})}>▶ 12-16번 스탭</button>
               <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'99PUY1gfBWk'})}>▶ 12-20번 스탭</button>
             </div>
           </div>

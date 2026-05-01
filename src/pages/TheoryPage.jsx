@@ -488,6 +488,7 @@ export default function TheoryPage() {
               { id: '_8Or-ODndKw', num: 17, title: '치킨웍 & 더블 치킨웍', eng: 'Chicken Walk', desc: '닭처럼 톡톡 튀며 걷기 + 손동작·치마 활용' },
               { id: '7q6HtVIjra8', num: 18, title: '토 힐 스위블', eng: 'Toe Heel Swivel', desc: '발끝·뒤꿈치 번갈아 비틀기 (현우·현아쌤)' },
               { id: 'VsI7jjuI8Is', num: 19, title: '플릭 인투 브레이크', eng: 'Flick Into Break', desc: '발차기 후 급정지 (현우·현아쌤)' },
+              { id: 'e19bTTO04fg', num: 20, title: '쉐도우 스토킹 웍', eng: 'Shadow Stalking Walk', desc: '그림자처럼 따라 걷기 (현우·현아쌤)' },
 
             ].map(v => (
               <div

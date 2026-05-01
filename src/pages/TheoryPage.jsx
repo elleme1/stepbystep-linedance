@@ -456,6 +456,7 @@ export default function TheoryPage() {
             <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'873NOf9d8z4'})}>▶ 6-11번 스탭</button>
             <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'99PUY1gfBWk'})}>▶ 12-20번 스탭</button>
             <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'j1u5dECISR0'})}>▶ 9번 윕(Whip)</button>
+            <button className="jive-global-btn orange" onClick={() => setActiveVideo({cardN:'global',videoId:'cDgoTb_q5y0'})}>▶ 10번 윕 쓰루웨이</button>
           </div>
         </div>
       )}

@@ -497,6 +497,7 @@ export default function TheoryPage() {
               { id: 'ak-oVgZmsck', num: 26, title: '처깅', eng: 'Chugging', desc: '기차처럼 씩씩하게 전진 (현우·현아쌤)' },
               { id: 'R4Qf406MK8Y', num: 27, title: '로타리 지그재그', eng: 'Rotary Zigzag', desc: '회전하며 지그재그 이동 (현우·현아쌤)' },
               { id: 'HGta7wGPljs', num: 28, title: '윕 스핀 & 보타포고스', eng: 'Whip Spin & Bota Fogos', desc: '휩 회전 + 삼바 스텝 결합 (현우·현아쌤)' },
+              { id: 'CWnXipKICaw', num: 30, title: '뉴욕 위드 스프링스', eng: 'New York with Springs', desc: '스프링처럼 탄력 있는 뉴욕 (현우·현아쌤)' },
 
             ].map(v => (
               <div

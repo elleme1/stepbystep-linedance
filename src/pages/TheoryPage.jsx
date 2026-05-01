@@ -37,6 +37,13 @@ const jive375Data = [
     choreographer: '',
     genre: '자이브',
     mainVideoId: 'bBf0W_sLWog',
+  },
+  {
+    id: '375_6',
+    title: 'Jive Technique - Basic Dance Steps - Body Action in Jive',
+    choreographer: 'Oleg Astakhov',
+    genre: '자이브',
+    mainVideoId: 'qI018B3Uyug',
   }
 ];
 

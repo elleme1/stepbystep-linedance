@@ -490,6 +490,7 @@ export default function TheoryPage() {
               { id: 'VsI7jjuI8Is', num: 19, title: '플릭 인투 브레이크', eng: 'Flick Into Break', desc: '발차기 후 급정지 (현우·현아쌤)' },
               { id: 'e19bTTO04fg', num: 20, title: '쉐도우 스토킹 웍', eng: 'Shadow Stalking Walk', desc: '그림자처럼 따라 걷기 (현우·현아쌤)' },
               { id: 'qiFhBwNl7lY', num: 21, title: '무치', eng: 'Mooch', desc: '느릿한 리듬의 제자리 스텝 (현우·현아쌤)' },
+              { id: '8Hs1ve0xjaY', num: 22, title: '프레아 홉스', eng: 'Flea Hops', desc: '벼룩처럼 가볍게 뛰기 (현우·현아쌤)' },
 
             ].map(v => (
               <div

@@ -483,6 +483,7 @@ export default function TheoryPage() {
             </div>
             {[
               { id: '6or6en0im6c', num: '기초', title: '댄스스포츠 홀드법', eng: 'Hold Method', desc: '파트너와 올바른 자세·손 잡는 법 (전상우·강민지)' },
+              { id: 'MxhVqxirA20', num: '강의', title: '바디 스피드 & 파트너십', eng: 'Body Speed & Partnering', desc: '여성 파트너의 중요성과 몸의 스피드 (도미니코 강의 번역)' },
               { id: 'j1u5dECISR0', num: 9, title: '윕', eng: 'The Whip', desc: '채찍처럼 여성을 당겨 1회전' },
               { id: 'cDgoTb_q5y0', num: 10, title: '윕 쓰루웨이', eng: 'Whip Throwaway', desc: '휩 후 여성을 밖으로 밀어냄' },
               { id: '_8Or-ODndKw', num: 17, title: '치킨웍 & 더블 치킨웍', eng: 'Chicken Walk', desc: '닭처럼 톡톡 튀며 걷기 + 손동작·치마 활용' },

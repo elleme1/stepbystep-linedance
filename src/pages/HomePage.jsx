@@ -25,44 +25,14 @@ export default function HomePage() {
         <div className="home-container">
 
             {/* 🎯 히어로 배너 */}
-            <div style={{
-                background: 'linear-gradient(135deg, rgba(212, 168, 83, 0.15) 0%, rgba(139, 92, 246, 0.08) 50%, rgba(212, 168, 83, 0.1) 100%)',
-                border: '1px solid rgba(212, 168, 83, 0.2)',
-                borderRadius: 'var(--radius-xl)',
-                padding: 'var(--space-lg)',
-                marginBottom: 'var(--space-md)',
-                textAlign: 'center',
-                position: 'relative',
-                overflow: 'hidden',
-            }}>
-                <div style={{
-                    position: 'absolute', top: '-20px', right: '-20px',
-                    width: '100px', height: '100px', borderRadius: '50%',
-                    background: 'radial-gradient(circle, rgba(212, 168, 83, 0.15) 0%, transparent 70%)',
-                    filter: 'blur(20px)',
-                }} />
-                <div style={{ fontSize: '2.2rem', marginBottom: '8px' }}>💃</div>
-                <h2 style={{
-                    fontSize: 'var(--font-size-lg)',
-                    fontWeight: 800,
-                    background: 'var(--gradient-primary)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                    marginBottom: '4px',
-                }}>
-                    오늘도 한 걸음 더
-                </h2>
-                <p style={{
-                    fontSize: 'var(--font-size-sm)',
-                    color: 'var(--text-secondary)',
-                    fontWeight: 500,
-                }}>
-                    Step by Step 🎶
-                </p>
+            <div className="hero-banner">
+                <div className="hero-banner-glow" />
+                <div className="hero-banner-emoji">💃</div>
+                <h2 className="hero-banner-title">오늘도 한 걸음 더</h2>
+                <p className="hero-banner-subtitle">Step by Step 🎶</p>
 
                 {/* 📍 장소 뱃지 */}
-                <div style={{ marginTop: '12px' }}>
+                <div className="hero-banner-location">
                     <LocationBadge />
                 </div>
             </div>

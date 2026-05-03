@@ -570,12 +570,12 @@ export default function TheoryPage() {
           <div className="jive-section" style={{ marginTop: '0px' }}>
             <div className="jive-section-title lv-beginner" style={{ marginBottom: '12px' }}>
               <span className="jive-emoji">🎧</span>
-              <h2 style={{ fontSize: '1rem' }}>자이브 초급 연습용 논스톱 믹스 (135 BPM)</h2>
+              <h2 style={{ fontSize: '1rem' }}>자이브 초급 연습용 논스톱 믹스</h2>
               <span className="jive-badge">스트리밍 전용</span>
             </div>
             <div style={{ background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)', borderRadius: '14px', padding: '16px' }}>
               <p style={{ fontSize: '.85rem', color: '#a0a0c0', marginBottom: '12px', lineHeight: '1.6' }}>
-                초보자가 자이브 스텝을 편안하게 연습할 수 있도록, 엄선된 10곡의 자이브 음악을 <strong>135 BPM</strong>으로 통일하여 <strong>약 32분간</strong> 곡 간 끊김 없이 연결한 논스톱 음원입니다.
+                초보자가 자이브 스텝을 편안하게 연습할 수 있도록, 엄선된 <strong>10곡의 자이브 메들리</strong>를 <strong>약 32분간</strong> 끊김 없이 연결한 논스톱 음원입니다. 아래 <strong>재생 속도</strong>를 조절해 본인 페이스에 맞게 연습해 보세요.
               </p>
               {/* 드롭박스 다이렉트 스트리밍 주소 (raw=1) */}
               <audio ref={audioRef} controls style={{ width: '100%', height: '45px', borderRadius: '24px' }} preload="metadata">

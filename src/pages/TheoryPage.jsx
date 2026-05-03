@@ -575,7 +575,7 @@ export default function TheoryPage() {
             </div>
             <div style={{ background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)', borderRadius: '14px', padding: '16px' }}>
               <p style={{ fontSize: '.85rem', color: '#a0a0c0', marginBottom: '12px', lineHeight: '1.6' }}>
-                초보자가 자이브 스텝을 편안하게 연습할 수 있도록, 엄선된 10곡의 자이브 음악을 <strong>135 BPM</strong>으로 통일하여 곡 간 끊김 없이 연결한 논스톱 음원입니다.
+                초보자가 자이브 스텝을 편안하게 연습할 수 있도록, 엄선된 10곡의 자이브 음악을 <strong>135 BPM</strong>으로 통일하여 <strong>약 32분간</strong> 곡 간 끊김 없이 연결한 논스톱 음원입니다.
               </p>
               {/* 드롭박스 다이렉트 스트리밍 주소 (raw=1) */}
               <audio ref={audioRef} controls style={{ width: '100%', height: '45px', borderRadius: '24px' }} preload="metadata">

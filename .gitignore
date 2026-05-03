@@ -26,5 +26,13 @@ dist-ssr
 files.zip
 *.mp4
 *.mp3
+*.wav
 .tmp.driveupload/
 public/스텝라인댄스-동영상 다운로드/
+
+# 작업용 임시 파일 (오디오 작업 스크립트 및 중간 산출물)
+jive_audio/
+process_jive.py
+merge_all.py
+온부경_제17강*
+자이브영상/

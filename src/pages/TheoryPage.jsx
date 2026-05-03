@@ -430,19 +430,19 @@ export default function TheoryPage() {
       <div className="jive-header" style={{ paddingBottom: '0' }}>
         <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '16px' }}>
           <button 
-              onClick={() => setActiveTab('sequence')}
+              onClick={() => { setActiveTab('sequence'); setActiveVideo(null); }}
               style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: activeTab === 'sequence' ? 'var(--primary-color, #ef4444)' : 'var(--bg-secondary, rgba(0,0,0,0.05))', color: activeTab === 'sequence' ? '#fff' : 'var(--text-secondary, #888)', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
           >자이브 순서</button>
           <button 
-              onClick={() => setActiveTab('375')}
+              onClick={() => { setActiveTab('375'); setActiveVideo(null); }}
               style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: activeTab === '375' ? 'var(--primary-color, #ef4444)' : 'var(--bg-secondary, rgba(0,0,0,0.05))', color: activeTab === '375' ? '#fff' : 'var(--text-secondary, #888)', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
           >자이브 375</button>
           <button 
-              onClick={() => setActiveTab('education')}
+              onClick={() => { setActiveTab('education'); setActiveVideo(null); }}
               style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: activeTab === 'education' ? 'var(--primary-color, #ef4444)' : 'var(--bg-secondary, rgba(0,0,0,0.05))', color: activeTab === 'education' ? '#fff' : 'var(--text-secondary, #888)', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
           >자이브 교육영상</button>
           <button 
-              onClick={() => setActiveTab('mix')}
+              onClick={() => { setActiveTab('mix'); setActiveVideo(null); }}
               style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: activeTab === 'mix' ? 'var(--primary-color, #ef4444)' : 'var(--bg-secondary, rgba(0,0,0,0.05))', color: activeTab === 'mix' ? '#fff' : 'var(--text-secondary, #888)', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
           >자이브 논스톱 믹스</button>
         </div>

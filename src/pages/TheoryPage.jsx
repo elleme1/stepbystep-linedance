@@ -220,6 +220,13 @@ export default function TheoryPage() {
     }
   };
 
+  // 🐛 탭 전환 버그 방지: mix 탭으로 돌아왔을 때 오디오 DOM에 현재 배속 상태 강제 동기화
+  useEffect(() => {
+    if (activeTab === 'mix' && audioRef.current) {
+      audioRef.current.playbackRate = playbackRate;
+    }
+  }, [activeTab, playbackRate]);
+
   // ====================================
   // 🧹 A-B 루프 타이머 정리 (언마운트 시)
   // ====================================

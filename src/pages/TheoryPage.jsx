@@ -562,7 +562,7 @@ export default function TheoryPage() {
               </p>
               {/* TODO: 대표님, 아래 src 부분에 구글 드라이브의 '직접 재생용 주소(URL)'를 붙여넣어 주세요! */}
               <audio controls style={{ width: '100%', height: '45px', borderRadius: '24px' }} preload="metadata">
-                <source src="여기에_구글드라이브_URL을_붙여넣으세요" type="audio/mpeg" />
+                <source src="https://drive.google.com/uc?export=download&id=1u0_4h0W12dp8GdGmkEKHZqSNb7M9Tb25" type="audio/mpeg" />
                 브라우저가 오디오 재생을 지원하지 않습니다.
               </audio>
             </div>

@@ -210,6 +210,16 @@ export default function TheoryPage() {
   const abIntervalRef = useRef(null);       // A-B 루프 타이머 ID
   const lastSeekTimeRef = useRef(0);        // 중복 seek 방지용
 
+  // 🎵 오디오 플레이어 속도 조절용
+  const audioRef = useRef(null);
+  const [playbackRate, setPlaybackRate] = useState(1.0);
+  const handleSpeedChange = (speed) => {
+    setPlaybackRate(speed);
+    if (audioRef.current) {
+      audioRef.current.playbackRate = speed;
+    }
+  };
+
   // ====================================
   // 🧹 A-B 루프 타이머 정리 (언마운트 시)
   // ====================================
@@ -561,10 +571,35 @@ export default function TheoryPage() {
                 초보자가 자이브 스텝을 편안하게 연습할 수 있도록, 엄선된 10곡의 자이브 음악을 <strong>135 BPM</strong>으로 통일하여 곡 간 끊김 없이 연결한 논스톱 음원입니다.
               </p>
               {/* 드롭박스 다이렉트 스트리밍 주소 (raw=1) */}
-              <audio controls style={{ width: '100%', height: '45px', borderRadius: '24px' }} preload="metadata">
+              <audio ref={audioRef} controls style={{ width: '100%', height: '45px', borderRadius: '24px' }} preload="metadata">
                 <source src="https://www.dropbox.com/scl/fi/ixqhhil25k1jkcvlx5ftw/Jive_Beginner_Practice_Mix_Full.mp3?rlkey=t9axe2xarrnbv8qqt46cf6mur&st=n484ab62&raw=1" type="audio/mpeg" />
                 브라우저가 오디오 재생을 지원하지 않습니다.
               </audio>
+
+              {/* 🎛 속도 조절 UI */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '16px', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '.85rem', color: '#a0a0c0', fontWeight: 'bold', marginRight: '4px' }}>⏱ 재생 속도:</span>
+                {[0.5, 0.75, 1.0, 1.1, 1.25, 1.5].map(speed => (
+                  <button
+                    key={speed}
+                    onClick={() => handleSpeedChange(speed)}
+                    style={{
+                      padding: '6px 12px',
+                      borderRadius: '8px',
+                      border: '1px solid',
+                      borderColor: playbackRate === speed ? '#ef4444' : 'rgba(255,255,255,0.1)',
+                      background: playbackRate === speed ? 'rgba(239, 68, 68, 0.2)' : 'rgba(0,0,0,0.2)',
+                      color: playbackRate === speed ? '#ef4444' : '#fff',
+                      fontSize: '0.85rem',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      fontWeight: playbackRate === speed ? 'bold' : 'normal'
+                    }}
+                  >
+                    {speed}x
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </>

@@ -441,6 +441,10 @@ export default function TheoryPage() {
               onClick={() => setActiveTab('education')}
               style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: activeTab === 'education' ? 'var(--primary-color, #ef4444)' : 'var(--bg-secondary, rgba(0,0,0,0.05))', color: activeTab === 'education' ? '#fff' : 'var(--text-secondary, #888)', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
           >자이브 교육영상</button>
+          <button 
+              onClick={() => setActiveTab('mix')}
+              style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: activeTab === 'mix' ? 'var(--primary-color, #ef4444)' : 'var(--bg-secondary, rgba(0,0,0,0.05))', color: activeTab === 'mix' ? '#fff' : 'var(--text-secondary, #888)', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
+          >자이브 논스톱 믹스</button>
         </div>
       </div>
 
@@ -541,9 +545,12 @@ export default function TheoryPage() {
               </div>
             ))}
           </div>
+        </>
+      )}
 
-          {/* 섹션 3: 자이브 연습용 음원 */}
-          <div className="jive-section" style={{ marginTop: '16px' }}>
+      {activeTab === 'mix' && (
+        <>
+          <div className="jive-section" style={{ marginTop: '0px' }}>
             <div className="jive-section-title lv-beginner" style={{ marginBottom: '12px' }}>
               <span className="jive-emoji">🎧</span>
               <h2 style={{ fontSize: '1rem' }}>자이브 초급 연습용 논스톱 믹스 (135 BPM)</h2>

@@ -560,9 +560,9 @@ export default function TheoryPage() {
               <p style={{ fontSize: '.85rem', color: '#a0a0c0', marginBottom: '12px', lineHeight: '1.6' }}>
                 초보자가 자이브 스텝을 편안하게 연습할 수 있도록, 엄선된 10곡의 자이브 음악을 <strong>135 BPM</strong>으로 통일하여 곡 간 끊김 없이 연결한 논스톱 음원입니다.
               </p>
-              {/* TODO: 대표님, 아래 src 부분에 드롭박스(Dropbox) 링크를 넣고 맨 끝을 raw=1 로 수정해 주세요! */}
+              {/* 드롭박스 다이렉트 스트리밍 주소 (raw=1) */}
               <audio controls style={{ width: '100%', height: '45px', borderRadius: '24px' }} preload="metadata">
-                <source src="여기에_드롭박스_URL을_붙여넣고_끝을_raw=1_로_바꿔주세요" type="audio/mpeg" />
+                <source src="https://www.dropbox.com/scl/fi/ixqhhil25k1jkcvlx5ftw/Jive_Beginner_Practice_Mix_Full.mp3?rlkey=t9axe2xarrnbv8qqt46cf6mur&st=n484ab62&raw=1" type="audio/mpeg" />
                 브라우저가 오디오 재생을 지원하지 않습니다.
               </audio>
             </div>

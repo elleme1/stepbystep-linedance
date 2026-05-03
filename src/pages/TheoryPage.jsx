@@ -541,6 +541,24 @@ export default function TheoryPage() {
               </div>
             ))}
           </div>
+
+          {/* 섹션 3: 자이브 연습용 음원 */}
+          <div className="jive-section" style={{ marginTop: '16px' }}>
+            <div className="jive-section-title lv-beginner" style={{ marginBottom: '12px' }}>
+              <span className="jive-emoji">🎧</span>
+              <h2 style={{ fontSize: '1rem' }}>자이브 초급 연습용 논스톱 믹스 (135 BPM)</h2>
+              <span className="jive-badge">스페셜 믹스</span>
+            </div>
+            <div style={{ background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)', borderRadius: '14px', padding: '16px' }}>
+              <p style={{ fontSize: '.85rem', color: '#a0a0c0', marginBottom: '12px', lineHeight: '1.6' }}>
+                초보자가 자이브 스텝을 편안하게 연습할 수 있도록, 엄선된 10곡의 자이브 음악을 <strong>135 BPM</strong>으로 통일하여 곡 간 끊김 없이 연결한 논스톱 음원입니다.
+              </p>
+              <audio controls style={{ width: '100%', height: '45px', borderRadius: '24px' }} preload="metadata">
+                <source src="/audio/Jive_Beginner_Practice_Mix_Full.mp3" type="audio/mpeg" />
+                브라우저가 오디오 재생을 지원하지 않습니다.
+              </audio>
+            </div>
+          </div>
         </>
       )}
 

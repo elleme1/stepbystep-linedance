@@ -199,6 +199,7 @@ export default function TheoryPage() {
   const [activeVideo, setActiveVideo] = useState(null);
   const [expandedSections, setExpandedSections] = useState({});
   const [activeTab, setActiveTab] = useState('sequence');
+  const [activeMix, setActiveMix] = useState('foreign');
 
   // 🔁 A-B 반복구간 상태
   const [pointA, setPointA] = useState(null);
@@ -574,12 +575,55 @@ export default function TheoryPage() {
               <span className="jive-badge">스트리밍 전용</span>
             </div>
             <div style={{ background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)', borderRadius: '14px', padding: '16px' }}>
-              <p style={{ fontSize: '.85rem', color: '#a0a0c0', marginBottom: '12px', lineHeight: '1.6' }}>
-                초보자가 자이브 스텝을 편안하게 연습할 수 있도록, 엄선된 <strong>10곡의 자이브 메들리</strong>를 <strong>약 32분간</strong> 끊김 없이 연결한 논스톱 음원입니다. 아래 <strong>재생 속도</strong>를 조절해 본인 페이스에 맞게 연습해 보세요.
+              <p style={{ fontSize: '.85rem', color: '#a0a0c0', marginBottom: '16px', lineHeight: '1.6' }}>
+                초보자가 자이브 스텝을 편안하게 연습할 수 있도록, <strong>한국 노래 / 외국 노래 자이브 메들리</strong>를 <strong>논스톱</strong>으로 연결한 음원입니다. 아래 <strong>재생 속도</strong>를 조절해 본인 페이스에 맞게 연습해 보세요.
               </p>
+              
+              {/* 🔀 믹스 선택 버튼 */}
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                <button
+                  onClick={() => setActiveMix('korean')}
+                  style={{
+                    flex: 1, padding: '10px', borderRadius: '10px', border: '1px solid',
+                    borderColor: activeMix === 'korean' ? '#ef4444' : 'rgba(255,255,255,0.1)',
+                    background: activeMix === 'korean' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(0,0,0,0.2)',
+                    color: activeMix === 'korean' ? '#ef4444' : '#a0a0c0',
+                    fontWeight: activeMix === 'korean' ? 'bold' : 'normal',
+                    cursor: 'pointer', transition: 'all 0.2s'
+                  }}
+                >🇰🇷 한국 노래 믹스</button>
+                <button
+                  onClick={() => setActiveMix('foreign')}
+                  style={{
+                    flex: 1, padding: '10px', borderRadius: '10px', border: '1px solid',
+                    borderColor: activeMix === 'foreign' ? '#3b82f6' : 'rgba(255,255,255,0.1)',
+                    background: activeMix === 'foreign' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(0,0,0,0.2)',
+                    color: activeMix === 'foreign' ? '#3b82f6' : '#a0a0c0',
+                    fontWeight: activeMix === 'foreign' ? 'bold' : 'normal',
+                    cursor: 'pointer', transition: 'all 0.2s'
+                  }}
+                >🌎 외국 노래 믹스</button>
+              </div>
+
               {/* 드롭박스 다이렉트 스트리밍 주소 (raw=1) */}
-              <audio ref={audioRef} controls style={{ width: '100%', height: '45px', borderRadius: '24px' }} preload="metadata">
-                <source src="https://www.dropbox.com/scl/fi/ixqhhil25k1jkcvlx5ftw/Jive_Beginner_Practice_Mix_Full.mp3?rlkey=t9axe2xarrnbv8qqt46cf6mur&st=n484ab62&raw=1" type="audio/mpeg" />
+              <audio 
+                key={activeMix} 
+                ref={audioRef} 
+                controls 
+                style={{ width: '100%', height: '45px', borderRadius: '24px' }} 
+                preload="metadata"
+                onCanPlay={() => {
+                  if (audioRef.current) audioRef.current.playbackRate = playbackRate;
+                }}
+              >
+                <source 
+                  src={
+                    activeMix === 'foreign'
+                      ? "https://www.dropbox.com/scl/fi/9egfg9jom2h1jhx0up30v/Foreign_Jive_Mix.mp3?rlkey=n2xm2hhuwcdnz58tv9idlpa2j&st=dutz6fw2&raw=1"
+                      : "https://www.dropbox.com/scl/fi/e65ayrup0g4hay0iasloc/Korean_Jive_Mix.mp3?rlkey=poemkg7ualcjzxxg77de6txjw&st=y2nqw8pd&raw=1"
+                  } 
+                  type="audio/mpeg" 
+                />
                 브라우저가 오디오 재생을 지원하지 않습니다.
               </audio>
 

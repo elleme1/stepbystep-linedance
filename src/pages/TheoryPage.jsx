@@ -619,8 +619,8 @@ export default function TheoryPage() {
                 <source 
                   src={
                     activeMix === 'foreign'
-                      ? "https://www.dropbox.com/scl/fi/9egfg9jom2h1jhx0up30v/Foreign_Jive_Mix.mp3?rlkey=n2xm2hhuwcdnz58tv9idlpa2j&st=dutz6fw2&raw=1"
-                      : "https://www.dropbox.com/scl/fi/e65ayrup0g4hay0iasloc/Korean_Jive_Mix.mp3?rlkey=poemkg7ualcjzxxg77de6txjw&st=y2nqw8pd&raw=1"
+                      ? "https://www.dropbox.com/scl/fi/l9don1qe82i17pcv91cn8/Foreign_Jive_Mix_fixed.mp3?rlkey=uymma112amdvt14ii25d3r33u&raw=1"
+                      : "https://www.dropbox.com/scl/fi/e2iwnc65uqnxlbccmo4ka/Korean_Jive_Mix_fixed.mp3?rlkey=zrd3b6w1mosko4kvvwianzvf3&raw=1"
                   } 
                   type="audio/mpeg" 
                 />

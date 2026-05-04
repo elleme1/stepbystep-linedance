@@ -214,6 +214,7 @@ export default function TheoryPage() {
   // 🎵 오디오 플레이어 속도 조절용
   const audioRef = useRef(null);
   const [playbackRate, setPlaybackRate] = useState(1.0);
+  const [audioLoop, setAudioLoop] = useState(false);
   const handleSpeedChange = (speed) => {
     setPlaybackRate(speed);
     if (audioRef.current) {
@@ -221,12 +222,13 @@ export default function TheoryPage() {
     }
   };
 
-  // 🐛 탭 전환 버그 방지: mix 탭으로 돌아왔을 때 오디오 DOM에 현재 배속 상태 강제 동기화
+  // 🐛 탭 전환 버그 방지: mix 탭으로 돌아왔을 때 오디오 DOM에 현재 배속/루프 상태 강제 동기화
   useEffect(() => {
     if (activeTab === 'mix' && audioRef.current) {
       audioRef.current.playbackRate = playbackRate;
+      audioRef.current.loop = audioLoop;
     }
-  }, [activeTab, playbackRate]);
+  }, [activeTab, playbackRate, audioLoop]);
 
   // ====================================
   // 🧹 A-B 루프 타이머 정리 (언마운트 시)
@@ -606,14 +608,18 @@ export default function TheoryPage() {
               </div>
 
               {/* 드롭박스 다이렉트 스트리밍 주소 (raw=1) */}
-              <audio 
-                key={activeMix} 
-                ref={audioRef} 
-                controls 
-                style={{ width: '100%', height: '45px', borderRadius: '24px' }} 
+              <audio
+                key={activeMix}
+                ref={audioRef}
+                controls
+                loop={audioLoop}
+                style={{ width: '100%', height: '45px', borderRadius: '24px' }}
                 preload="metadata"
                 onCanPlay={() => {
-                  if (audioRef.current) audioRef.current.playbackRate = playbackRate;
+                  if (audioRef.current) {
+                    audioRef.current.playbackRate = playbackRate;
+                    audioRef.current.loop = audioLoop;
+                  }
                 }}
               >
                 <source 
@@ -627,8 +633,35 @@ export default function TheoryPage() {
                 브라우저가 오디오 재생을 지원하지 않습니다.
               </audio>
 
+              {/* 🔁 자동반복 토글 버튼 */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '12px' }}>
+                <span style={{ fontSize: '.85rem', color: '#a0a0c0', fontWeight: 'bold', marginRight: '4px' }}>🔁 자동반복:</span>
+                <button
+                  onClick={() => {
+                    const next = !audioLoop;
+                    setAudioLoop(next);
+                    if (audioRef.current) audioRef.current.loop = next;
+                  }}
+                  aria-pressed={audioLoop}
+                  style={{
+                    padding: '6px 14px',
+                    borderRadius: '20px',
+                    border: '1px solid',
+                    borderColor: audioLoop ? '#10b981' : 'rgba(255,255,255,0.15)',
+                    background: audioLoop ? 'rgba(16, 185, 129, 0.18)' : 'rgba(0,0,0,0.2)',
+                    color: audioLoop ? '#10b981' : '#a0a0c0',
+                    fontSize: '0.85rem',
+                    fontWeight: audioLoop ? 'bold' : 'normal',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  {audioLoop ? '✅ ON' : 'OFF'}
+                </button>
+              </div>
+
               {/* 🎛 속도 조절 UI */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '16px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '12px', flexWrap: 'wrap' }}>
                 <span style={{ fontSize: '.85rem', color: '#a0a0c0', fontWeight: 'bold', marginRight: '4px' }}>⏱ 재생 속도:</span>
                 {[0.5, 0.75, 1.0, 1.1, 1.25, 1.5].map(speed => (
                   <button

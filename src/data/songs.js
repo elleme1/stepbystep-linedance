@@ -1,6 +1,22 @@
 // 라인댄스 안무곡 데이터
 const rawSongs = [
   {
+    id: 66,
+    title: "Future Jive (퓨처 자이브)",
+    artist: "Unknown",
+    choreographer: "Unknown",
+    level: 3,
+    bpm: 135,
+    walls: 4,
+    counts: 32,
+    genre: "자이브",
+    youtubeId: "5HnD96idlfk",
+    tutorialId: "",
+    thumbnail: "https://img.youtube.com/vi/5HnD96idlfk/hqdefault.jpg",
+    mp3Url: "",
+    steps: []
+  },
+  {
     id: 65,
     title: "You Have to Go Crazy (유 해브 투 고 크레이지)",
     artist: "Unknown",
@@ -1327,7 +1343,8 @@ const songSchedule = {
   10: { date: '2026-03-10', location: 'kolon' },   // Everyone Needs a Hero
 
   // === 중리 행정복지센터 전용 (밴드 게시물 기반) ===
-  64: { date: '2026-04-29', location: 'sindun' },    // Old Time Rock and Roll (★ 이번주 수업곡 - 중리)
+  66: { date: '2026-05-06', location: 'sindun' },    // Future Jive (★ 이번주 수업곡 - 중리)
+  64: { date: '2026-04-29', location: 'sindun' },    // Old Time Rock and Roll (이전 수업곡)
   58: { date: '2026-04-23', location: 'sindun' },    // Delight (이전 수업곡)
   57: { date: '2026-04-23', location: 'both' },      // Accept (이전 수업곡 - 코오롱 / 중리 재학습)
   56: { date: '2026-04-09', location: 'sindun' },    // Love at First Sight (이전 수업곡 - 중리)

@@ -11,7 +11,7 @@ const rawSongs = [
     counts: 32,
     genre: "자이브",
     youtubeId: "5HnD96idlfk",
-    tutorialId: "",
+    tutorialId: "Es5cckqeYL8",
     thumbnail: "https://img.youtube.com/vi/5HnD96idlfk/hqdefault.jpg",
     mp3Url: "",
     steps: []

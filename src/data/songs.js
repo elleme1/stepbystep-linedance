@@ -1358,6 +1358,9 @@ const songSchedule = {
   53: { date: '2026-04-02', location: 'kolon' },  // Funky Groove
   42: { date: '2026-04-02', location: 'both' },   // No.9
   10: { date: '2026-03-10', location: 'kolon' },   // Everyone Needs a Hero
+  63: { date: '2026-02-15', location: 'both' },    // 찔레꽃 (Wild Rose)
+  62: { date: '2026-02-15', location: 'both' },    // 한잔해 (Han Jan Hae)
+  61: { date: '2026-02-15', location: 'both' },    // Violet Life (부초같은 인생)
 
   // === 중리 행정복지센터 전용 (밴드 게시물 기반) ===
   66: { date: '2026-05-06', location: 'sindun' },    // Future Jive (★ 이번주 수업곡 - 중리)
@@ -1427,6 +1430,9 @@ const kolonOrder = [
   65,  // You Have to Go Crazy (이번주 수업곡)
   57,  // Accept (체념) (이전 수업곡)
   60,  // Moonbay Rumba (문베이 룸바)
+  63,  // 찔레꽃 (Wild Rose)
+  62,  // 한잔해 (Han Jan Hae)
+  61,  // Violet Life (부초같은 인생)
   55,  // Electro Shake
   54,  // 돌아와요 부산항에
   53,  // Funky Groove
@@ -1477,7 +1483,11 @@ const kolonOrder = [
 
 // 📋 중리 행정복지센터 영상 순서 (수업 순서대로)
 const sindunOrder = [
-  64,  // Old Time Rock and Roll (이번주 수업곡)
+  66,  // Future Jive (이번주 수업곡)
+  64,  // Old Time Rock and Roll (이전 수업곡)
+  63,  // 찔레꽃 (Wild Rose)
+  62,  // 한잔해 (Han Jan Hae)
+  61,  // Violet Life (부초같은 인생)
   58,  // Delight (환희) (이전 수업곡)
   57,  // 0. Accept (체념) (이전 수업곡)
   56,  // 1. Love at First Sight (이번주 수업곡)

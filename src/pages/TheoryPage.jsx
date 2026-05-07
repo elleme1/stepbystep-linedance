@@ -663,7 +663,7 @@ export default function TheoryPage() {
               {/* 🎛 속도 조절 UI */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '12px', flexWrap: 'wrap' }}>
                 <span style={{ fontSize: '.85rem', color: '#a0a0c0', fontWeight: 'bold', marginRight: '4px' }}>⏱ 재생 속도:</span>
-                {[0.5, 0.75, 1.0, 1.1, 1.25, 1.5].map(speed => (
+                {[0.5, 0.75, 0.85, 0.9, 1.0, 1.1, 1.25, 1.5].map(speed => (
                   <button
                     key={speed}
                     onClick={() => handleSpeedChange(speed)}

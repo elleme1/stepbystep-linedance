@@ -65,54 +65,6 @@ const rawSongs = [
     steps: []
   },
   {
-    id: 63,
-    title: "찔레꽃 (Wild Rose)",
-    artist: "Unknown",
-    choreographer: "Unknown",
-    level: 1,
-    bpm: 120,
-    walls: 4,
-    counts: 32,
-    genre: "트로트",
-    youtubeId: "mJV_0iOQuWY",
-    tutorialId: "",
-    thumbnail: "https://img.youtube.com/vi/mJV_0iOQuWY/hqdefault.jpg",
-    mp3Url: "/mp3/mJV_0iOQuWY.mp3",
-    steps: []
-  },
-  {
-    id: 62,
-    title: "한잔해 (Han Jan Hae)",
-    artist: "박군",
-    choreographer: "Unknown",
-    level: 1,
-    bpm: 120,
-    walls: 4,
-    counts: 32,
-    genre: "트로트",
-    youtubeId: "oIv0xmzSJuA",
-    tutorialId: "",
-    thumbnail: "https://img.youtube.com/vi/oIv0xmzSJuA/hqdefault.jpg",
-    mp3Url: "/mp3/oIv0xmzSJuA.mp3",
-    steps: []
-  },
-  {
-    id: 61,
-    title: "Violet Life (부초같은 인생) Remix",
-    artist: "Unknown",
-    choreographer: "Unknown",
-    level: 1,
-    bpm: 120,
-    walls: 4,
-    counts: 32,
-    genre: "트로트",
-    youtubeId: "NedFc7LvHE8",
-    tutorialId: "",
-    thumbnail: "https://img.youtube.com/vi/NedFc7LvHE8/hqdefault.jpg",
-    mp3Url: "/mp3/NedFc7LvHE8.mp3",
-    steps: []
-  },
-  {
     id: 58,
     title: "Delight (환희)",
     artist: "정수라",
@@ -1358,9 +1310,6 @@ const songSchedule = {
   53: { date: '2026-04-02', location: 'kolon' },  // Funky Groove
   42: { date: '2026-04-02', location: 'both' },   // No.9
   10: { date: '2026-03-10', location: 'kolon' },   // Everyone Needs a Hero
-  63: { date: '2026-02-15', location: 'kolon' },    // 찔레꽃 (Wild Rose)
-  62: { date: '2026-02-15', location: 'kolon' },    // 한잔해 (Han Jan Hae)
-  61: { date: '2026-02-15', location: 'kolon' },    // Violet Life (부초같은 인생)
 
   // === 중리 행정복지센터 전용 (밴드 게시물 기반) ===
   66: { date: '2026-05-06', location: 'sindun' },    // Future Jive (★ 이번주 수업곡 - 중리)
@@ -1430,9 +1379,6 @@ const kolonOrder = [
   65,  // You Have to Go Crazy (이번주 수업곡)
   57,  // Accept (체념) (이전 수업곡)
   60,  // Moonbay Rumba (문베이 룸바)
-  63,  // 찔레꽃 (Wild Rose)
-  62,  // 한잔해 (Han Jan Hae)
-  61,  // Violet Life (부초같은 인생)
   55,  // Electro Shake
   54,  // 돌아와요 부산항에
   53,  // Funky Groove

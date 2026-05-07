@@ -143,7 +143,7 @@ export default function HomePage() {
                 <footer className="home-footer">
                     <button className="admin-access-btn" onClick={() => navigate('/admin')}>
                         <span className="admin-icon">⚙️</span>
-                        <span>코오롱 관리자 대시보드</span>
+                        <strong>코오롱 관리자 모드 접속</strong>
                     </button>
                 </footer>
             )}

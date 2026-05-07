@@ -7,6 +7,7 @@ import { FavoritesProvider } from './context/FavoritesContext';
 import { PracticeProvider } from './context/PracticeContext';
 import { LocationProvider, useLocation } from './context/LocationContext';
 import { DeviceProvider } from './context/DeviceContext';
+import { DataProvider } from './context/DataContext';
 
 // 🎬 스플래시 화면
 import SplashScreen from './components/SplashScreen';
@@ -27,6 +28,7 @@ import CommunityPage from './pages/CommunityPage';
 import SearchPage from './pages/SearchPage';
 import VideoDetail from './pages/VideoDetail';
 import PlaylistPage from './pages/PlaylistPage';
+import AdminPage from './pages/AdminPage';
 
 import ReloadPrompt from './ReloadPrompt';
 
@@ -70,8 +72,10 @@ function AppContent() {
             <Route path="/search" element={<SearchPage />} />
             <Route path="/video/:id" element={<VideoDetail />} />
             <Route path="/playlist" element={<PlaylistPage />} />
-
           </Route>
+          
+          {/* 👑 관리자 전용 경로 (Layout 외부) */}
+          <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </BrowserRouter>
     </>
@@ -81,15 +85,17 @@ function AppContent() {
 export default function App() {
   return (
     <DeviceProvider>
-      <ThemeProvider>
-        <FavoritesProvider>
-          <PracticeProvider>
-            <LocationProvider>
-              <AppContent />
-            </LocationProvider>
-          </PracticeProvider>
-        </FavoritesProvider>
-      </ThemeProvider>
+      <DataProvider>
+        <ThemeProvider>
+          <FavoritesProvider>
+            <PracticeProvider>
+              <LocationProvider>
+                <AppContent />
+              </LocationProvider>
+            </PracticeProvider>
+          </FavoritesProvider>
+        </ThemeProvider>
+      </DataProvider>
     </DeviceProvider>
   );
 }

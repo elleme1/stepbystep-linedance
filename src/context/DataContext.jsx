@@ -1,0 +1,89 @@
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import rawProcessedSongs, { getThisWeekSong as getRawThisWeek, getSongsForLocation as getRawForLocation } from '../data/songs';
+
+const DataContext = createContext();
+
+export const DataProvider = ({ children }) => {
+  const [localSongs, setLocalSongs] = useState([]);
+
+  // 앱 시작 시 localStorage에서 데이터 로드
+  useEffect(() => {
+    const saved = localStorage.getItem('custom_songs');
+    if (saved) {
+      try {
+        setLocalSongs(JSON.parse(saved));
+      } catch (e) {
+        console.error('Failed to parse local songs:', e);
+      }
+    }
+  }, []);
+
+  // 새로운 곡 추가 (관리자 페이지에서 호출)
+  const addSong = (newSongData) => {
+    // 1. 새 ID 생성 (기존 최대 ID + 1)
+    const allIds = [...rawProcessedSongs, ...localSongs].map(s => s.id);
+    const nextId = Math.max(0, ...allIds) + 1;
+
+    const newSong = {
+      id: nextId,
+      title: newSongData.title,
+      artist: newSongData.artist,
+      youtubeId: newSongData.youtubeId,
+      tutorialId: newSongData.tutorialId || "",
+      thumbnail: `https://img.youtube.com/vi/${newSongData.youtubeId}/hqdefault.jpg`,
+      location: 'kolon', // 코오롱 전용 관리자이므로 고정
+      addedDate: newSongData.date || new Date().toISOString().split('T')[0],
+      isLocal: true // 로컬에서 추가된 데이터임을 표시
+    };
+
+    const updatedLocal = [newSong, ...localSongs];
+    setLocalSongs(updatedLocal);
+    localStorage.setItem('custom_songs', JSON.stringify(updatedLocal));
+    return newSong;
+  };
+
+  // 전체 데이터 합치기
+  const allSongs = useMemo(() => {
+    // 로컬 데이터를 앞에 두어 최신순 유지 (정렬 로직은 각 페이지에서 처리됨)
+    return [...localSongs, ...rawProcessedSongs];
+  }, [localSongs]);
+
+  // 장소별 필터링 및 정렬 로직 (기존 songs.js 로직 확장)
+  const getSongsForLocation = (locationId) => {
+    const filtered = allSongs.filter(s => s.location === locationId || s.location === 'both');
+    
+    // 코오롱의 경우, 로컬 데이터는 무조건 최상단에, 나머지는 기존 정렬 유지
+    if (locationId === 'kolon') {
+      const local = filtered.filter(s => s.isLocal);
+      const original = getRawForLocation('kolon'); // 기존 정렬된 데이터
+      return [...local, ...original];
+    }
+    
+    return getRawForLocation(locationId);
+  };
+
+  // 이번주 곡 가져오기 (로컬 데이터가 있으면 최신 로컬 데이터를 우선)
+  const getThisWeekSong = (locationId) => {
+    if (locationId === 'kolon') {
+      const local = localSongs.find(s => s.location === 'kolon' || s.location === 'both');
+      if (local) return local;
+    }
+    return getRawThisWeek(locationId);
+  };
+
+  const value = {
+    allSongs,
+    localSongs,
+    addSong,
+    getSongsForLocation,
+    getThisWeekSong
+  };
+
+  return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
+};
+
+export const useData = () => {
+  const context = useContext(DataContext);
+  if (!context) throw new Error('useData must be used within a DataProvider');
+  return context;
+};

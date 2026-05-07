@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HomePage.css';
-import songs, { getThisWeekSong } from '../data/songs';
+import { useData } from '../context/DataContext';
 import { useLocation } from '../context/LocationContext';
 import LocationBadge from '../components/LocationBadge';
 import InstallBanner from '../components/InstallBanner';
@@ -9,6 +9,7 @@ export default function HomePage() {
     const navigate = useNavigate();
     const [greetingOpen, setGreetingOpen] = useState(false);
     const { selectedLocation, locationInfo } = useLocation();
+    const { getThisWeekSong } = useData();
 
     // 📍 선택된 장소의 이번 주 수업곡을 자동으로 불러옵니다.
     const thisWeekSong = getThisWeekSong(selectedLocation);

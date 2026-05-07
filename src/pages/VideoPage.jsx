@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import songs, { getSongsForLocation } from '../data/songs';
+import { useData } from '../context/DataContext';
 import { levelText } from '../data/constants';
 import { useLocation } from '../context/LocationContext';
 import LocationBadge from '../components/LocationBadge';
@@ -9,6 +9,7 @@ import './VideoPage.css';
 export default function VideoPage() {
     const navigate = useNavigate();
     const { selectedLocation } = useLocation();
+    const { getSongsForLocation } = useData();
     const [activeTab, setActiveTab] = useState('전체');
     const [likedIds, setLikedIds] = useState([]);
     const [showScrollTop, setShowScrollTop] = useState(false);

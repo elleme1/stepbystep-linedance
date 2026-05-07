@@ -1358,9 +1358,9 @@ const songSchedule = {
   53: { date: '2026-04-02', location: 'kolon' },  // Funky Groove
   42: { date: '2026-04-02', location: 'both' },   // No.9
   10: { date: '2026-03-10', location: 'kolon' },   // Everyone Needs a Hero
-  63: { date: '2026-02-15', location: 'both' },    // 찔레꽃 (Wild Rose)
-  62: { date: '2026-02-15', location: 'both' },    // 한잔해 (Han Jan Hae)
-  61: { date: '2026-02-15', location: 'both' },    // Violet Life (부초같은 인생)
+  63: { date: '2026-02-15', location: 'kolon' },    // 찔레꽃 (Wild Rose)
+  62: { date: '2026-02-15', location: 'kolon' },    // 한잔해 (Han Jan Hae)
+  61: { date: '2026-02-15', location: 'kolon' },    // Violet Life (부초같은 인생)
 
   // === 중리 행정복지센터 전용 (밴드 게시물 기반) ===
   66: { date: '2026-05-06', location: 'sindun' },    // Future Jive (★ 이번주 수업곡 - 중리)
@@ -1485,25 +1485,22 @@ const kolonOrder = [
 const sindunOrder = [
   66,  // Future Jive (이번주 수업곡)
   64,  // Old Time Rock and Roll (이전 수업곡)
-  63,  // 찔레꽃 (Wild Rose)
-  62,  // 한잔해 (Han Jan Hae)
-  61,  // Violet Life (부초같은 인생)
   58,  // Delight (환희) (이전 수업곡)
-  57,  // 0. Accept (체념) (이전 수업곡)
-  56,  // 1. Love at First Sight (이번주 수업곡)
-  42,  // 2. No.9 넘버나인
-  52,  // 3. 디스코 피자
-  43,  // 2. 돈 룩 백
-  41,  // 3. 와일드 웨스트 앤
-  44,  // 4. 드링크 샴페인
-  1,   // 4. 와이
-  45,  // 5. 녹여버려요
-  6,   // 6. 러브 포션 666
-  2,   // 7. 정말잘해왔어
-  4,   // 8. 오늘밤에 만나요
-  3,   // 9. 디스 이즈 마이 라이프
-  46,  // 10. 재즈 잇 업 라인댄스
-  47,  // 11. 리듬 라인댄스
+  57,  // Accept (체념)
+  56,  // Love at First Sight
+  42,  // No.9 넘버나인
+  52,  // 디스코 피자
+  43,  // 돈 룩 백
+  41,  // 와일드 웨스트 앤
+  44,  // 드링크 샴페인
+  1,   // 와이
+  45,  // 녹여버려요
+  6,   // 러브 포션 666
+  2,   // 정말잘해왔어
+  4,   // 오늘밤에 만나요
+  3,   // 디스 이즈 마이 라이프
+  46,  // 재즈 잇 업 라인댄스
+  47,  // 리듬 라인댄스
   8,   // 12. 우연히
   16,  // 13. 뉴스
   11,  // 14. 삼바 드 브라질

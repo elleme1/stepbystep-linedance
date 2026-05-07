@@ -1,6 +1,22 @@
 // 라인댄스 안무곡 데이터
 const rawSongs = [
   {
+    id: 67,
+    title: "Big Diamond Ring Cha Cha (빅 다이아몬드 차차)",
+    artist: "Ichiro Dances",
+    choreographer: "Julaeha Pangngulu & Dancing Bagu",
+    level: 2,
+    bpm: 115,
+    walls: 4,
+    counts: 32,
+    genre: "차차",
+    youtubeId: "nz083O_PCr8",
+    tutorialId: "kcyo57SbH1k",
+    thumbnail: "https://img.youtube.com/vi/nz083O_PCr8/hqdefault.jpg",
+    mp3Url: "",
+    steps: []
+  },
+  {
     id: 66,
     title: "Future Jive (퓨처 자이브)",
     artist: "Unknown",
@@ -1334,6 +1350,7 @@ const rawSongs = [
 // ============================================================
 const songSchedule = {
   // === 코오롱 전용 ===
+  67: { date: '2026-05-07', location: 'kolon' },  // Big Diamond Ring Cha Cha (★ 이번주 수업곡 - 코오롱)
   65: { date: '2026-04-30', location: 'kolon' },  // You Have to Go Crazy (★ 이번주 수업곡 - 코오롱)
   60: { date: '2026-04-20', location: 'kolon' },  // Moonbay Rumba (문베이 룸바)
   55: { date: '2026-04-17', location: 'kolon' },  // Electro Shake
@@ -1406,6 +1423,7 @@ const songSchedule = {
 
 // 📋 코오롱 스포렉스 영상 순서 (수업 순서대로)
 const kolonOrder = [
+  67,  // Big Diamond Ring Cha Cha (이번주 수업곡)
   65,  // You Have to Go Crazy (이번주 수업곡)
   57,  // Accept (체념) (이전 수업곡)
   60,  // Moonbay Rumba (문베이 룸바)

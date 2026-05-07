@@ -123,8 +123,10 @@ const AdminPage = () => {
       <style>{`
         .admin-page-root { min-height: 100vh; background: #0b1120; color: #f1f0f0; font-family: 'Noto Sans KR', sans-serif; }
         .admin-header { position: sticky; top: 0; z-index: 100; height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: rgba(11, 17, 32, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(212, 168, 83, 0.15); }
-        .admin-header h2 { font-size: 1.1rem; font-weight: 700; background: linear-gradient(135deg, #c9952e 0%, #e8c56d 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
-        .logout-btn { font-size: 0.8rem; color: #94a3b8; padding: 6px 12px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; }
+        .admin-header h2 { font-size: 1rem; font-weight: 700; background: linear-gradient(135deg, #c9952e 0%, #e8c56d 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
+        .logout-btn { font-size: 0.8rem; color: #94a3b8; padding: 6px 12px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; background: transparent; cursor: pointer; }
+        .back-home-btn { font-size: 0.85rem; color: #e8c56d; padding: 6px 14px; border: 1px solid rgba(212, 168, 83, 0.3); border-radius: 8px; background: rgba(212, 168, 83, 0.1); cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 4px; transition: 0.3s; }
+        .back-home-btn:hover { background: rgba(212, 168, 83, 0.2); transform: translateY(-1px); }
         
         .content-wrap { max-width: 600px; margin: 0 auto; padding: 20px; }
         .hero-banner { background: linear-gradient(135deg, rgba(201, 149, 46, 0.1), rgba(232, 197, 109, 0.05)); border: 1px solid rgba(212, 168, 83, 0.1); border-radius: 20px; padding: 30px 20px; text-align: center; margin-bottom: 30px; }
@@ -159,7 +161,10 @@ const AdminPage = () => {
       `}</style>
 
       <header className="admin-header">
-        <h2>👑 코오롱 스포렉스 관리</h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button className="back-home-btn" onClick={() => navigate('/')}>🏠 홈</button>
+          <h2>👑 코오롱 관리</h2>
+        </div>
         <button className="logout-btn" onClick={() => setIsAuthenticated(false)}>로그아웃</button>
       </header>
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 
 /**
@@ -13,6 +13,10 @@ const AdminPage = () => {
   const [password, setPassword] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [searchParams] = useSearchParams();
+  const locParam = searchParams.get('loc') || 'kolon';
+  const locationName = locParam === 'kolon' ? '코오롱 스포렉스' : '중리 행정복지센터';
+
   const [loadingMetadata, setLoadingMetadata] = useState(false);
 
   const [songInfo, setSongInfo] = useState({
@@ -22,7 +26,8 @@ const AdminPage = () => {
     youtubeId: '',
     tutorialUrl: '',
     tutorialId: '',
-    date: new Date().toISOString().split('T')[0]
+    date: new Date().toISOString().split('T')[0],
+    location: locParam
   });
 
   const handleLogin = (e) => {
@@ -35,9 +40,10 @@ const AdminPage = () => {
   };
 
   const getYoutubeId = (url) => {
-    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+    // 쇼츠(shorts/) 주소까지 완벽하게 잡아내는 마법의 가위!
+    const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/|youtube\.com\/shorts\/)([\w-]{11})/i;
     const match = url.match(regExp);
-    return (match && match[7].length === 11) ? match[7] : null;
+    return match ? match[1] : null;
   };
 
   const handleMainUrlChange = async (url) => {
@@ -84,7 +90,8 @@ const AdminPage = () => {
       setTimeout(() => setShowToast(false), 3000);
       setSongInfo({
         title: '', artist: 'Various', youtubeUrl: '', youtubeId: '',
-        tutorialUrl: '', tutorialId: '', date: new Date().toISOString().split('T')[0]
+        tutorialUrl: '', tutorialId: '', date: new Date().toISOString().split('T')[0],
+        location: locParam
       });
     } catch (err) {
       alert('저장 중 오류가 발생했습니다.');
@@ -108,7 +115,18 @@ const AdminPage = () => {
         `}</style>
         <div className="login-card">
           <h1>STEP-BY-STEP</h1>
-          <p>코오롱 스포렉스 관리자 로그인</p>
+          <div style={{ display: 'flex', background: 'rgba(212,168,83,0.1)', borderRadius: '8px', overflow: 'hidden', border: '1px solid rgba(212,168,83,0.3)', width: 'fit-content', margin: '0 auto 20px auto' }}>
+            <button 
+              type="button"
+              onClick={() => navigate('/admin?loc=kolon')}
+              style={{ padding: '8px 16px', border: 'none', background: locParam === 'kolon' ? '#c9952e' : 'transparent', color: locParam === 'kolon' ? '#0b1120' : '#e8c56d', fontSize: '0.9rem', fontWeight: 'bold', cursor: 'pointer', transition: '0.3s' }}
+            >코오롱 관리</button>
+            <button 
+              type="button"
+              onClick={() => navigate('/admin?loc=sindun')}
+              style={{ padding: '8px 16px', border: 'none', background: locParam === 'sindun' ? '#c9952e' : 'transparent', color: locParam === 'sindun' ? '#0b1120' : '#e8c56d', fontSize: '0.9rem', fontWeight: 'bold', cursor: 'pointer', transition: '0.3s' }}
+            >중리 관리</button>
+          </div>
           <form onSubmit={handleLogin}>
             <input type="password" className="login-input" placeholder="비밀번호 입력" value={password} onChange={(e) => setPassword(e.target.value)} autoFocus />
             <button type="submit" className="login-btn">관리자 입장</button>
@@ -163,7 +181,16 @@ const AdminPage = () => {
       <header className="admin-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button className="back-home-btn" onClick={() => navigate('/')}>🏠 홈</button>
-          <h2>👑 코오롱 관리</h2>
+          <div style={{ display: 'flex', background: 'rgba(212,168,83,0.1)', borderRadius: '8px', overflow: 'hidden', border: '1px solid rgba(212,168,83,0.3)' }}>
+            <button 
+              onClick={() => navigate('/admin?loc=kolon')}
+              style={{ padding: '6px 12px', border: 'none', background: locParam === 'kolon' ? '#c9952e' : 'transparent', color: locParam === 'kolon' ? '#0b1120' : '#e8c56d', fontSize: '0.85rem', fontWeight: 'bold', cursor: 'pointer', transition: '0.3s' }}
+            >코오롱</button>
+            <button 
+              onClick={() => navigate('/admin?loc=sindun')}
+              style={{ padding: '6px 12px', border: 'none', background: locParam === 'sindun' ? '#c9952e' : 'transparent', color: locParam === 'sindun' ? '#0b1120' : '#e8c56d', fontSize: '0.85rem', fontWeight: 'bold', cursor: 'pointer', transition: '0.3s' }}
+            >중리</button>
+          </div>
         </div>
         <button className="logout-btn" onClick={() => setIsAuthenticated(false)}>로그아웃</button>
       </header>
@@ -193,9 +220,31 @@ const AdminPage = () => {
                   <div style={{textAlign:'center', color:'#d4a853', fontSize:'.85rem'}}>곡 정보를 불러오는 중...</div>
                 ) : (
                   <>
-                    <div className="preview-row"><span className="preview-label">노래:</span> <span className="preview-value">{songInfo.title}</span></div>
-                    <div className="preview-row"><span className="preview-label">가수:</span> <span className="preview-value">{songInfo.artist}</span></div>
-                    <div className="preview-row"><span className="preview-label">장소:</span> <span className="preview-value">코오롱 스포렉스</span></div>
+                    {/* 자동으로 1차 채워지지만, 맘에 안 들면 관리자가 언제든 타이핑해서 수정 가능한 인풋! */}
+                    <div className="preview-row" style={{ flexDirection: 'column', gap: '6px', marginBottom: '12px' }}>
+                      <span className="preview-label" style={{ fontSize: '0.8rem' }}>노래 제목 (수정 가능):</span>
+                      <input 
+                        type="text" 
+                        className="input-box" 
+                        style={{ padding: '10px', fontSize: '0.95rem' }}
+                        value={songInfo.title}
+                        onChange={(e) => setSongInfo(prev => ({...prev, title: e.target.value}))}
+                      />
+                    </div>
+                    <div className="preview-row" style={{ flexDirection: 'column', gap: '6px', marginBottom: '12px' }}>
+                      <span className="preview-label" style={{ fontSize: '0.8rem' }}>가수명 (수정 가능):</span>
+                      <input 
+                        type="text" 
+                        className="input-box" 
+                        style={{ padding: '10px', fontSize: '0.95rem' }}
+                        value={songInfo.artist}
+                        onChange={(e) => setSongInfo(prev => ({...prev, artist: e.target.value}))}
+                      />
+                    </div>
+                    <div className="preview-row">
+                      <span className="preview-label">장소:</span> 
+                      <span className="preview-value">{locationName}</span>
+                    </div>
                   </>
                 )}
               </div>

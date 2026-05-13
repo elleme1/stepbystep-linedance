@@ -138,15 +138,16 @@ export default function HomePage() {
                 </div>
             </section>
 
-            {/* ⚙️ 코오롱 전용 관리자 버튼 (푸터) */}
-            {selectedLocation === 'kolon' && (
-                <footer className="home-footer">
-                    <button className="admin-access-btn" onClick={() => navigate('/admin')}>
-                        <span className="admin-icon">⚙️</span>
-                        <strong>코오롱 관리자 모드 접속</strong>
-                    </button>
-                </footer>
-            )}
+            {/* ⚙️ 관리자 버튼 (푸터) - 코오롱 & 중리 모두 표시 */}
+            <footer className="home-footer">
+                <button 
+                    className="admin-access-btn" 
+                    onClick={() => navigate(`/admin?loc=${selectedLocation}`)}
+                >
+                    <span className="admin-icon">⚙️</span>
+                    <strong>{selectedLocation === 'kolon' ? '코오롱' : '중리'} 관리자 모드 접속</strong>
+                </button>
+            </footer>
         </div>
     );
 }

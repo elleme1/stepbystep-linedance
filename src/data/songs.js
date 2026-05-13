@@ -1,6 +1,27 @@
 // 라인댄스 안무곡 데이터
 const rawSongs = [
   {
+    id: 68,
+    title: "Red Dress Rebel (레드 드레스 레블)",
+    artist: "DJTEXX",
+    choreographer: "Rob Fowler",
+    level: 2,
+    bpm: 120,
+    walls: 4,
+    counts: 32,
+    genre: "팝",
+    youtubeId: "SLDD7ydRKQE",
+    tutorialId: "a-MhInecblM",
+    thumbnail: "https://img.youtube.com/vi/SLDD7ydRKQE/hqdefault.jpg",
+    mp3Url: "",
+    steps: [
+      { count: "1-8", move: "워크 & 킥, 코스터 스텝 (Walk & Kick, Coaster Step)", desc: "앞으로 워크 2보 → 오른발 킥 → 뒤로 스텝 → 코스터 스텝" },
+      { count: "9-16", move: "피벗 턴 & 크로스 (Pivot Turn & Cross)", desc: "앞으로 스텝 → 1/4 피벗 턴 → 오른발 크로스" },
+      { count: "17-24", move: "사이드 록 & 위브 (Side Rock & Weave)", desc: "사이드 록 → 리커버 → 크로스 위브 스텝" },
+      { count: "25-32", move: "셔플 & 록 스텝 (Shuffle & Rock Step)", desc: "셔플 스텝 → 앞 록 → 리커버" }
+    ]
+  },
+  {
     id: 67,
     title: "Big Diamond Ring Cha Cha (빅 다이아몬드 차차)",
     artist: "Ichiro Dances",
@@ -1312,7 +1333,8 @@ const songSchedule = {
   10: { date: '2026-03-10', location: 'kolon' },   // Everyone Needs a Hero
 
   // === 중리 행정복지센터 전용 (밴드 게시물 기반) ===
-  66: { date: '2026-05-06', location: 'sindun' },    // Future Jive (★ 이번주 수업곡 - 중리)
+  68: { date: '2026-05-13', location: 'sindun' },    // Red Dress Rebel (★ 이번주 수업곡 - 중리)
+  66: { date: '2026-05-06', location: 'sindun' },    // Future Jive (이전 수업곡 - 중리)
   64: { date: '2026-04-29', location: 'sindun' },    // Old Time Rock and Roll (이전 수업곡)
   58: { date: '2026-04-23', location: 'sindun' },    // Delight (이전 수업곡)
   57: { date: '2026-04-23', location: 'both' },      // Accept (이전 수업곡 - 코오롱 / 중리 재학습)
@@ -1429,7 +1451,8 @@ const kolonOrder = [
 
 // 📋 중리 행정복지센터 영상 순서 (수업 순서대로)
 const sindunOrder = [
-  66,  // Future Jive (이번주 수업곡)
+  68,  // Red Dress Rebel (이번주 수업곡)
+  66,  // Future Jive (이전 수업곡)
   64,  // Old Time Rock and Roll (이전 수업곡)
   58,  // Delight (환희) (이전 수업곡)
   57,  // Accept (체념)

@@ -11,7 +11,14 @@ export default function VideoPage() {
     const { selectedLocation } = useLocation();
     const { getSongsForLocation } = useData();
     const [activeTab, setActiveTab] = useState('전체');
-    const [likedIds, setLikedIds] = useState([]);
+    const [likedIds, setLikedIds] = useState(() => {
+        const saved = localStorage.getItem('stepApp_likedIds');
+        return saved ? JSON.parse(saved) : [];
+    });
+
+    useEffect(() => {
+        localStorage.setItem('stepApp_likedIds', JSON.stringify(likedIds));
+    }, [likedIds]);
     const [showScrollTop, setShowScrollTop] = useState(false);
     const [showScrollBottom, setShowScrollBottom] = useState(true);
 

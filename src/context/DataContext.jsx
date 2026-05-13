@@ -31,7 +31,7 @@ export const DataProvider = ({ children }) => {
       youtubeId: newSongData.youtubeId,
       tutorialId: newSongData.tutorialId || "",
       thumbnail: `https://img.youtube.com/vi/${newSongData.youtubeId}/hqdefault.jpg`,
-      location: 'kolon', // 코오롱 전용 관리자이므로 고정
+      location: newSongData.location || 'kolon', // 선택된 장소 적용
       addedDate: newSongData.date || new Date().toISOString().split('T')[0],
       isLocal: true // 로컬에서 추가된 데이터임을 표시
     };
@@ -52,22 +52,18 @@ export const DataProvider = ({ children }) => {
   const getSongsForLocation = (locationId) => {
     const filtered = allSongs.filter(s => s.location === locationId || s.location === 'both');
     
-    // 코오롱의 경우, 로컬 데이터는 무조건 최상단에, 나머지는 기존 정렬 유지
-    if (locationId === 'kolon') {
-      const local = filtered.filter(s => s.isLocal);
-      const original = getRawForLocation('kolon'); // 기존 정렬된 데이터
-      return [...local, ...original];
-    }
+    // 로컬 데이터는 무조건 최상단에, 나머지는 기존 정렬 유지
+    const local = filtered.filter(s => s.isLocal);
+    const original = getRawForLocation(locationId); // 기존 정렬된 데이터
+    return [...local, ...original];
     
     return getRawForLocation(locationId);
   };
 
   // 이번주 곡 가져오기 (로컬 데이터가 있으면 최신 로컬 데이터를 우선)
   const getThisWeekSong = (locationId) => {
-    if (locationId === 'kolon') {
-      const local = localSongs.find(s => s.location === 'kolon' || s.location === 'both');
-      if (local) return local;
-    }
+    const local = localSongs.find(s => s.location === locationId || s.location === 'both');
+    if (local) return local;
     return getRawThisWeek(locationId);
   };
 

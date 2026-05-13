@@ -33,7 +33,7 @@ import AdminPage from './pages/AdminPage';
 import ReloadPrompt from './ReloadPrompt';
 
 // 🚀 State Reset (충돌 방지 버전 관리)
-const APP_VERSION = 'v1.2';
+const APP_VERSION = 'v1.3';
 const currentVersion = localStorage.getItem('app_version');
 if (currentVersion !== APP_VERSION) {
   localStorage.clear(); // 기존 데이터 모두 초기화

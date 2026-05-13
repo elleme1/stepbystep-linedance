@@ -112,32 +112,6 @@ export default function HomePage() {
                 </div>
             </section>
 
-            {/* 하단 퀵 메뉴 이동 */}
-
-            {/* 3. 🚀 하단 퀵 메뉴 */}
-            <section className="quick-actions">
-                <h2 className="quick-title">무엇을 찾으시나요?</h2>
-                <div className="action-grid">
-
-                    <button className="action-btn" onClick={() => navigate('/community')}>
-                        <span className="btn-icon">💬</span>
-                        <div className="btn-text">
-                            <strong>회원 소통방</strong>
-                            <span>질문하고 수다떨기</span>
-                        </div>
-                    </button>
-
-                    <button className="action-btn" onClick={() => navigate('/search')}>
-                        <span className="btn-icon">🔍</span>
-                        <div className="btn-text">
-                            <strong>지난 안무 검색</strong>
-                            <span>안무·음악 찾기</span>
-                        </div>
-                    </button>
-
-                </div>
-            </section>
-
             {/* ⚙️ 관리자 버튼 (푸터) - 코오롱 & 중리 모두 표시 */}
             <footer className="home-footer">
                 <button 

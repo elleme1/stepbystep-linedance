@@ -18,7 +18,6 @@ import Layout from './components/Layout';
 
 // 📄 메인 4-Tab 화면들
 import HomePage from './pages/HomePage';
-import SchedulePage from './pages/SchedulePage';
 import VideoPage from './pages/VideoPage';
 import TheoryPage from './pages/TheoryPage';
 import RecommendPage from './pages/RecommendPage';
@@ -33,7 +32,7 @@ import AdminPage from './pages/AdminPage';
 import ReloadPrompt from './ReloadPrompt';
 
 // 🚀 State Reset (충돌 방지 버전 관리)
-const APP_VERSION = 'v1.3';
+const APP_VERSION = 'v1.4';
 const currentVersion = localStorage.getItem('app_version');
 if (currentVersion !== APP_VERSION) {
   localStorage.clear(); // 기존 데이터 모두 초기화
@@ -62,7 +61,6 @@ function AppContent() {
 
             {/* 메인 4-Tab 경로 */}
             <Route path="/" element={<HomePage />} />
-            <Route path="/schedule" element={<SchedulePage />} />
             <Route path="/video" element={<VideoPage />} />
             <Route path="/theory" element={<TheoryPage />} />
             <Route path="/recommend" element={<RecommendPage />} />

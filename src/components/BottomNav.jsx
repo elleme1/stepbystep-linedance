@@ -5,7 +5,6 @@ import './BottomNav.css';
 export default function BottomNav() {
     const navItems = [
         { path: '/', icon: '🏠', label: '홈' },
-        { path: '/schedule', icon: '📅', label: '일정' },
         { path: '/video', icon: '🎬', label: '수업영상' },
         { path: '/theory', icon: '📘', label: '자이브' },
         { path: '/recommend', icon: '⭐', label: '영상모음' },

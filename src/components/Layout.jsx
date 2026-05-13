@@ -11,7 +11,7 @@ export default function Layout() {
     const { theme, toggleTheme } = useTheme();
     const { selectedLocation, setSelectedLocation, locationInfo } = useLocationCtx();
 
-    const isMainTab = path === '/' || path === '/schedule' || path === '/video' || path === '/theory';
+    const isMainTab = path === '/' || path === '/video' || path === '/theory' || path === '/recommend';
     const isOurSubPage = path.startsWith('/community') || path.startsWith('/search');
 
     // 📍 장소 전환 함수 (코오롱 ↔ 중리 행정복지센터 토글)
@@ -35,7 +35,6 @@ export default function Layout() {
 
     const getHeaderTitle = () => {
         if (path === '/') return '구향회 스텝바이스텝 💃';
-        if (path === '/schedule') return '수업 일정';
         if (path === '/video') return '수업영상 보관함';
         if (path === '/theory') return '자이브';
         if (path.startsWith('/community')) return '회원 소통방';

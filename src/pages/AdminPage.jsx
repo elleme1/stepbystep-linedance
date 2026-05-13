@@ -85,7 +85,8 @@ const AdminPage = () => {
 
     setIsSaving(true);
     try {
-      addSong(songInfo); // 실제 저장 호출
+      // 🛡️ CTO 비기: 기존 songInfo를 복사하되, location만 현재 탭의 진짜 위치로 강제 덮어쓰기!
+      addSong({ ...songInfo, location: locParam }); 
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
       setSongInfo({

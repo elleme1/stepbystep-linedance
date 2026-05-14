@@ -214,3 +214,67 @@
     color: #666;
     font-size: 0.9rem;
 }
+
+.session-video-log {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed #333;
+    display: flex;
+    justify-content: center;
+}
+
+.add-video-btn {
+    background: transparent;
+    border: 1px dashed #ff4785;
+    color: #ff4785;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.add-video-btn:hover {
+    background: rgba(255, 71, 133, 0.1);
+}
+
+.saved-video-container {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.saved-video-btn {
+    flex: 1;
+    background: #ff4785;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 20px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.saved-video-btn:hover {
+    background: #e63e75;
+}
+
+.edit-video-btn {
+    background: #333;
+    border: none;
+    color: #ccc;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.edit-video-btn:hover {
+    background: #444;
+}

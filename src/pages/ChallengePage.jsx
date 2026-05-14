@@ -6,7 +6,7 @@ import './ChallengePage.css';
 
 export default function ChallengePage() {
     const navigate = useNavigate();
-    const { completedTasks, toggleTask } = useChallenge();
+    const { completedTasks, toggleTask, getVideoLink, saveVideoLink } = useChallenge();
     const [expandedWeeks, setExpandedWeeks] = useState({ 1: true });
 
     const toggleWeek = (weekNum) => {
@@ -73,43 +73,77 @@ export default function ChallengePage() {
 
                         {expandedWeeks[week.week] && (
                             <div className="week-body">
-                                {week.sessions.map(session => (
-                                    <div key={session.session} className="session-card">
-                                        <h3 className="session-title">{session.session}회차: {session.title}</h3>
-                                        <ul className="task-list">
-                                            {session.tasks.map((task, idx) => {
-                                                const taskId = `${jivePlanData.id}_${week.week}_${session.session}_${idx}`;
-                                                const isCompleted = completedTasks[taskId];
-                                                
-                                                return (
-                                                    <li key={idx} className={`task-item ${isCompleted ? 'completed' : ''}`}>
-                                                        <div 
-                                                            className="task-checkbox" 
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                toggleTask(taskId);
+                                {week.sessions.map(session => {
+                                    const sessionId = `${jivePlanData.id}_${week.week}_${session.session}`;
+                                    const savedVideo = getVideoLink(sessionId);
+
+                                    return (
+                                        <div key={session.session} className="session-card">
+                                            <h3 className="session-title">{session.session}회차: {session.title}</h3>
+                                            <ul className="task-list">
+                                                {session.tasks.map((task, idx) => {
+                                                    const taskId = `${sessionId}_${idx}`;
+                                                    const isCompleted = completedTasks[taskId];
+                                                    
+                                                    return (
+                                                        <li key={idx} className={`task-item ${isCompleted ? 'completed' : ''}`}>
+                                                            <div 
+                                                                className="task-checkbox" 
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    toggleTask(taskId);
+                                                                }}
+                                                            >
+                                                                {isCompleted ? '✅' : '⬜️'}
+                                                            </div>
+                                                            <div 
+                                                                className="task-content"
+                                                                onClick={() => handleTaskClick(task, taskId)}
+                                                            >
+                                                                <span className={`task-type badge-${task.type}`}>
+                                                                    {task.type === 'song' ? '🎵 루틴' : task.type === 'theory' ? '📺 영상' : '🏃 연습'}
+                                                                </span>
+                                                                <span className="task-text">{task.title}</span>
+                                                                {(task.type === 'song' || task.type === 'theory') && (
+                                                                    <span className="task-link-icon">↗</span>
+                                                                )}
+                                                            </div>
+                                                        </li>
+                                                    );
+                                                })}
+                                            </ul>
+                                            
+                                            <div className="session-video-log">
+                                                {savedVideo ? (
+                                                    <div className="saved-video-container">
+                                                        <a href={savedVideo} target="_blank" rel="noreferrer" className="saved-video-btn">
+                                                            🎥 내 연습 영상 보기
+                                                        </a>
+                                                        <button 
+                                                            className="edit-video-btn"
+                                                            onClick={() => {
+                                                                const newUrl = window.prompt("수정할 영상 링크를 입력해주세요. (빈 칸으로 두면 삭제됩니다)", savedVideo);
+                                                                if (newUrl !== null) saveVideoLink(sessionId, newUrl.trim());
                                                             }}
                                                         >
-                                                            {isCompleted ? '✅' : '⬜️'}
-                                                        </div>
-                                                        <div 
-                                                            className="task-content"
-                                                            onClick={() => handleTaskClick(task, taskId)}
-                                                        >
-                                                            <span className={`task-type badge-${task.type}`}>
-                                                                {task.type === 'song' ? '🎵 루틴' : task.type === 'theory' ? '📺 영상' : '🏃 연습'}
-                                                            </span>
-                                                            <span className="task-text">{task.title}</span>
-                                                            {(task.type === 'song' || task.type === 'theory') && (
-                                                                <span className="task-link-icon">↗</span>
-                                                            )}
-                                                        </div>
-                                                    </li>
-                                                );
-                                            })}
-                                        </ul>
-                                    </div>
-                                ))}
+                                                            수정
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <button 
+                                                        className="add-video-btn"
+                                                        onClick={() => {
+                                                            const url = window.prompt("녹화하신 영상의 링크(구글드라이브, 유튜브 등)를 붙여넣어주세요.");
+                                                            if (url && url.trim()) saveVideoLink(sessionId, url.trim());
+                                                        }}
+                                                    >
+                                                        + 연습 영상 링크 등록
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         )}
                     </div>

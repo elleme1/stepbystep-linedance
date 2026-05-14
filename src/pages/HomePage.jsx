@@ -76,6 +76,16 @@ export default function HomePage() {
                     <span className="notice-badge">공지</span>
                     <p className="notice-text">오늘 배운 안무 영상이 <b>영상 보관함</b>에 업로드 되었습니다! 🎶</p>
                 </div>
+
+                {/* 🌟 4주 자이브 마스터 챌린지 배너 */}
+                <div className="challenge-banner" onClick={() => navigate('/challenge/jive')}>
+                    <div className="challenge-banner-content">
+                        <span className="challenge-badge">🔥 챌린지</span>
+                        <h3 className="challenge-banner-title">4주 자이브 마스터 플랜</h3>
+                        <p className="challenge-banner-desc">기본기부터 완곡까지 체계적으로 도전해 보세요!</p>
+                    </div>
+                    <div className="challenge-banner-icon">🎯</div>
+                </div>
             </header>
 
             {/* 2. 👑 VIP석 : 오늘 배운 안무 (초집중 구역) */}

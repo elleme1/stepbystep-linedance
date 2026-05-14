@@ -129,7 +129,18 @@ const AdminPage = () => {
             >중리 관리</button>
           </div>
           <form onSubmit={handleLogin}>
-            <input type="password" className="login-input" placeholder="비밀번호 입력" value={password} onChange={(e) => setPassword(e.target.value)} autoFocus />
+            <input 
+              type="password" 
+              className="login-input" 
+              placeholder="비밀번호 4자리 입력" 
+              value={password} 
+              onChange={(e) => {
+                const val = e.target.value;
+                setPassword(val);
+                if (val === '1234') setIsAuthenticated(true);
+              }} 
+              autoFocus 
+            />
             <button type="submit" className="login-btn">관리자 입장</button>
           </form>
         </div>

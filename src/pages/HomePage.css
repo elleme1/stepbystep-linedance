@@ -101,6 +101,58 @@
     /* 글씨가 길면 ... 으로 예쁘게 잘립니다 */
 }
 
+/* --- 🔥 챌린지 배너 --- */
+.challenge-banner {
+    background: linear-gradient(135deg, #1e0b2b 0%, #3a1c71 100%);
+    border: 1px solid rgba(139, 92, 246, 0.4);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 15px rgba(58, 28, 113, 0.3);
+}
+
+.challenge-banner:active {
+    transform: scale(0.98);
+}
+
+.challenge-banner-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.challenge-badge {
+    background-color: #ff4785;
+    color: white;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    align-self: flex-start;
+}
+
+.challenge-banner-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+    color: #fff;
+}
+
+.challenge-banner-desc {
+    margin: 0;
+    font-size: 14px;
+    color: #d8b4e2;
+}
+
+.challenge-banner-icon {
+    font-size: 32px;
+}
+
 /* --- ✨ 구향회 선생님 인사말 카드 --- */
 .greeting-card-section {
     margin-bottom: 32px;

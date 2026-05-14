@@ -8,6 +8,7 @@ import { PracticeProvider } from './context/PracticeContext';
 import { LocationProvider, useLocation } from './context/LocationContext';
 import { DeviceProvider } from './context/DeviceContext';
 import { DataProvider } from './context/DataContext';
+import { ChallengeProvider } from './context/ChallengeContext';
 
 // 🎬 스플래시 화면
 import SplashScreen from './components/SplashScreen';
@@ -28,6 +29,7 @@ import SearchPage from './pages/SearchPage';
 import VideoDetail from './pages/VideoDetail';
 import PlaylistPage from './pages/PlaylistPage';
 import AdminPage from './pages/AdminPage';
+import ChallengePage from './pages/ChallengePage';
 
 import ReloadPrompt from './ReloadPrompt';
 
@@ -35,9 +37,19 @@ import ReloadPrompt from './ReloadPrompt';
 const APP_VERSION = 'v1.5';
 const currentVersion = localStorage.getItem('app_version');
 if (currentVersion !== APP_VERSION) {
-  localStorage.clear(); // 기존 데이터 모두 초기화
+  // 사용자의 소중한 데이터(커스텀 곡, 즐겨찾기, 연습 기록 등)는 보존!
+  const customSongs = localStorage.getItem('custom_songs');
+  const favorites = localStorage.getItem('favorites');
+  const practiceData = localStorage.getItem('practiceData');
+  
+  localStorage.clear(); // 기존 설정 초기화
+  
+  if (customSongs) localStorage.setItem('custom_songs', customSongs);
+  if (favorites) localStorage.setItem('favorites', favorites);
+  if (practiceData) localStorage.setItem('practiceData', practiceData);
+  
   localStorage.setItem('app_version', APP_VERSION);
-  console.log(`[App] Version updated to ${APP_VERSION}. LocalStorage cleared.`);
+  console.log(`[App] Version updated to ${APP_VERSION}. Critical user data preserved.`);
 }
 
 function AppContent() {
@@ -70,6 +82,7 @@ function AppContent() {
             <Route path="/search" element={<SearchPage />} />
             <Route path="/video/:id" element={<VideoDetail />} />
             <Route path="/playlist" element={<PlaylistPage />} />
+            <Route path="/challenge/jive" element={<ChallengePage />} />
           </Route>
           
           {/* 👑 관리자 전용 경로 (Layout 외부) */}
@@ -87,9 +100,11 @@ export default function App() {
         <ThemeProvider>
           <FavoritesProvider>
             <PracticeProvider>
-              <LocationProvider>
-                <AppContent />
-              </LocationProvider>
+              <ChallengeProvider>
+                <LocationProvider>
+                  <AppContent />
+                </LocationProvider>
+              </ChallengeProvider>
             </PracticeProvider>
           </FavoritesProvider>
         </ThemeProvider>

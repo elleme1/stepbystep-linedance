@@ -1,15 +1,29 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import './HomePage.css';
 import { useData } from '../context/DataContext';
 import { useLocation } from '../context/LocationContext';
 import LocationBadge from '../components/LocationBadge';
 import InstallBanner from '../components/InstallBanner';
+
 export default function HomePage() {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const [greetingOpen, setGreetingOpen] = useState(false);
+    const [isVip, setIsVip] = useState(false);
+
     const { selectedLocation, locationInfo } = useLocation();
     const { getThisWeekSong } = useData();
+
+    // 🔑 URL에 ?vip=true가 포함되어 있으면 로컬스토리지에 저장하여 나만의 비밀 모드 활성화
+    useEffect(() => {
+        if (searchParams.get('vip') === 'true') {
+            localStorage.setItem('isVipUser', 'true');
+        }
+        if (localStorage.getItem('isVipUser') === 'true') {
+            setIsVip(true);
+        }
+    }, [searchParams]);
 
     // 📍 선택된 장소의 이번 주 수업곡을 자동으로 불러옵니다.
     const thisWeekSong = getThisWeekSong(selectedLocation);
@@ -77,15 +91,17 @@ export default function HomePage() {
                     <p className="notice-text">오늘 배운 안무 영상이 <b>영상 보관함</b>에 업로드 되었습니다! 🎶</p>
                 </div>
 
-                {/* 🌟 4주 자이브 마스터 챌린지 배너 */}
-                <div className="challenge-banner" onClick={() => navigate('/challenge/jive')}>
-                    <div className="challenge-banner-content">
-                        <span className="challenge-badge">🔥 챌린지</span>
-                        <h3 className="challenge-banner-title">4주 자이브 마스터 플랜</h3>
-                        <p className="challenge-banner-desc">기본기부터 완곡까지 체계적으로 도전해 보세요!</p>
+                {/* 🌟 4주 자이브 마스터 챌린지 배너 (나만의 비밀 모드일 때만 렌더링) */}
+                {isVip && (
+                    <div className="challenge-banner" onClick={() => navigate('/challenge/jive')}>
+                        <div className="challenge-banner-content">
+                            <span className="challenge-badge" style={{background: 'linear-gradient(135deg, #f43f5e 0%, #e11d48 100%)'}}>🔒 VIP 챌린지</span>
+                            <h3 className="challenge-banner-title">4주 자이브 마스터 플랜</h3>
+                            <p className="challenge-banner-desc">나만의 주 3회 맞춤형 오프라인 연계 연습 플랜!</p>
+                        </div>
+                        <div className="challenge-banner-icon">🎯</div>
                     </div>
-                    <div className="challenge-banner-icon">🎯</div>
-                </div>
+                )}
             </header>
 
             {/* 2. 👑 VIP석 : 오늘 배운 안무 (초집중 구역) */}

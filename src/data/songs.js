@@ -1332,8 +1332,10 @@ const songSchedule = {
   42: { date: '2026-04-02', location: 'both' },   // No.9
   10: { date: '2026-03-10', location: 'kolon' },   // Everyone Needs a Hero
 
+  // === 양쪽 지점 공통 ===
+  68: { date: '2026-05-15', location: 'both' },    // Red Dress Rebel (★ 이번주 수업곡 - 양쪽)
+
   // === 중리 행정복지센터 전용 (밴드 게시물 기반) ===
-  68: { date: '2026-05-13', location: 'sindun' },    // Red Dress Rebel (★ 이번주 수업곡 - 중리)
   66: { date: '2026-05-06', location: 'sindun' },    // Future Jive (이전 수업곡 - 중리)
   64: { date: '2026-04-29', location: 'sindun' },    // Old Time Rock and Roll (이전 수업곡)
   58: { date: '2026-04-23', location: 'sindun' },    // Delight (이전 수업곡)
@@ -1397,7 +1399,8 @@ const songSchedule = {
 
 // 📋 코오롱 스포렉스 영상 순서 (수업 순서대로)
 const kolonOrder = [
-  67,  // Big Diamond Ring Cha Cha (이번주 수업곡)
+  68,  // Red Dress Rebel (이번주 수업곡)
+  67,  // Big Diamond Ring Cha Cha (이전 수업곡)
   65,  // You Have to Go Crazy (이번주 수업곡)
   57,  // Accept (체념) (이전 수업곡)
   60,  // Moonbay Rumba (문베이 룸바)

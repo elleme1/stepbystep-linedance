@@ -11,7 +11,15 @@ export const DataProvider = ({ children }) => {
     const saved = localStorage.getItem('custom_songs');
     if (saved) {
       try {
-        setLocalSongs(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        // 누락된 메타데이터로 인한 UI 깨짐(undefined 표시) 방지
+        const sanitized = parsed.map(s => ({
+            ...s,
+            genre: s.genre || '장르 미상',
+            level: s.level || 2,
+            choreographer: s.choreographer || '안무가 미상'
+        }));
+        setLocalSongs(sanitized);
       } catch (e) {
         console.error('Failed to parse local songs:', e);
       }
@@ -26,14 +34,19 @@ export const DataProvider = ({ children }) => {
 
     const newSong = {
       id: nextId,
-      title: newSongData.title,
-      artist: newSongData.artist,
+      title: newSongData.title || '제목 없음',
+      artist: newSongData.artist || '가수 미상',
       youtubeId: newSongData.youtubeId,
       tutorialId: newSongData.tutorialId || "",
       thumbnail: `https://img.youtube.com/vi/${newSongData.youtubeId}/hqdefault.jpg`,
       location: newSongData.location || 'kolon', // 선택된 장소 적용
       addedDate: newSongData.date || new Date().toISOString().split('T')[0],
-      isLocal: true // 로컬에서 추가된 데이터임을 표시
+      isLocal: true, // 로컬에서 추가된 데이터임을 표시
+      genre: newSongData.genre || '장르 미상',
+      level: newSongData.level || 2,
+      choreographer: newSongData.choreographer || '안무가 미상',
+      steps: newSongData.steps || [],
+      tags: newSongData.tags || []
     };
 
     const updatedLocal = [newSong, ...localSongs];

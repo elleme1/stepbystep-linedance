@@ -1,7 +1,8 @@
 import React, { useRef, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import songs, { getSongsForLocation } from '../data/songs';
+import songs from '../data/songs';
 import { useLocation } from '../context/LocationContext';
+import { useData } from '../context/DataContext';
 import useVideoDetail from '../hooks/useVideoDetail';
 
 import YouTubePlayer from '../components/YouTubePlayer/YouTubePlayer';
@@ -22,7 +23,8 @@ export default function VideoDetail() {
 
     // ── 장소별 곡 데이터 ──
     const { selectedLocation } = useLocation();
-    const locationSongs = useMemo(() => getSongsForLocation(selectedLocation), [selectedLocation]);
+    const { getSongsForLocation } = useData();
+    const locationSongs = useMemo(() => getSongsForLocation(selectedLocation), [selectedLocation, getSongsForLocation]);
 
     const currentIndex = locationSongs.findIndex(song => String(song.id) === String(id));
     const videoData = currentIndex !== -1 ? locationSongs[currentIndex] : null;

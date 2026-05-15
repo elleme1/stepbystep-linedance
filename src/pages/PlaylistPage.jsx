@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import songs, { getSongsForLocation } from '../data/songs';
+import songs from '../data/songs';
 import { levelStars } from '../data/constants';
 import { useLocation } from '../context/LocationContext';
+import { useData } from '../context/DataContext';
 import useYouTubePlayer from '../components/YouTubePlayer/useYouTubePlayer';
 
 export default function PlaylistPage() {
@@ -35,6 +36,7 @@ export default function PlaylistPage() {
     const wantPlayRef = useRef(false);
 
     const { selectedLocation } = useLocation();
+    const { getSongsForLocation } = useData();
     const speeds = [0.5, 0.75, 1, 1.25];
 
     // 📍 장소별 곡 필터링

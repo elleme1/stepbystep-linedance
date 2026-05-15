@@ -71,15 +71,36 @@ const AdminPage = () => {
     }
   };
 
-  const handleTutorialUrlChange = (url) => {
+  const handleTutorialUrlChange = async (url) => {
     const id = getYoutubeId(url);
     setSongInfo(prev => ({ ...prev, tutorialUrl: url, tutorialId: id || '' }));
+
+    // 메인 곡이 없거나 메타데이터가 안 불렸을 때 튜토리얼에서라도 메타데이터를 가져옴
+    if (id && !songInfo.youtubeId && !songInfo.title) {
+      setLoadingMetadata(true);
+      try {
+        const response = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${id}`);
+        const data = await response.json();
+        if (data.title) {
+          const titleParts = data.title.split('-').map(p => p.trim());
+          setSongInfo(prev => ({
+            ...prev,
+            title: prev.title || (titleParts.length > 1 ? titleParts[1] : titleParts[0]),
+            artist: prev.artist === 'Various' ? (titleParts.length > 1 ? titleParts[0] : 'Various') : prev.artist
+          }));
+        }
+      } catch (err) {
+        console.error('메타데이터 조회 실패:', err);
+      } finally {
+        setLoadingMetadata(false);
+      }
+    }
   };
 
   const handleAddSong = (e) => {
     e.preventDefault();
-    if (!songInfo.youtubeId) {
-      alert('메인 수업곡 주소를 입력해주세요.');
+    if (!songInfo.youtubeId && !songInfo.tutorialId) {
+      alert('메인 곡 또는 튜토리얼 중 하나 이상은 입력해주세요.');
       return;
     }
 
@@ -226,7 +247,7 @@ const AdminPage = () => {
               />
             </div>
 
-            {(songInfo.youtubeId || loadingMetadata) && (
+            {(songInfo.youtubeId || songInfo.tutorialId || loadingMetadata) && (
               <div className="auto-preview">
                 {loadingMetadata ? (
                   <div style={{textAlign:'center', color:'#d4a853', fontSize:'.85rem'}}>곡 정보를 불러오는 중...</div>
@@ -262,20 +283,19 @@ const AdminPage = () => {
               </div>
             )}
 
-            <div className="field-group" style={{opacity: songInfo.youtubeId ? 1 : 0.5}}>
-              <label className="field-label"><span className="badge">2</span> 오늘 수업 튜토리얼 (선택)</label>
+            <div className="field-group">
+              <label className="field-label"><span className="badge">2</span> 오늘 수업 튜토리얼 (독립/선택)</label>
               <input 
                 type="text" 
                 className="input-box"
                 placeholder="유튜브 주소 붙여넣기" 
                 value={songInfo.tutorialUrl}
                 onChange={(e) => handleTutorialUrlChange(e.target.value)}
-                disabled={!songInfo.youtubeId}
               />
               {songInfo.tutorialId && <div style={{fontSize:'.8rem', color:'#10b981', marginTop:'10px', fontWeight:600}}>✅ 튜토리얼 영상이 포함되었습니다.</div>}
             </div>
 
-            <button className="submit-button" disabled={isSaving || !songInfo.youtubeId || loadingMetadata}>
+            <button className="submit-button" disabled={isSaving || (!songInfo.youtubeId && !songInfo.tutorialId) || loadingMetadata}>
               {isSaving ? <><div className="spinner"></div> 저장 중...</> : '오늘의 수업 업데이트 완료'}
             </button>
           </form>

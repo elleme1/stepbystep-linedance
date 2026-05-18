@@ -49,7 +49,7 @@ export default function useVideoDetail({ playerRef, mainVideoId, tutorialVideoId
     // viewMode에 따른 현재 영상 ID 계산
     const currentVideoId = viewMode === 'tutorial' && hasTutorial ? tutorialVideoId : mainVideoId;
 
-    const speeds = [0.25, 0.5, 0.75, 1, 1.25, 1.5];
+    const speeds = [0.25, 0.5, 0.75, 0.8, 0.9, 1, 1.25, 1.5];
     const qualities = ['small', 'default', 'medium', 'large', 'hd720', 'hd1080'];
 
     // ===========================

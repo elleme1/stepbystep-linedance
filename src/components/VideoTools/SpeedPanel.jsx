@@ -10,6 +10,8 @@ export default function SpeedPanel({ speed, speeds, onSpeedChange, quality, qual
         if (s === 0.25) return '¼×';
         if (s === 0.5) return '½×';
         if (s === 0.75) return '¾×';
+        if (s === 0.8) return '⅘×';
+        if (s === 0.9) return '9/10×';
         return `${s}×`;
     };
 

@@ -37,7 +37,7 @@ export default function PlaylistPage() {
 
     const { selectedLocation } = useLocation();
     const { getSongsForLocation } = useData();
-    const speeds = [0.5, 0.75, 1, 1.25];
+    const speeds = [0.5, 0.75, 0.8, 0.9, 1, 1.25];
 
     // 📍 장소별 곡 필터링
     const isThisWeekForLocation = (song) => {
@@ -348,11 +348,18 @@ export default function PlaylistPage() {
 
                 <div className="playlist-extra-controls">
                     <div className="playlist-speed-group">
-                        {speeds.map((s) => (
-                            <button key={s} className={`speed-btn ${speed === s ? 'active' : ''}`} onClick={() => handleSpeedChange(s)}>
-                                {s}x
-                            </button>
-                        ))}
+                        {speeds.map((s) => {
+                            let label = `${s}x`;
+                            if (s === 0.5) label = '½×';
+                            if (s === 0.75) label = '¾×';
+                            if (s === 0.8) label = '⅘×';
+                            if (s === 0.9) label = '9/10×';
+                            return (
+                                <button key={s} className={`speed-btn ${speed === s ? 'active' : ''}`} onClick={() => handleSpeedChange(s)}>
+                                    {label}
+                                </button>
+                            );
+                        })}
                     </div>
                     <button className={`mirror-btn ${isMirror ? 'active' : ''}`} onClick={() => setIsMirror(!isMirror)}>
                         🪞 거울

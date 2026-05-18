@@ -8,12 +8,15 @@ import { useData } from '../context/DataContext';
  */
 const AdminPage = () => {
   const navigate = useNavigate();
-  const { addSong } = useData();
+  const { addSong, removeSong, updateSong, localSongs, allSongs } = useData();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
   const [searchParams] = useSearchParams();
+  const [editingSongId, setEditingSongId] = useState(null);
+  const [editSongUrl, setEditSongUrl] = useState('');
   const locParam = searchParams.get('loc') || 'kolon';
   const locationName = locParam === 'kolon' ? '코오롱 스포렉스' : '중리 행정복지센터';
 
@@ -108,6 +111,7 @@ const AdminPage = () => {
     try {
       // 🛡️ CTO 비기: 기존 songInfo를 복사하되, location만 현재 탭의 진짜 위치로 강제 덮어쓰기!
       addSong({ ...songInfo, location: locParam }); 
+      setToastMsg('✅ 오늘의 수업곡이 성공적으로 등록되었습니다!');
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
       setSongInfo({
@@ -301,13 +305,83 @@ const AdminPage = () => {
           </form>
         </div>
 
-        <div style={{textAlign:'center', fontSize:'.85rem', color:'#64748b', lineHeight:1.6}}>
+        <div style={{textAlign:'center', fontSize:'.85rem', color:'#64748b', lineHeight:1.6, marginBottom:'30px'}}>
           앱의 메인 화면에 오늘 날짜로 즉시 반영됩니다.<br/>
           곡 정보는 유튜브 영상 제목을 기반으로 자동 추출됩니다.
         </div>
+
+        {/* 📋 전체 곡 관리 섹션 — 항상 표시 */}
+        {(() => {
+          const locSongs = allSongs.filter(s => s.location === locParam || s.location === 'both');
+          return (
+            <div className="form-card">
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#e8c56d', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                📋 {locationName} 전체 곡 목록 <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 400 }}>({locSongs.length}곡)</span>
+              </h3>
+              {locSongs.length === 0 ? (
+                <div style={{ textAlign: 'center', color: '#64748b', padding: '20px', fontSize: '0.9rem' }}>등록된 곡이 없습니다.</div>
+              ) : locSongs.map(song => {
+                const isLocal = !!song.isLocal;
+                return (
+                  <div key={song.id} style={{ background: 'rgba(0,0,0,0.2)', borderRadius: '14px', padding: '14px', marginBottom: '10px', border: isLocal ? '1px solid rgba(212,168,83,0.15)' : '1px solid rgba(255,255,255,0.05)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px' }}>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <span style={{ fontWeight: 700, fontSize: '0.95rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{song.title}</span>
+                          {isLocal && (
+                            <span style={{ fontSize: '0.65rem', padding: '2px 6px', borderRadius: '6px', background: 'rgba(212,168,83,0.2)', color: '#e8c56d', fontWeight: 700, flexShrink: 0 }}>관리자</span>
+                          )}
+                        </div>
+                        <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '2px' }}>{song.artist}{song.addedDate ? ` · ${song.addedDate}` : ''}</div>
+                      </div>
+                      <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
+                        <button
+                          onClick={() => { setEditingSongId(editingSongId === song.id ? null : song.id); setEditSongUrl(''); }}
+                          style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(212,168,83,0.3)', background: editingSongId === song.id ? 'rgba(212,168,83,0.2)' : 'transparent', color: '#e8c56d', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}
+                        >교체</button>
+                        <button
+                          onClick={() => { if (confirm(`"${song.title}"을(를) 삭제하시겠습니까?`)) { removeSong(song.id); setToastMsg('🗑️ 곡이 삭제되었습니다.'); setShowToast(true); setTimeout(() => setShowToast(false), 3000); } }}
+                          style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}
+                        >삭제</button>
+                      </div>
+                    </div>
+                    {editingSongId === song.id && (
+                      <div style={{ marginTop: '10px', display: 'flex', gap: '8px' }}>
+                        <input
+                          type="text" className="input-box"
+                          placeholder="새 유튜브 URL 붙여넣기"
+                          value={editSongUrl}
+                          onChange={(e) => setEditSongUrl(e.target.value)}
+                          style={{ flex: 1, marginBottom: 0, padding: '10px', fontSize: '0.9rem' }}
+                          autoFocus
+                        />
+                        <button
+                          onClick={async () => {
+                            const newId = getYoutubeId(editSongUrl);
+                            if (!newId) { alert('유효한 유튜브 링크를 입력해주세요.'); return; }
+                            let newTitle = song.title;
+                            try {
+                              const res = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${newId}`);
+                              const data = await res.json();
+                              if (data.title) { const parts = data.title.split('-').map(p => p.trim()); newTitle = parts.length > 1 ? parts[1] : parts[0]; }
+                            } catch (e) {}
+                            updateSong(song.id, { youtubeId: newId, title: newTitle });
+                            setEditingSongId(null); setEditSongUrl('');
+                            setToastMsg(`✅ "${newTitle}"(으)로 교체되었습니다.`); setShowToast(true); setTimeout(() => setShowToast(false), 3000);
+                          }}
+                          style={{ padding: '10px 16px', borderRadius: '10px', border: 'none', background: 'linear-gradient(135deg, #c9952e, #e8c56d)', color: '#0b1120', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                        >확인</button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })()}
       </div>
 
-      {showToast && <div className="toast-msg">✅ 오늘의 수업곡이 성공적으로 등록되었습니다!</div>}
+      {showToast && <div className="toast-msg">{toastMsg}</div>}
     </div>
   );
 };

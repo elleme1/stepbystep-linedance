@@ -1,0 +1,7 @@
+{
+  "rules": {
+    ".read": true,
+    ".write": true,
+    "_comment": "TEMPORARY: open write. 곡 동기화 동작 검증용. Phase 5에서 Firebase Auth(이메일/비번) 도입 후 '.write': 'auth != null && root.child(\"admins/\" + auth.uid).val() === true' 로 강화 예정."
+  }
+}

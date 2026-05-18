@@ -33,9 +33,11 @@ const AdminPage = () => {
     location: locParam
   });
 
+  const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
+
   const handleLogin = (e) => {
     e.preventDefault();
-    if (password === '1234') {
+    if (ADMIN_PASSWORD && password === ADMIN_PASSWORD) {
       setIsAuthenticated(true);
     } else {
       alert('비밀번호가 올바르지 않습니다.');
@@ -162,8 +164,8 @@ const AdminPage = () => {
               onChange={(e) => {
                 const val = e.target.value;
                 setPassword(val);
-                if (val === '1234') setIsAuthenticated(true);
-              }} 
+                if (ADMIN_PASSWORD && val === ADMIN_PASSWORD) setIsAuthenticated(true);
+              }}
               autoFocus 
             />
             <button type="submit" className="login-btn">관리자 입장</button>

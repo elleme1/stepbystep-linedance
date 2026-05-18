@@ -1,29 +1,8 @@
 // 라인댄스 안무곡 데이터
 const rawSongs = [
   {
-    id: 69,
-    title: "Red Dress Rebel (레드 드레스 레블) - 코오롱",
-    artist: "DJTEXX",
-    choreographer: "Rob Fowler",
-    level: 2,
-    bpm: 120,
-    walls: 4,
-    counts: 32,
-    genre: "팝",
-    youtubeId: "vfU0eM1HwU4",
-    tutorialId: "a-MhInecblM",
-    thumbnail: "https://img.youtube.com/vi/vfU0eM1HwU4/hqdefault.jpg",
-    mp3Url: "",
-    steps: [
-      { count: "1-8", move: "워크 & 킥, 코스터 스텝 (Walk & Kick, Coaster Step)", desc: "앞으로 워크 2보 → 오른발 킥 → 뒤로 스텝 → 코스터 스텝" },
-      { count: "9-16", move: "피벗 턴 & 크로스 (Pivot Turn & Cross)", desc: "앞으로 스텝 → 1/4 피벗 턴 → 오른발 크로스" },
-      { count: "17-24", move: "사이드 록 & 위브 (Side Rock & Weave)", desc: "사이드 록 → 리커버 → 크로스 위브 스텝" },
-      { count: "25-32", move: "셔플 & 록 스텝 (Shuffle & Rock Step)", desc: "셔플 스텝 → 앞 록 → 리커버" }
-    ]
-  },
-  {
     id: 68,
-    title: "Red Dress Rebel (레드 드레스 레블) - 중리",
+    title: "Red Dress Rebel (레드 드레스 레블)",
     artist: "DJTEXX",
     choreographer: "Rob Fowler",
     level: 2,
@@ -31,9 +10,9 @@ const rawSongs = [
     walls: 4,
     counts: 32,
     genre: "팝",
-    youtubeId: "VocZXeCz8LQ",
+    youtubeId: "SLDD7ydRKQE",
     tutorialId: "a-MhInecblM",
-    thumbnail: "https://img.youtube.com/vi/VocZXeCz8LQ/hqdefault.jpg",
+    thumbnail: "https://img.youtube.com/vi/SLDD7ydRKQE/hqdefault.jpg",
     mp3Url: "",
     steps: [
       { count: "1-8", move: "워크 & 킥, 코스터 스텝 (Walk & Kick, Coaster Step)", desc: "앞으로 워크 2보 → 오른발 킥 → 뒤로 스텝 → 코스터 스텝" },
@@ -1354,8 +1333,7 @@ const songSchedule = {
   10: { date: '2026-03-10', location: 'kolon' },   // Everyone Needs a Hero
 
   // === 양쪽 지점 공통 ===
-  69: { date: '2026-05-15', location: 'kolon' },   // Red Dress Rebel (★ 이번주 수업곡 - 코오롱)
-  68: { date: '2026-05-15', location: 'sindun' },  // Red Dress Rebel (★ 이번주 수업곡 - 중리)
+  68: { date: '2026-05-15', location: 'both' },    // Red Dress Rebel (★ 이번주 수업곡 - 양쪽)
 
   // === 중리 행정복지센터 전용 (밴드 게시물 기반) ===
   66: { date: '2026-05-06', location: 'sindun' },    // Future Jive (이전 수업곡 - 중리)
@@ -1421,7 +1399,7 @@ const songSchedule = {
 
 // 📋 코오롱 스포렉스 영상 순서 (수업 순서대로)
 const kolonOrder = [
-  69,  // Red Dress Rebel (이번주 수업곡)
+  68,  // Red Dress Rebel (이번주 수업곡)
   67,  // Big Diamond Ring Cha Cha (이전 수업곡)
   65,  // You Have to Go Crazy (이번주 수업곡)
   57,  // Accept (체념) (이전 수업곡)

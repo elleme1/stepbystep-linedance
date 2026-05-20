@@ -38,6 +38,29 @@ const AdminPage = () => {
 
   const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
 
+  // 🎵 댄스 큐 앱(dance-instructor-player) 동기화 — 메인곡 업로드/수정 시 호출
+  // role 매핑: 우리 'kolon' ↔ 큐앱 'kolong', 우리 'sindun'(중리) ↔ 큐앱 'jungri'
+  const syncMainTrackToCueApp = async ({ location, youtubeId, title }) => {
+    const apiUrl = import.meta.env.VITE_DANCE_CUE_API;
+    const token = import.meta.env.VITE_DANCE_CUE_TOKEN;
+    if (!apiUrl || !token || !youtubeId) return; // 환경변수 없거나 URL 비면 조용히 스킵
+    const role = location === 'kolon' ? 'kolong' : 'jungri';
+    const url = `https://www.youtube.com/watch?v=${youtubeId}`;
+    try {
+      const res = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ role, url, name: title || '' }),
+      });
+      if (!res.ok) {
+        console.warn('[DanceCue] 큐앱 동기화 실패:', res.status, await res.text());
+      }
+    } catch (err) {
+      // 큐앱 다운/네트워크 문제로 어드민 흐름이 막히면 안 되므로 경고만 남김
+      console.warn('[DanceCue] 큐앱 동기화 네트워크 오류:', err);
+    }
+  };
+
   const handleLogin = (e) => {
     e.preventDefault();
     if (ADMIN_PASSWORD && password === ADMIN_PASSWORD) {
@@ -118,6 +141,8 @@ const AdminPage = () => {
     try {
       // 🛡️ CTO 비기: 기존 songInfo를 복사하되, location만 현재 탭의 진짜 위치로 강제 덮어쓰기!
       addSong({ ...songInfo, location: locParam });
+      // 🎵 댄스 큐 앱에도 메인곡 동기화 (fire-and-forget, 실패해도 어드민 흐름은 진행)
+      syncMainTrackToCueApp({ location: locParam, youtubeId: songInfo.youtubeId, title: songInfo.title });
       setToastMsg('✅ 오늘의 수업곡이 성공적으로 등록되었습니다!');
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
@@ -458,6 +483,15 @@ const AdminPage = () => {
 
                               try {
                                 await updateSong(song.id, updates);
+                                // 🎵 메인 영상(youtubeId) 또는 제목이 바뀌었으면 댄스 큐 앱에도 반영
+                                // 곡 자체가 'both'일 수 있으므로 현재 어드민 탭(locParam) 기준으로 role 결정
+                                if (updates.youtubeId || updates.title) {
+                                  syncMainTrackToCueApp({
+                                    location: locParam,
+                                    youtubeId: updates.youtubeId || song.youtubeId,
+                                    title: updates.title || song.title,
+                                  });
+                                }
                                 setEditingSongId(null); setEditSongUrl(''); setEditSongTitle(''); setEditSongArtist(''); setEditSongTutorialUrl('');
                                 setToastMsg('✅ 곡 정보가 수정되었습니다.'); setShowToast(true); setTimeout(() => setShowToast(false), 3000);
                               } catch (err) {

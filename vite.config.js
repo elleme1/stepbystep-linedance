@@ -6,7 +6,10 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'prompt',
+      // 'prompt' 모드는 사용자 클릭 전까지 옛 번들이 살아남아 새 기능이 안 보이는 사례가 자주 발생.
+      // 'autoUpdate' + skipWaiting/clientsClaim/cleanupOutdatedCaches 로 다음 로드 시 무조건 새 SW가
+      // 활성화되고 옛 캐시가 정리되도록 한다.
+      registerType: 'autoUpdate',
       injectRegister: 'auto',
       includeAssets: ['favicon.png', 'logo-192.png'],
       manifest: {
@@ -23,7 +26,10 @@ export default defineConfig({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,png,svg,jpg}']
+        globPatterns: ['**/*.{js,css,html,png,svg,jpg}'],
+        skipWaiting: true,
+        clientsClaim: true,
+        cleanupOutdatedCaches: true,
       }
     })
   ],

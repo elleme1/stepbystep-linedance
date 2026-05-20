@@ -40,10 +40,12 @@ const AdminPage = () => {
 
   // 🎵 댄스 큐 앱(dance-instructor-player) 동기화 — 메인곡 업로드/수정 시 호출
   // role 매핑: 우리 'kolon' ↔ 큐앱 'kolong', 우리 'sindun'(중리) ↔ 큐앱 'jungri'
+  // 반환: { ok: boolean, reason: string } — 호출자가 toast로 사용자에게 결과 표시
   const syncMainTrackToCueApp = async ({ location, youtubeId, title }) => {
     const apiUrl = import.meta.env.VITE_DANCE_CUE_API;
     const token = import.meta.env.VITE_DANCE_CUE_TOKEN;
-    if (!apiUrl || !token || !youtubeId) return; // 환경변수 없거나 URL 비면 조용히 스킵
+    if (!apiUrl || !token) return { ok: false, reason: 'env-missing' };
+    if (!youtubeId) return { ok: false, reason: 'no-youtube-id' };
     const role = location === 'kolon' ? 'kolong' : 'jungri';
     const url = `https://www.youtube.com/watch?v=${youtubeId}`;
     try {
@@ -53,11 +55,15 @@ const AdminPage = () => {
         body: JSON.stringify({ role, url, name: title || '' }),
       });
       if (!res.ok) {
-        console.warn('[DanceCue] 큐앱 동기화 실패:', res.status, await res.text());
+        const text = await res.text();
+        console.warn('[DanceCue] 큐앱 동기화 실패:', res.status, text);
+        return { ok: false, reason: `http-${res.status}` };
       }
+      return { ok: true, reason: 'ok' };
     } catch (err) {
       // 큐앱 다운/네트워크 문제로 어드민 흐름이 막히면 안 되므로 경고만 남김
       console.warn('[DanceCue] 큐앱 동기화 네트워크 오류:', err);
+      return { ok: false, reason: 'network-error' };
     }
   };
 
@@ -128,7 +134,7 @@ const AdminPage = () => {
     }
   };
 
-  const handleAddSong = (e) => {
+  const handleAddSong = async (e) => {
     e.preventDefault();
     // 메인 곡 URL은 필수. 튜토리얼은 메인 곡과 함께 등록되는 보조 영상이므로
     // 단독으로는 곡 데이터를 채울 수 없음 (썸네일/제목/메인영상 모두 메인 URL 기준).
@@ -141,11 +147,13 @@ const AdminPage = () => {
     try {
       // 🛡️ CTO 비기: 기존 songInfo를 복사하되, location만 현재 탭의 진짜 위치로 강제 덮어쓰기!
       addSong({ ...songInfo, location: locParam });
-      // 🎵 댄스 큐 앱에도 메인곡 동기화 (fire-and-forget, 실패해도 어드민 흐름은 진행)
-      syncMainTrackToCueApp({ location: locParam, youtubeId: songInfo.youtubeId, title: songInfo.title });
-      setToastMsg('✅ 오늘의 수업곡이 성공적으로 등록되었습니다!');
+      // 🎵 댄스 큐 앱에도 메인곡 동기화 — 결과를 토스트에 반영해 사용자가 도달 여부 확인
+      const cue = await syncMainTrackToCueApp({ location: locParam, youtubeId: songInfo.youtubeId, title: songInfo.title });
+      setToastMsg(cue.ok
+        ? '✅ 등록 완료 + 댄스 큐 앱에 동기화됨'
+        : `✅ 등록 완료 (⚠️ 큐 앱 동기화 실패: ${cue.reason})`);
       setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
+      setTimeout(() => setShowToast(false), 4000);
       setSongInfo({
         title: '', artist: 'Various', youtubeUrl: '', youtubeId: '',
         tutorialUrl: '', tutorialId: '', date: new Date().toISOString().split('T')[0],
@@ -485,15 +493,17 @@ const AdminPage = () => {
                                 await updateSong(song.id, updates);
                                 // 🎵 메인 영상(youtubeId) 또는 제목이 바뀌었으면 댄스 큐 앱에도 반영
                                 // 곡 자체가 'both'일 수 있으므로 현재 어드민 탭(locParam) 기준으로 role 결정
+                                let cueResultMsg = '';
                                 if (updates.youtubeId || updates.title) {
-                                  syncMainTrackToCueApp({
+                                  const cue = await syncMainTrackToCueApp({
                                     location: locParam,
                                     youtubeId: updates.youtubeId || song.youtubeId,
                                     title: updates.title || song.title,
                                   });
+                                  cueResultMsg = cue.ok ? ' · 큐 앱 동기화됨' : ` · ⚠️ 큐 앱 실패(${cue.reason})`;
                                 }
                                 setEditingSongId(null); setEditSongUrl(''); setEditSongTitle(''); setEditSongArtist(''); setEditSongTutorialUrl('');
-                                setToastMsg('✅ 곡 정보가 수정되었습니다.'); setShowToast(true); setTimeout(() => setShowToast(false), 3000);
+                                setToastMsg('✅ 곡 정보가 수정되었습니다.' + cueResultMsg); setShowToast(true); setTimeout(() => setShowToast(false), 4000);
                               } catch (err) {
                                 alert('수정 중 오류가 발생했습니다.');
                               }

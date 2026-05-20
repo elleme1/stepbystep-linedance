@@ -17,6 +17,8 @@ const AdminPage = () => {
   const [searchParams] = useSearchParams();
   const [editingSongId, setEditingSongId] = useState(null);
   const [editSongUrl, setEditSongUrl] = useState('');
+  const [editSongTitle, setEditSongTitle] = useState('');
+  const [editSongArtist, setEditSongArtist] = useState('');
   const locParam = searchParams.get('loc') || 'kolon';
   const locationName = locParam === 'kolon' ? '코오롱 스포렉스' : '중리 행정복지센터';
 
@@ -104,15 +106,17 @@ const AdminPage = () => {
 
   const handleAddSong = (e) => {
     e.preventDefault();
-    if (!songInfo.youtubeId && !songInfo.tutorialId) {
-      alert('메인 곡 또는 튜토리얼 중 하나 이상은 입력해주세요.');
+    // 메인 곡 URL은 필수. 튜토리얼은 메인 곡과 함께 등록되는 보조 영상이므로
+    // 단독으로는 곡 데이터를 채울 수 없음 (썸네일/제목/메인영상 모두 메인 URL 기준).
+    if (!songInfo.youtubeId) {
+      alert('메인 곡 URL을 먼저 입력해주세요.\n튜토리얼은 메인 곡에 첨부되는 보조 영상입니다.');
       return;
     }
 
     setIsSaving(true);
     try {
       // 🛡️ CTO 비기: 기존 songInfo를 복사하되, location만 현재 탭의 진짜 위치로 강제 덮어쓰기!
-      addSong({ ...songInfo, location: locParam }); 
+      addSong({ ...songInfo, location: locParam });
       setToastMsg('✅ 오늘의 수업곡이 성공적으로 등록되었습니다!');
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
@@ -179,7 +183,7 @@ const AdminPage = () => {
     <div className="admin-page-root dark-theme">
       <style>{`
         .admin-page-root { min-height: 100vh; background: #0b1120; color: #f1f0f0; font-family: 'Noto Sans KR', sans-serif; }
-        .admin-header { position: sticky; top: 0; z-index: 100; height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: rgba(11, 17, 32, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(212, 168, 83, 0.15); }
+        .admin-header { position: sticky; top: 0; z-index: 100; min-height: 64px; height: calc(64px + env(safe-area-inset-top)); box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; padding: env(safe-area-inset-top) 20px 0 20px; background: rgba(11, 17, 32, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(212, 168, 83, 0.15); }
         .admin-header h2 { font-size: 1rem; font-weight: 700; background: linear-gradient(135deg, #c9952e 0%, #e8c56d 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
         .logout-btn { font-size: 0.8rem; color: #94a3b8; padding: 6px 12px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; background: transparent; cursor: pointer; }
         .back-home-btn { font-size: 0.85rem; color: #e8c56d; padding: 6px 14px; border: 1px solid rgba(212, 168, 83, 0.3); border-radius: 8px; background: rgba(212, 168, 83, 0.1); cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 4px; transition: 0.3s; }
@@ -290,18 +294,22 @@ const AdminPage = () => {
             )}
 
             <div className="field-group">
-              <label className="field-label"><span className="badge">2</span> 오늘 수업 튜토리얼 (독립/선택)</label>
-              <input 
-                type="text" 
+              <label className="field-label" style={{ opacity: songInfo.youtubeId ? 1 : 0.4 }}>
+                <span className="badge">2</span> 오늘 수업 튜토리얼 (보조/선택)
+              </label>
+              <input
+                type="text"
                 className="input-box"
-                placeholder="유튜브 주소 붙여넣기" 
+                placeholder={songInfo.youtubeId ? "유튜브 주소 붙여넣기" : "메인 곡 URL을 먼저 입력해주세요"}
                 value={songInfo.tutorialUrl}
                 onChange={(e) => handleTutorialUrlChange(e.target.value)}
+                disabled={!songInfo.youtubeId}
+                style={{ opacity: songInfo.youtubeId ? 1 : 0.5, cursor: songInfo.youtubeId ? 'text' : 'not-allowed' }}
               />
               {songInfo.tutorialId && <div style={{fontSize:'.8rem', color:'#10b981', marginTop:'10px', fontWeight:600}}>✅ 튜토리얼 영상이 포함되었습니다.</div>}
             </div>
 
-            <button className="submit-button" disabled={isSaving || (!songInfo.youtubeId && !songInfo.tutorialId) || loadingMetadata}>
+            <button className="submit-button" disabled={isSaving || !songInfo.youtubeId || loadingMetadata}>
               {isSaving ? <><div className="spinner"></div> 저장 중...</> : '오늘의 수업 업데이트 완료'}
             </button>
           </form>
@@ -338,9 +346,15 @@ const AdminPage = () => {
                       </div>
                       <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
                         <button
-                          onClick={() => { setEditingSongId(editingSongId === song.id ? null : song.id); setEditSongUrl(''); }}
+                          onClick={() => {
+                            const opening = editingSongId !== song.id;
+                            setEditingSongId(opening ? song.id : null);
+                            setEditSongUrl('');
+                            setEditSongTitle(opening ? (song.title || '') : '');
+                            setEditSongArtist(opening ? (song.artist || '') : '');
+                          }}
                           style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(212,168,83,0.3)', background: editingSongId === song.id ? 'rgba(212,168,83,0.2)' : 'transparent', color: '#e8c56d', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}
-                        >교체</button>
+                        >수정</button>
                         <button
                           onClick={() => { if (confirm(`"${song.title}"을(를) 삭제하시겠습니까?`)) { removeSong(song.id); setToastMsg('🗑️ 곡이 삭제되었습니다.'); setShowToast(true); setTimeout(() => setShowToast(false), 3000); } }}
                           style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}
@@ -348,31 +362,73 @@ const AdminPage = () => {
                       </div>
                     </div>
                     {editingSongId === song.id && (
-                      <div style={{ marginTop: '10px', display: 'flex', gap: '8px' }}>
-                        <input
-                          type="text" className="input-box"
-                          placeholder="새 유튜브 URL 붙여넣기"
-                          value={editSongUrl}
-                          onChange={(e) => setEditSongUrl(e.target.value)}
-                          style={{ flex: 1, marginBottom: 0, padding: '10px', fontSize: '0.9rem' }}
-                          autoFocus
-                        />
-                        <button
-                          onClick={async () => {
-                            const newId = getYoutubeId(editSongUrl);
-                            if (!newId) { alert('유효한 유튜브 링크를 입력해주세요.'); return; }
-                            let newTitle = song.title;
-                            try {
-                              const res = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${newId}`);
-                              const data = await res.json();
-                              if (data.title) { const parts = data.title.split('-').map(p => p.trim()); newTitle = parts.length > 1 ? parts[1] : parts[0]; }
-                            } catch (e) {}
-                            updateSong(song.id, { youtubeId: newId, title: newTitle });
-                            setEditingSongId(null); setEditSongUrl('');
-                            setToastMsg(`✅ "${newTitle}"(으)로 교체되었습니다.`); setShowToast(true); setTimeout(() => setShowToast(false), 3000);
-                          }}
-                          style={{ padding: '10px 16px', borderRadius: '10px', border: 'none', background: 'linear-gradient(135deg, #c9952e, #e8c56d)', color: '#0b1120', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', whiteSpace: 'nowrap' }}
-                        >확인</button>
+                      <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div>
+                          <label style={{ fontSize: '0.75rem', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>제목</label>
+                          <input
+                            type="text" className="input-box"
+                            value={editSongTitle}
+                            onChange={(e) => setEditSongTitle(e.target.value)}
+                            style={{ marginBottom: 0, padding: '10px', fontSize: '0.9rem' }}
+                            autoFocus
+                          />
+                        </div>
+                        <div>
+                          <label style={{ fontSize: '0.75rem', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>가수</label>
+                          <input
+                            type="text" className="input-box"
+                            value={editSongArtist}
+                            onChange={(e) => setEditSongArtist(e.target.value)}
+                            style={{ marginBottom: 0, padding: '10px', fontSize: '0.9rem' }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ fontSize: '0.75rem', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>유튜브 URL (변경 시에만 입력)</label>
+                          <input
+                            type="text" className="input-box"
+                            placeholder="비워두면 영상은 그대로 유지"
+                            value={editSongUrl}
+                            onChange={(e) => setEditSongUrl(e.target.value)}
+                            style={{ marginBottom: 0, padding: '10px', fontSize: '0.9rem' }}
+                          />
+                        </div>
+                        <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+                          <button
+                            onClick={() => { setEditingSongId(null); setEditSongUrl(''); setEditSongTitle(''); setEditSongArtist(''); }}
+                            style={{ padding: '10px 16px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#94a3b8', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}
+                          >취소</button>
+                          <button
+                            onClick={async () => {
+                              const trimmedTitle = editSongTitle.trim();
+                              const trimmedArtist = editSongArtist.trim();
+                              if (!trimmedTitle) { alert('제목을 입력해주세요.'); return; }
+
+                              const updates = {};
+                              if (trimmedTitle !== song.title) updates.title = trimmedTitle;
+                              if (trimmedArtist !== (song.artist || '')) updates.artist = trimmedArtist;
+
+                              if (editSongUrl.trim()) {
+                                const newId = getYoutubeId(editSongUrl);
+                                if (!newId) { alert('유효한 유튜브 링크를 입력해주세요.\nURL을 비우면 영상은 변경되지 않습니다.'); return; }
+                                updates.youtubeId = newId;
+                              }
+
+                              if (Object.keys(updates).length === 0) {
+                                setEditingSongId(null);
+                                return;
+                              }
+
+                              try {
+                                await updateSong(song.id, updates);
+                                setEditingSongId(null); setEditSongUrl(''); setEditSongTitle(''); setEditSongArtist('');
+                                setToastMsg('✅ 곡 정보가 수정되었습니다.'); setShowToast(true); setTimeout(() => setShowToast(false), 3000);
+                              } catch (err) {
+                                alert('수정 중 오류가 발생했습니다.');
+                              }
+                            }}
+                            style={{ flex: 1, padding: '10px 16px', borderRadius: '10px', border: 'none', background: 'linear-gradient(135deg, #c9952e, #e8c56d)', color: '#0b1120', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                          >저장</button>
+                        </div>
                       </div>
                     )}
                   </div>

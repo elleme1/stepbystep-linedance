@@ -14,12 +14,19 @@ export const DataProvider = ({ children }) => {
   useEffect(() => {
     const unsubSongs = onValue(ref(db, 'songs'), (snap) => {
       const data = snap.val() || {};
-      const arr = Object.values(data).map(s => ({
-        ...s,
-        genre: s.genre || '장르 미상',
-        level: s.level || 2,
-        choreographer: s.choreographer || '안무가 미상'
-      }));
+      const arr = Object.values(data)
+        .map(s => ({
+          ...s,
+          genre: s.genre || '장르 미상',
+          level: s.level || 2,
+          choreographer: s.choreographer || '안무가 미상'
+        }))
+        // 최신 업로드가 항상 1번 자리에 오도록 정렬 (addedDate desc, 동률은 id desc)
+        .sort((a, b) => {
+          const dateCmp = (b.addedDate || '').localeCompare(a.addedDate || '');
+          if (dateCmp !== 0) return dateCmp;
+          return (b.id || 0) - (a.id || 0);
+        });
       setLocalSongs(arr);
     });
 

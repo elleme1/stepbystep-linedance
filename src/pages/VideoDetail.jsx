@@ -200,18 +200,14 @@ export default function VideoDetail() {
                     </button>
                     <button
                         className={`view-toggle__btn ${vd.viewMode === 'tutorial' ? 'view-toggle__btn--active' : ''}`}
-                        onClick={() => vd.setViewMode('tutorial')}
+                        onClick={() => hasTutorial && vd.setViewMode('tutorial')}
+                        disabled={!hasTutorial}
+                        title={hasTutorial ? '튜토리얼 영상 보기' : '튜토리얼 영상이 등록되지 않았습니다'}
+                        style={!hasTutorial ? { opacity: 0.45, cursor: 'not-allowed' } : undefined}
                     >
-                        👣 친절한 스텝 설명
+                        👣 친절한 스텝 설명{!hasTutorial && ' (준비중)'}
                     </button>
                 </div>
-
-                {/* 튜토리얼 없음 안내 */}
-                {vd.viewMode === 'tutorial' && !hasTutorial && (
-                    <div className="tutorial-notice">
-                        👣 스텝 설명 영상이 준비 중입니다
-                    </div>
-                )}
 
                 {/* 태그 */}
                 <div className="song-tags">

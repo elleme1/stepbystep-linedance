@@ -67,6 +67,37 @@ const AdminPage = () => {
     }
   };
 
+  // 🗑 큐앱 동기화 — 어드민에서 곡 삭제 시 호출
+  // 큐앱의 현재 메인이 삭제 대상과 같은 youtubeId일 때만 DELETE
+  // (다른 곡이 큐앱 메인인데 옛 곡을 삭제했다고 메인 슬롯을 비우면 안 됨)
+  const removeMainTrackFromCueAppIfMatches = async ({ youtubeIdToRemove }) => {
+    const apiUrl = import.meta.env.VITE_DANCE_CUE_API;
+    const token = import.meta.env.VITE_DANCE_CUE_TOKEN;
+    if (!apiUrl || !token || !youtubeIdToRemove) return { removed: [] };
+    try {
+      const cur = await fetch(apiUrl, { headers: { Authorization: `Bearer ${token}` } });
+      if (!cur.ok) return { removed: [] };
+      const data = await cur.json();
+      const removed = [];
+      // 두 role 모두 검사 — 'both' 곡이거나 사용자가 다른 탭에서 보더라도 안전
+      for (const role of ['kolong', 'jungri']) {
+        const url = data?.[role]?.url || '';
+        if (url.includes(youtubeIdToRemove)) {
+          const del = await fetch(`${apiUrl}?role=${role}`, {
+            method: 'DELETE',
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (del.ok) removed.push(role);
+          else console.warn('[DanceCue] 삭제 실패:', role, del.status);
+        }
+      }
+      return { removed };
+    } catch (err) {
+      console.warn('[DanceCue] 삭제 동기화 네트워크 오류:', err);
+      return { removed: [] };
+    }
+  };
+
   const handleLogin = (e) => {
     e.preventDefault();
     if (ADMIN_PASSWORD && password === ADMIN_PASSWORD) {
@@ -391,7 +422,14 @@ const AdminPage = () => {
                           style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(212,168,83,0.3)', background: editingSongId === song.id ? 'rgba(212,168,83,0.2)' : 'transparent', color: '#e8c56d', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}
                         >수정</button>
                         <button
-                          onClick={() => { if (confirm(`"${song.title}"을(를) 삭제하시겠습니까?`)) { removeSong(song.id); setToastMsg('🗑️ 곡이 삭제되었습니다.'); setShowToast(true); setTimeout(() => setShowToast(false), 3000); } }}
+                          onClick={async () => {
+                            if (!confirm(`"${song.title}"을(를) 삭제하시겠습니까?`)) return;
+                            removeSong(song.id);
+                            // 큐앱 메인 슬롯과 일치하면 같이 정리
+                            const { removed } = await removeMainTrackFromCueAppIfMatches({ youtubeIdToRemove: song.youtubeId });
+                            const suffix = removed.length ? ` (큐앱 ${removed.join(', ')}도 비움)` : '';
+                            setToastMsg(`🗑️ 곡이 삭제되었습니다.${suffix}`); setShowToast(true); setTimeout(() => setShowToast(false), 3000);
+                          }}
                           style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}
                         >삭제</button>
                       </div>

@@ -19,6 +19,7 @@ const AdminPage = () => {
   const [editSongUrl, setEditSongUrl] = useState('');
   const [editSongTitle, setEditSongTitle] = useState('');
   const [editSongArtist, setEditSongArtist] = useState('');
+  const [editSongTutorialUrl, setEditSongTutorialUrl] = useState('');
   const locParam = searchParams.get('loc') || 'kolon';
   const locationName = locParam === 'kolon' ? '코오롱 스포렉스' : '중리 행정복지센터';
 
@@ -352,6 +353,7 @@ const AdminPage = () => {
                             setEditSongUrl('');
                             setEditSongTitle(opening ? (song.title || '') : '');
                             setEditSongArtist(opening ? (song.artist || '') : '');
+                            setEditSongTutorialUrl('');
                           }}
                           style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(212,168,83,0.3)', background: editingSongId === song.id ? 'rgba(212,168,83,0.2)' : 'transparent', color: '#e8c56d', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}
                         >수정</button>
@@ -392,9 +394,39 @@ const AdminPage = () => {
                             style={{ marginBottom: 0, padding: '10px', fontSize: '0.9rem' }}
                           />
                         </div>
+                        <div>
+                          <label style={{ fontSize: '0.75rem', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
+                            튜토리얼 URL {song.tutorialId ? '(변경 시에만 입력)' : '(추가하려면 입력)'}
+                          </label>
+                          <div style={{ fontSize: '0.7rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                            <span>현재: {song.tutorialId ? '✅ 등록됨' : '— 없음'}</span>
+                            {song.tutorialId && (
+                              <button
+                                type="button"
+                                onClick={async () => {
+                                  if (!confirm('튜토리얼 영상을 제거하시겠습니까?')) return;
+                                  try {
+                                    await updateSong(song.id, { tutorialId: '' });
+                                    setToastMsg('🗑️ 튜토리얼 영상이 제거되었습니다.'); setShowToast(true); setTimeout(() => setShowToast(false), 3000);
+                                  } catch (err) {
+                                    alert('튜토리얼 제거 중 오류가 발생했습니다.');
+                                  }
+                                }}
+                                style={{ background: 'transparent', border: '1px solid rgba(239,68,68,0.4)', color: '#ef4444', borderRadius: '6px', fontSize: '0.7rem', padding: '2px 8px', cursor: 'pointer', fontWeight: 600, whiteSpace: 'nowrap' }}
+                              >🗑 제거</button>
+                            )}
+                          </div>
+                          <input
+                            type="text" className="input-box"
+                            placeholder={song.tutorialId ? "비워두면 그대로 유지" : "튜토리얼 유튜브 주소 붙여넣기"}
+                            value={editSongTutorialUrl}
+                            onChange={(e) => setEditSongTutorialUrl(e.target.value)}
+                            style={{ marginBottom: 0, padding: '10px', fontSize: '0.9rem' }}
+                          />
+                        </div>
                         <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
                           <button
-                            onClick={() => { setEditingSongId(null); setEditSongUrl(''); setEditSongTitle(''); setEditSongArtist(''); }}
+                            onClick={() => { setEditingSongId(null); setEditSongUrl(''); setEditSongTitle(''); setEditSongArtist(''); setEditSongTutorialUrl(''); }}
                             style={{ padding: '10px 16px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#94a3b8', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}
                           >취소</button>
                           <button
@@ -413,6 +445,12 @@ const AdminPage = () => {
                                 updates.youtubeId = newId;
                               }
 
+                              if (editSongTutorialUrl.trim()) {
+                                const newTutId = getYoutubeId(editSongTutorialUrl);
+                                if (!newTutId) { alert('유효한 튜토리얼 유튜브 링크를 입력해주세요.\n비우면 기존 튜토리얼은 그대로 유지됩니다.'); return; }
+                                if (newTutId !== song.tutorialId) updates.tutorialId = newTutId;
+                              }
+
                               if (Object.keys(updates).length === 0) {
                                 setEditingSongId(null);
                                 return;
@@ -420,7 +458,7 @@ const AdminPage = () => {
 
                               try {
                                 await updateSong(song.id, updates);
-                                setEditingSongId(null); setEditSongUrl(''); setEditSongTitle(''); setEditSongArtist('');
+                                setEditingSongId(null); setEditSongUrl(''); setEditSongTitle(''); setEditSongArtist(''); setEditSongTutorialUrl('');
                                 setToastMsg('✅ 곡 정보가 수정되었습니다.'); setShowToast(true); setTimeout(() => setShowToast(false), 3000);
                               } catch (err) {
                                 alert('수정 중 오류가 발생했습니다.');

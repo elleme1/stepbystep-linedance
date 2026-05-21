@@ -199,7 +199,13 @@ export default function TheoryPage() {
   const [activeVideo, setActiveVideo] = useState(null);
   const [expandedSections, setExpandedSections] = useState({});
   const [activeTab, setActiveTab] = useState('sequence');
-  const [activeMix, setActiveMix] = useState('foreign');
+
+  // 🎚️ 댄스 큐 연결 — 비밀번호 게이트 (스텝앱과 독립된 외부 앱)
+  const DANCE_CUE_APP_URL = 'https://dance-instructor-player.vercel.app/';
+  const DANCE_CUE_PAGE_PASSWORD = import.meta.env.VITE_DANCE_CUE_PAGE_PASSWORD || '0402';
+  const [cuePassword, setCuePassword] = useState('');
+  const [cueUnlocked, setCueUnlocked] = useState(false);
+  const [cueError, setCueError] = useState(false);
 
   // 🔁 A-B 반복구간 상태
   const [pointA, setPointA] = useState(null);
@@ -210,25 +216,6 @@ export default function TheoryPage() {
   const activePlayerRef = useRef(null);     // 현재 활성 YT.Player 인스턴스
   const abIntervalRef = useRef(null);       // A-B 루프 타이머 ID
   const lastSeekTimeRef = useRef(0);        // 중복 seek 방지용
-
-  // 🎵 오디오 플레이어 속도 조절용
-  const audioRef = useRef(null);
-  const [playbackRate, setPlaybackRate] = useState(1.0);
-  const [audioLoop, setAudioLoop] = useState(false);
-  const handleSpeedChange = (speed) => {
-    setPlaybackRate(speed);
-    if (audioRef.current) {
-      audioRef.current.playbackRate = speed;
-    }
-  };
-
-  // 🐛 탭 전환 버그 방지: mix 탭으로 돌아왔을 때 오디오 DOM에 현재 배속/루프 상태 강제 동기화
-  useEffect(() => {
-    if (activeTab === 'mix' && audioRef.current) {
-      audioRef.current.playbackRate = playbackRate;
-      audioRef.current.loop = audioLoop;
-    }
-  }, [activeTab, playbackRate, audioLoop]);
 
   // ====================================
   // 🧹 A-B 루프 타이머 정리 (언마운트 시)
@@ -464,7 +451,7 @@ export default function TheoryPage() {
           <button 
               onClick={() => { setActiveTab('mix'); setActiveVideo(null); }}
               style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: activeTab === 'mix' ? 'var(--primary-color, #ef4444)' : 'var(--bg-secondary, rgba(0,0,0,0.05))', color: activeTab === 'mix' ? '#fff' : 'var(--text-secondary, #888)', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
-          >자이브 논스톱 믹스</button>
+          >댄스 큐</button>
         </div>
       </div>
 
@@ -612,118 +599,73 @@ export default function TheoryPage() {
         <>
           <div className="jive-section" style={{ marginTop: '0px' }}>
             <div className="jive-section-title lv-beginner" style={{ marginBottom: '12px' }}>
-              <span className="jive-emoji">🎧</span>
-              <h2 style={{ fontSize: '1rem' }}>자이브 초급 연습용 논스톱 믹스</h2>
-              <span className="jive-badge">스트리밍 전용</span>
+              <span className="jive-emoji">🎚️</span>
+              <h2 style={{ fontSize: '1rem' }}>댄스 큐</h2>
+              <span className="jive-badge">강사 전용 · 독립 앱</span>
             </div>
-            <div style={{ background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)', borderRadius: '14px', padding: '16px' }}>
-              <p style={{ fontSize: '.85rem', color: '#a0a0c0', marginBottom: '16px', lineHeight: '1.6' }}>
-                초보자가 자이브 스텝을 편안하게 연습할 수 있도록, <strong>한국 노래 / 외국 노래 자이브 메들리</strong>를 <strong>논스톱</strong>으로 연결한 음원입니다. 아래 <strong>재생 속도</strong>를 조절해 본인 페이스에 맞게 연습해 보세요.
+            <div style={{ background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)', borderRadius: '14px', padding: '20px' }}>
+              <p style={{ fontSize: '.85rem', color: '#a0a0c0', marginBottom: '18px', lineHeight: '1.6' }}>
+                수업 현장용 <strong>댄스 큐</strong> 앱으로 연결됩니다. 스텝앱과는 <strong>독립된 별도 앱</strong>이며 강사 전용이라 비밀번호가 필요합니다.
               </p>
-              
-              {/* 🔀 믹스 선택 버튼 */}
-              <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-                <button
-                  onClick={() => setActiveMix('korean')}
-                  style={{
-                    flex: 1, padding: '10px', borderRadius: '10px', border: '1px solid',
-                    borderColor: activeMix === 'korean' ? '#ef4444' : 'rgba(255,255,255,0.1)',
-                    background: activeMix === 'korean' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(0,0,0,0.2)',
-                    color: activeMix === 'korean' ? '#ef4444' : '#a0a0c0',
-                    fontWeight: activeMix === 'korean' ? 'bold' : 'normal',
-                    cursor: 'pointer', transition: 'all 0.2s'
-                  }}
-                >🇰🇷 한국 노래 믹스</button>
-                <button
-                  onClick={() => setActiveMix('foreign')}
-                  style={{
-                    flex: 1, padding: '10px', borderRadius: '10px', border: '1px solid',
-                    borderColor: activeMix === 'foreign' ? '#3b82f6' : 'rgba(255,255,255,0.1)',
-                    background: activeMix === 'foreign' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(0,0,0,0.2)',
-                    color: activeMix === 'foreign' ? '#3b82f6' : '#a0a0c0',
-                    fontWeight: activeMix === 'foreign' ? 'bold' : 'normal',
-                    cursor: 'pointer', transition: 'all 0.2s'
-                  }}
-                >🌎 외국 노래 믹스</button>
-              </div>
 
-              {/* 드롭박스 다이렉트 스트리밍 주소 (raw=1) */}
-              <audio
-                key={activeMix}
-                ref={audioRef}
-                controls
-                loop={audioLoop}
-                style={{ width: '100%', height: '45px', borderRadius: '24px' }}
-                preload="metadata"
-                onCanPlay={() => {
-                  if (audioRef.current) {
-                    audioRef.current.playbackRate = playbackRate;
-                    audioRef.current.loop = audioLoop;
-                  }
-                }}
-              >
-                <source 
-                  src={
-                    activeMix === 'foreign'
-                      ? "https://www.dropbox.com/scl/fi/l9don1qe82i17pcv91cn8/Foreign_Jive_Mix_fixed.mp3?rlkey=uymma112amdvt14ii25d3r33u&raw=1"
-                      : "https://www.dropbox.com/scl/fi/e2iwnc65uqnxlbccmo4ka/Korean_Jive_Mix_fixed.mp3?rlkey=zrd3b6w1mosko4kvvwianzvf3&raw=1"
-                  } 
-                  type="audio/mpeg" 
-                />
-                브라우저가 오디오 재생을 지원하지 않습니다.
-              </audio>
-
-              {/* 🔁 자동반복 토글 버튼 */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '12px' }}>
-                <span style={{ fontSize: '.85rem', color: '#a0a0c0', fontWeight: 'bold', marginRight: '4px' }}>🔁 자동반복:</span>
-                <button
-                  onClick={() => {
-                    const next = !audioLoop;
-                    setAudioLoop(next);
-                    if (audioRef.current) audioRef.current.loop = next;
+              {!cueUnlocked ? (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (cuePassword === DANCE_CUE_PAGE_PASSWORD) {
+                      setCueUnlocked(true);
+                      setCueError(false);
+                    } else {
+                      setCueError(true);
+                    }
                   }}
-                  aria-pressed={audioLoop}
-                  style={{
-                    padding: '6px 14px',
-                    borderRadius: '20px',
-                    border: '1px solid',
-                    borderColor: audioLoop ? '#10b981' : 'rgba(255,255,255,0.15)',
-                    background: audioLoop ? 'rgba(16, 185, 129, 0.18)' : 'rgba(0,0,0,0.2)',
-                    color: audioLoop ? '#10b981' : '#a0a0c0',
-                    fontSize: '0.85rem',
-                    fontWeight: audioLoop ? 'bold' : 'normal',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                  }}
+                  style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
                 >
-                  {audioLoop ? '✅ ON' : 'OFF'}
-                </button>
-              </div>
-
-              {/* 🎛 속도 조절 UI */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '12px', flexWrap: 'wrap' }}>
-                <span style={{ fontSize: '.85rem', color: '#a0a0c0', fontWeight: 'bold', marginRight: '4px' }}>⏱ 재생 속도:</span>
-                {[0.5, 0.75, 0.85, 0.9, 1.0, 1.1, 1.25, 1.5].map(speed => (
-                  <button
-                    key={speed}
-                    onClick={() => handleSpeedChange(speed)}
+                  <input
+                    type="password"
+                    inputMode="numeric"
+                    placeholder="비밀번호 입력"
+                    value={cuePassword}
+                    onChange={(e) => { setCuePassword(e.target.value); setCueError(false); }}
+                    autoFocus
                     style={{
-                      padding: '6px 12px',
-                      borderRadius: '8px',
-                      border: '1px solid',
-                      borderColor: playbackRate === speed ? '#ef4444' : 'rgba(255,255,255,0.1)',
-                      background: playbackRate === speed ? 'rgba(239, 68, 68, 0.2)' : 'rgba(0,0,0,0.2)',
-                      color: playbackRate === speed ? '#ef4444' : '#fff',
-                      fontSize: '0.85rem',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s',
-                      fontWeight: playbackRate === speed ? 'bold' : 'normal'
+                      width: '100%', padding: '14px', borderRadius: '12px',
+                      border: `1px solid ${cueError ? '#ef4444' : 'rgba(255,255,255,0.15)'}`,
+                      background: 'rgba(0,0,0,0.3)', color: '#fff', fontSize: '1.05rem',
+                      textAlign: 'center', letterSpacing: '0.3em', outline: 'none', boxSizing: 'border-box',
                     }}
-                  >
-                    {speed}x
-                  </button>
-                ))}
-              </div>
+                  />
+                  {cueError && (
+                    <div style={{ fontSize: '.8rem', color: '#ef4444', textAlign: 'center' }}>
+                      비밀번호가 올바르지 않습니다.
+                    </div>
+                  )}
+                  <button
+                    type="submit"
+                    style={{
+                      width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
+                      background: 'linear-gradient(135deg, #6366f1, #818cf8)', color: '#fff',
+                      fontSize: '1rem', fontWeight: 700, cursor: 'pointer',
+                    }}
+                  >🔓 잠금 해제</button>
+                </form>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <button
+                    onClick={() => window.open(DANCE_CUE_APP_URL, '_blank', 'noopener,noreferrer')}
+                    style={{
+                      width: '100%', padding: '16px', borderRadius: '14px', border: 'none',
+                      background: 'linear-gradient(135deg, #8b5cf6, #a855f7)', color: '#fff',
+                      fontSize: '1.05rem', fontWeight: 800, cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                      boxShadow: '0 8px 24px rgba(139,92,246,0.3)',
+                    }}
+                  >🎚️ 댄스 큐 열기 (새 탭)</button>
+                  <div style={{ fontSize: '.75rem', color: '#10b981', textAlign: 'center', fontWeight: 600 }}>
+                    ✅ 잠금 해제됨 — 버튼을 누르면 새 탭에서 열립니다.
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </>

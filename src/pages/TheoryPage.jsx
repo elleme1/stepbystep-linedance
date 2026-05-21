@@ -505,65 +505,105 @@ export default function TheoryPage() {
               <h2 style={{ fontSize: '1rem' }}>개별 스탭 교육영상</h2>
               <span className="jive-badge">은선생의 댄스클리닉</span>
             </div>
-            {[
-              { id: '6or6en0im6c', num: '기초', title: '댄스스포츠 홀드법', eng: 'Hold Method', desc: '파트너와 올바른 자세·손 잡는 법 (전상우·강민지)' },
-              { id: 'MxhVqxirA20', num: '강의', title: '바디 스피드 & 파트너십', eng: 'Body Speed & Partnering', desc: '여성 파트너의 중요성과 몸의 스피드 (도미니코 강의 번역)' },
-              { id: 'j1u5dECISR0', num: 9, title: '윕', eng: 'The Whip', desc: '채찍처럼 여성을 당겨 1회전' },
-              { id: 'cDgoTb_q5y0', num: 10, title: '윕 쓰루웨이', eng: 'Whip Throwaway', desc: '휩 후 여성을 밖으로 밀어냄' },
-              { id: '_8Or-ODndKw', num: 17, title: '치킨웍 & 더블 치킨웍', eng: 'Chicken Walk', desc: '닭처럼 톡톡 튀며 걷기 + 손동작·치마 활용' },
-              { id: '7q6HtVIjra8', num: 18, title: '토 힐 스위블', eng: 'Toe Heel Swivel', desc: '발끝·뒤꿈치 번갈아 비틀기 (현우·현아쌤)' },
-              { id: 'VsI7jjuI8Is', num: 19, title: '플릭 인투 브레이크', eng: 'Flick Into Break', desc: '발차기 후 급정지 (현우·현아쌤)' },
-              { id: 'e19bTTO04fg', num: 20, title: '쉐도우 스토킹 웍', eng: 'Shadow Stalking Walk', desc: '그림자처럼 따라 걷기 (현우·현아쌤)' },
-              { id: 'qiFhBwNl7lY', num: 21, title: '무치', eng: 'Mooch', desc: '느릿한 리듬의 제자리 스텝 (현우·현아쌤)' },
-              { id: '8Hs1ve0xjaY', num: 22, title: '프레아 홉스', eng: 'Flea Hops', desc: '벼룩처럼 가볍게 뛰기 (현우·현아쌤)' },
-              { id: '-BB6bBYh96I', num: 23, title: '스탑 앤 고', eng: 'Stop And Go', desc: '엔딩 투 스탑 앤 고 (현우·현아쌤)' },
-              { id: 'u8MwDb0TfCo', num: 24, title: '카터펄트', eng: 'Catapult', desc: '투석기처럼 여성을 밀어 올리기 (현우·현아쌤)' },
-              { id: '_Lcp0zPBhxY', num: 25, title: '숄더 스핀', eng: 'Shoulder Spin', desc: '어깨를 잡고 회전 (현우·현아쌤)' },
-              { id: 'ak-oVgZmsck', num: 26, title: '처깅', eng: 'Chugging', desc: '기차처럼 씩씩하게 전진 (현우·현아쌤)' },
-              { id: 'R4Qf406MK8Y', num: 27, title: '로타리 지그재그', eng: 'Rotary Zigzag', desc: '회전하며 지그재그 이동 (현우·현아쌤)' },
-              { id: 'HGta7wGPljs', num: 28, title: '윕 스핀 & 보타포고스', eng: 'Whip Spin & Bota Fogos', desc: '휩 회전 + 삼바 스텝 결합 (현우·현아쌤)' },
-              { id: 'NfoNqkqDDlI', num: 29, title: '사이드 패스', eng: 'Side Pass', desc: '옆으로 지나가며 자리 교대 (현우·현아쌤)' },
-              { id: 'CWnXipKICaw', num: 30, title: '뉴욕 위드 스프링스', eng: 'New York with Springs', desc: '스프링처럼 탄력 있는 뉴욕 (현우·현아쌤)' },
+            {(() => {
+              const eduVideos = [
+                { id: '6or6en0im6c', num: '기초', title: '댄스스포츠 홀드법', eng: 'Hold Method', desc: '파트너와 올바른 자세·손 잡는 법 (전상우·강민지)' },
+                { id: 'MxhVqxirA20', num: '강의', title: '바디 스피드 & 파트너십', eng: 'Body Speed & Partnering', desc: '여성 파트너의 중요성과 몸의 스피드 (도미니코 강의 번역)' },
+                { id: 'j1u5dECISR0', num: 9, title: '윕', eng: 'The Whip', desc: '채찍처럼 여성을 당겨 1회전' },
+                { id: 'cDgoTb_q5y0', num: 10, title: '윕 쓰루웨이', eng: 'Whip Throwaway', desc: '휩 후 여성을 밖으로 밀어냄' },
+                { id: '_8Or-ODndKw', num: 17, title: '치킨웍 & 더블 치킨웍', eng: 'Chicken Walk', desc: '닭처럼 톡톡 튀며 걷기 + 손동작·치마 활용' },
+                { id: '7q6HtVIjra8', num: 18, title: '토 힐 스위블', eng: 'Toe Heel Swivel', desc: '발끝·뒤꿈치 번갈아 비틀기 (현우·현아쌤)' },
+                { id: 'VsI7jjuI8Is', num: 19, title: '플릭 인투 브레이크', eng: 'Flick Into Break', desc: '발차기 후 급정지 (현우·현아쌤)' },
+                { id: 'e19bTTO04fg', num: 20, title: '쉐도우 스토킹 웍', eng: 'Shadow Stalking Walk', desc: '그림자처럼 따라 걷기 (현우·현아쌤)' },
+                { id: 'qiFhBwNl7lY', num: 21, title: '무치', eng: 'Mooch', desc: '느릿한 리듬의 제자리 스텝 (현우·현아쌤)' },
+                { id: '8Hs1ve0xjaY', num: 22, title: '프레아 홉스', eng: 'Flea Hops', desc: '벼룩처럼 가볍게 뛰기 (현우·현아쌤)' },
+                { id: '-BB6bBYh96I', num: 23, title: '스탑 앤 고', eng: 'Stop And Go', desc: '엔딩 투 스탑 앤 고 (현우·현아쌤)' },
+                { id: 'u8MwDb0TfCo', num: 24, title: '카터펄트', eng: 'Catapult', desc: '투석기처럼 여성을 밀어 올리기 (현우·현아쌤)' },
+                { id: '_Lcp0zPBhxY', num: 25, title: '숄더 스핀', eng: 'Shoulder Spin', desc: '어깨를 잡고 회전 (현우·현아쌤)' },
+                { id: 'ak-oVgZmsck', num: 26, title: '처깅', eng: 'Chugging', desc: '기차처럼 씩씩하게 전진 (현우·현아쌤)' },
+                { id: 'R4Qf406MK8Y', num: 27, title: '로타리 지그재그', eng: 'Rotary Zigzag', desc: '회전하며 지그재그 이동 (현우·현아쌤)' },
+                { id: 'HGta7wGPljs', num: 28, title: '윕 스핀 & 보타포고스', eng: 'Whip Spin & Bota Fogos', desc: '휩 회전 + 삼바 스텝 결합 (현우·현아쌤)' },
+                { id: 'NfoNqkqDDlI', num: 29, title: '사이드 패스', eng: 'Side Pass', desc: '옆으로 지나가며 자리 교대 (현우·현아쌤)' },
+                { id: 'CWnXipKICaw', num: 30, title: '뉴욕 위드 스프링스', eng: 'New York with Springs', desc: '스프링처럼 탄력 있는 뉴욕 (현우·현아쌤)' },
+              ];
+              const CHUNK = 7;
+              const groups = [];
+              for (let i = 0; i < eduVideos.length; i += CHUNK) groups.push(eduVideos.slice(i, i + CHUNK));
 
-            ].map(v => (
-              <div
-                key={v.id}
-                onClick={() => { setActiveVideo({cardN:'global', videoId: v.id}); window.scrollTo(0, 0); }}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: '12px',
-                  padding: '12px 14px', marginBottom: '8px',
-                  background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)',
-                  borderRadius: '14px', cursor: 'pointer', transition: 'all .2s',
-                }}
-              >
-                {/* 썸네일 */}
-                <div style={{ position: 'relative', flexShrink: 0, width: '100px', aspectRatio: '16/9', borderRadius: '10px', overflow: 'hidden', background: '#111' }}>
-                  <img
-                    src={`https://img.youtube.com/vi/${v.id}/mqdefault.jpg`}
-                    alt={v.title}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                  <div style={{
-                    position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    background: 'rgba(0,0,0,.3)', color: '#fff', fontSize: '1.2rem'
-                  }}>▶</div>
-                </div>
-                {/* 정보 */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                    <span style={{
-                      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                      width: '26px', height: '26px', borderRadius: '50%',
-                      background: 'rgba(99,102,241,.15)', color: '#818cf8',
-                      fontSize: '.75rem', fontWeight: 700, flexShrink: 0
-                    }}>{v.num}</span>
-                    <span style={{ fontSize: '.95rem', fontWeight: 700, color: '#fff' }}>{v.title}</span>
+              return groups.map((group, gi) => {
+                const sectionId = `edu-group-${gi}`;
+                // 첫 그룹은 기본 펼침, 나머지는 접힘
+                const isExpanded = expandedSections[sectionId] ?? (gi === 0);
+                return (
+                  <div key={sectionId} style={{ marginBottom: '10px' }}>
+                    {/* 그룹 헤더 (클릭 시 접기/펼치기) */}
+                    <div
+                      onClick={() => toggleSection(sectionId)}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: '10px',
+                        padding: '12px 14px', borderRadius: '12px', cursor: 'pointer',
+                        background: 'rgba(99,102,241,.10)', border: '1px solid rgba(99,102,241,.25)',
+                        userSelect: 'none', transition: 'all .2s',
+                      }}
+                    >
+                      <span style={{ fontSize: '1rem' }}>📺</span>
+                      <span style={{ fontSize: '.9rem', fontWeight: 700, color: '#c7d2fe' }}>
+                        그룹 {gi + 1}
+                      </span>
+                      <span style={{ fontSize: '.72rem', color: '#818cf8', background: 'rgba(99,102,241,.15)', borderRadius: '10px', padding: '2px 8px' }}>
+                        영상 {group.length}개
+                      </span>
+                      <span style={{ marginLeft: 'auto', fontSize: '.8rem', color: '#a0a0c0', transform: isExpanded ? 'rotate(180deg)' : 'none', transition: 'transform .3s' }}>▼</span>
+                    </div>
+
+                    {/* 그룹 본문 */}
+                    {isExpanded && (
+                      <div style={{ marginTop: '8px' }}>
+                        {group.map(v => (
+                          <div
+                            key={v.id}
+                            onClick={() => { setActiveVideo({cardN:'global', videoId: v.id}); window.scrollTo(0, 0); }}
+                            style={{
+                              display: 'flex', alignItems: 'center', gap: '12px',
+                              padding: '12px 14px', marginBottom: '8px',
+                              background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)',
+                              borderRadius: '14px', cursor: 'pointer', transition: 'all .2s',
+                            }}
+                          >
+                            {/* 썸네일 */}
+                            <div style={{ position: 'relative', flexShrink: 0, width: '100px', aspectRatio: '16/9', borderRadius: '10px', overflow: 'hidden', background: '#111' }}>
+                              <img
+                                src={`https://img.youtube.com/vi/${v.id}/mqdefault.jpg`}
+                                alt={v.title}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                              />
+                              <div style={{
+                                position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                background: 'rgba(0,0,0,.3)', color: '#fff', fontSize: '1.2rem'
+                              }}>▶</div>
+                            </div>
+                            {/* 정보 */}
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                                <span style={{
+                                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                                  width: '26px', height: '26px', borderRadius: '50%',
+                                  background: 'rgba(99,102,241,.15)', color: '#818cf8',
+                                  fontSize: '.75rem', fontWeight: 700, flexShrink: 0
+                                }}>{v.num}</span>
+                                <span style={{ fontSize: '.95rem', fontWeight: 700, color: '#fff' }}>{v.title}</span>
+                              </div>
+                              <div style={{ fontSize: '.76rem', color: '#a0a0c0' }}>{v.eng}</div>
+                              <div style={{ fontSize: '.73rem', color: '#777', marginTop: '2px' }}>{v.desc}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  <div style={{ fontSize: '.76rem', color: '#a0a0c0' }}>{v.eng}</div>
-                  <div style={{ fontSize: '.73rem', color: '#777', marginTop: '2px' }}>{v.desc}</div>
-                </div>
-              </div>
-            ))}
+                );
+              });
+            })()}
           </div>
         </>
       )}

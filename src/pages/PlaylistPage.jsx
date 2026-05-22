@@ -237,6 +237,19 @@ export default function PlaylistPage() {
         else player.play();
     };
 
+    // 🎬 전체화면 — YouTube iframe을 직접 풀스크린 (iOS는 플레이어 내장 버튼 사용)
+    const handleFullscreen = () => {
+        try {
+            const iframe = player.playerRef?.current?.getIframe?.();
+            const target = iframe || containerRef.current;
+            if (!target) return;
+            if (target.requestFullscreen) target.requestFullscreen();
+            else if (target.webkitRequestFullscreen) target.webkitRequestFullscreen();
+            else if (target.webkitEnterFullscreen) target.webkitEnterFullscreen();
+            else if (iframe?.webkitEnterFullscreen) iframe.webkitEnterFullscreen();
+        } catch (e) {}
+    };
+
     const handleSpeedChange = (newSpeed) => {
         setSpeed(newSpeed);
         player.setSpeed(newSpeed);
@@ -363,6 +376,9 @@ export default function PlaylistPage() {
                     </div>
                     <button className={`mirror-btn ${isMirror ? 'active' : ''}`} onClick={() => setIsMirror(!isMirror)}>
                         🪞 거울
+                    </button>
+                    <button className="mirror-btn" onClick={handleFullscreen}>
+                        🎬 전체화면
                     </button>
                     <button className={`playlist-autoplay-btn ${isAutoPlay ? 'active' : ''}`} onClick={() => setIsAutoPlay(!isAutoPlay)}>
                         {isAutoPlay ? '▶ 자동재생 ON' : '■ 자동재생 OFF'}

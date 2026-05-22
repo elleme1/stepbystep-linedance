@@ -2262,28 +2262,25 @@ select {
   box-shadow: var(--shadow-lg);
 }
 
-/* 모바일: 영상 꽉찬 화면 */
+/* 모바일: 영상 잘림 없이 16:9 전체 표시 (이전엔 70vh+cover로 크롭됐음) */
 @media (max-width: 767px) {
   .playlist-video-area {
     border-radius: 0;
-    height: 70vh;
-    min-height: 300px;
   }
 
   .playlist-video-area .video-player-wrapper {
-    height: 100%;
     border-radius: 0;
+    aspect-ratio: 16 / 9;
   }
 
   .playlist-video-area .video-container {
-    height: 100%;
-    padding-bottom: 0;
+    padding-bottom: 56.25%;
   }
 
   .playlist-video-area .video-container iframe {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
   }
 }
 

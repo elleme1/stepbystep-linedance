@@ -1,6 +1,9 @@
 /* --- src/pages/VideoPage.css --- */
 
-.video-container {
+/* ⚠️ 이전엔 .video-container였으나 PlaylistPage 내부의 동명 클래스와 충돌해
+   영상 박스가 min-height:100vh로 늘어나는 버그가 있었음. 페이지 컨테이너 전용
+   이름으로 분리. */
+.video-page-root {
     background-color: var(--bg-primary);
     color: var(--text-primary);
     min-height: 100vh;

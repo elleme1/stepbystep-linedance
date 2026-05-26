@@ -2248,6 +2248,7 @@ select {
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
+  overflow-x: hidden; /* 자식 컨트롤 행이 잘못 폭을 넘어도 페이지가 가로 스크롤되지 않게 안전망 */
 }
 
 .playlist-now-playing {
@@ -2457,6 +2458,8 @@ select {
 .playlist-speed-group {
   display: flex;
   gap: 4px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .playlist-autoplay-btn {

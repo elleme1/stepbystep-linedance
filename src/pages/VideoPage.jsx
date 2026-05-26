@@ -96,7 +96,7 @@ export default function VideoPage() {
     }, [activeTab, likedIds, locationSongs, selectedLocation]);
 
     return (
-        <div className="video-container">
+        <div className="video-page-root">
 
             {/* 상단 헤더 및 필터 */}
             <div className="video-header-wrapper">

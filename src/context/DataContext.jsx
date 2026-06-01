@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { ref, onValue, set, remove, update } from 'firebase/database';
-import { db } from '../lib/firebase';
+import { db, authReady } from '../lib/firebase';
 import rawProcessedSongs, { getThisWeekSong as getRawThisWeek } from '../data/songs';
 
 const DataContext = createContext();
@@ -11,38 +11,52 @@ export const DataProvider = ({ children }) => {
   const [songOverrides, setSongOverrides] = useState({});
 
   // 🔥 Firebase RTDB 실시간 구독 — 모든 디바이스에 즉시 반영
+  //    익명 세션(authReady)이 잡힌 뒤에 구독을 붙인다. 보안 규칙이
+  //    "auth != null" 로 잠겨도 권한 거부 없이 데이터가 흐르게 하기 위함.
   useEffect(() => {
-    const unsubSongs = onValue(ref(db, 'songs'), (snap) => {
-      const data = snap.val() || {};
-      const arr = Object.values(data)
-        .map(s => ({
-          ...s,
-          genre: s.genre || '장르 미상',
-          level: s.level || 2,
-          choreographer: s.choreographer || '안무가 미상'
-        }))
-        // 최신 업로드가 항상 1번 자리에 오도록 정렬 (addedDate desc, 동률은 id desc)
-        .sort((a, b) => {
-          const dateCmp = (b.addedDate || '').localeCompare(a.addedDate || '');
-          if (dateCmp !== 0) return dateCmp;
-          return (b.id || 0) - (a.id || 0);
-        });
-      setLocalSongs(arr);
-    });
+    let cancelled = false;
+    let cleanup = () => {};
 
-    const unsubHidden = onValue(ref(db, 'hiddenSongs'), (snap) => {
-      const data = snap.val() || {};
-      setHiddenSongIds(Object.keys(data).map(Number));
-    });
+    authReady.then(() => {
+      if (cancelled) return;
 
-    const unsubOverrides = onValue(ref(db, 'songOverrides'), (snap) => {
-      setSongOverrides(snap.val() || {});
+      const unsubSongs = onValue(ref(db, 'songs'), (snap) => {
+        const data = snap.val() || {};
+        const arr = Object.values(data)
+          .map(s => ({
+            ...s,
+            genre: s.genre || '장르 미상',
+            level: s.level || 2,
+            choreographer: s.choreographer || '안무가 미상'
+          }))
+          // 최신 업로드가 항상 1번 자리에 오도록 정렬 (addedDate desc, 동률은 id desc)
+          .sort((a, b) => {
+            const dateCmp = (b.addedDate || '').localeCompare(a.addedDate || '');
+            if (dateCmp !== 0) return dateCmp;
+            return (b.id || 0) - (a.id || 0);
+          });
+        setLocalSongs(arr);
+      });
+
+      const unsubHidden = onValue(ref(db, 'hiddenSongs'), (snap) => {
+        const data = snap.val() || {};
+        setHiddenSongIds(Object.keys(data).map(Number));
+      });
+
+      const unsubOverrides = onValue(ref(db, 'songOverrides'), (snap) => {
+        setSongOverrides(snap.val() || {});
+      });
+
+      cleanup = () => {
+        unsubSongs();
+        unsubHidden();
+        unsubOverrides();
+      };
     });
 
     return () => {
-      unsubSongs();
-      unsubHidden();
-      unsubOverrides();
+      cancelled = true;
+      cleanup();
     };
   }, []);
 

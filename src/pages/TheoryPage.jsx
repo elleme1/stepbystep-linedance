@@ -216,6 +216,7 @@ export default function TheoryPage() {
   const activePlayerRef = useRef(null);     // 현재 활성 YT.Player 인스턴스
   const abIntervalRef = useRef(null);       // A-B 루프 타이머 ID
   const lastSeekTimeRef = useRef(0);        // 중복 seek 방지용
+  const playerScrollRef = useRef(null);     // 영상 켜질 때 정중앙으로 스크롤할 대상
 
   // ====================================
   // 🧹 A-B 루프 타이머 정리 (언마운트 시)
@@ -232,6 +233,18 @@ export default function TheoryPage() {
   useEffect(() => {
     setPointA(null); setPointB(null); setAbLoopActive(false);
     activePlayerRef.current = null;
+  }, [activeVideo?.videoId, activeVideo?.cardN]);
+
+  // ====================================
+  // 🎯 영상 켜지면 화면 정중앙으로 스크롤
+  //    (이전: 영상이 카드 아래/페이지 끝에 렌더돼 안 보이던 문제)
+  // ====================================
+  useEffect(() => {
+    if (!activeVideo) return;
+    const raf = requestAnimationFrame(() => {
+      playerScrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    return () => cancelAnimationFrame(raf);
   }, [activeVideo?.videoId, activeVideo?.cardN]);
 
   // ✅ 독립 컴포넌트에서 플레이어 인스턴스를 받는 콜백
@@ -549,7 +562,7 @@ export default function TheoryPage() {
                         {group.map(v => (
                           <div
                             key={v.id}
-                            onClick={() => { setActiveVideo({cardN:'global', videoId: v.id}); window.scrollTo(0, 0); }}
+                            onClick={() => { setActiveVideo({cardN:'global', videoId: v.id}); }}
                             style={{
                               display: 'flex', alignItems: 'center', gap: '12px',
                               padding: '12px 14px', marginBottom: '8px',
@@ -680,7 +693,6 @@ export default function TheoryPage() {
                 className="video-list-item"
                 onClick={() => {
                   setActiveVideo({ cardN: 'global', videoId: video.mainVideoId });
-                  window.scrollTo(0, 0);
                 }}
               >
                 <div className="list-thumbnail">
@@ -702,7 +714,7 @@ export default function TheoryPage() {
 
       {/* 글로벌 플레이어 */}
       {activeVideo && activeVideo.cardN === 'global' && (
-        <div style={{marginBottom:24}}>
+        <div ref={playerScrollRef} style={{marginBottom:24}}>
           <div style={{ position: 'relative' }}>
             {abLoopActive && <div className="jive-ab-badge">🔁 {formatTime(pointA)} → {formatTime(pointB)}</div>}
             <JiveYouTubePlayer videoId={activeVideo.videoId} onPlayerReady={handlePlayerReady} />
@@ -764,7 +776,7 @@ export default function TheoryPage() {
 
                     {/* 인라인 영상 플레이어 */}
                     {showingVideo && (
-                      <div style={{position:'relative', zIndex: 0}} onClick={(e) => e.stopPropagation()}>
+                      <div ref={playerScrollRef} style={{position:'relative', zIndex: 0}} onClick={(e) => e.stopPropagation()}>
                         <div style={{ position: 'relative' }}>
                           {abLoopActive && <div className="jive-ab-badge">🔁 {formatTime(pointA)} → {formatTime(pointB)}</div>}
                           <JiveYouTubePlayer videoId={activeVideo.videoId} onPlayerReady={handlePlayerReady} />

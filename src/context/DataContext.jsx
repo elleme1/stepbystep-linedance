@@ -113,7 +113,33 @@ export const DataProvider = ({ children }) => {
     const base = rawProcessedSongs
       .filter(s => !hiddenSongIds.includes(s.id))
       .map(s => songOverrides[s.id] ? { ...s, ...songOverrides[s.id] } : s);
-    return [...localSongs, ...base];
+    const merged = [...localSongs, ...base];
+
+    // 🗓️ "이번주 수업곡" 판정을 병합된 전체 곡 기준으로 동적 재계산.
+    //    songs.js의 songSchedule 고정 날짜가 아니라, 관리자 업로드(Firebase)까지
+    //    포함한 '지점별 실제 최신 addedDate'를 기준으로 삼는다. 이렇게 해야
+    //    새로 올린 '오늘 배운곡'이 1번 + 이번주 뱃지 + 이번주 연속재생 대상이 된다.
+    //    (예전엔 songSchedule 최신이 옛 곡에 고정돼 신규 업로드가 2번으로 밀렸음.)
+    const latestFor = (loc) => merged.reduce((max, s) => {
+      const matches = s.location === loc || s.location === 'both';
+      const d = s.addedDate || '';
+      return matches && d > max ? d : max;
+    }, '');
+    const latestKolon = latestFor('kolon');
+    const latestSindun = latestFor('sindun');
+
+    return merged.map(s => {
+      const d = s.addedDate || '';
+      const inKolon = s.location === 'kolon' || s.location === 'both';
+      const inSindun = s.location === 'sindun' || s.location === 'both';
+      return {
+        ...s,
+        isThisWeekKolon: inKolon && !!d && d === latestKolon,
+        isThisWeekSindun: inSindun && !!d && d === latestSindun,
+        // 하위 호환(전체 폴백): 어느 지점이든 이번주면 true
+        isThisWeek: !!d && (d === latestKolon || d === latestSindun),
+      };
+    });
   }, [localSongs, hiddenSongIds, songOverrides]);
 
   const getSongsForLocation = (locationId) => {
@@ -124,9 +150,11 @@ export const DataProvider = ({ children }) => {
   };
 
   const getThisWeekSong = (locationId) => {
-    const local = localSongs.find(s => s.location === locationId || s.location === 'both');
-    if (local) return local;
-    return getRawThisWeek(locationId);
+    // allSongs에 동적으로 찍힌 이번주 플래그를 그대로 사용 → 홈/안무보관함/연속재생 일관성
+    const flag = locationId === 'kolon' ? 'isThisWeekKolon'
+      : locationId === 'sindun' ? 'isThisWeekSindun'
+      : 'isThisWeek';
+    return allSongs.find(s => s[flag]) || getRawThisWeek(locationId);
   };
 
   const value = {

@@ -31,12 +31,12 @@
   - `/songOverrides/{id}`: 기본곡 메타 덮어쓰기 (구 `songOverrides`)
 - **클라이언트**: `DataContext`가 `onValue`로 세 노드 모두 실시간 구독 → 어느 디바이스에서 변경이 일어나도 모든 디바이스에 즉시 반영
 - **환경변수** (Vercel + `.env.local`): `VITE_FIREBASE_*` 7개 + `VITE_ADMIN_PASSWORD`
-- **보안 규칙** (`database.rules.json`): **현재 임시 open**. 며칠 내 Phase 6 (Auth + 화이트리스트)로 강화 필수.
+- **보안 규칙** (`database.rules.json`): **2026-06-01 `auth != null`로 잠금 + 익명 인증(Anonymous) 활성화** → Firebase 1차 "insecure rules"(미인증 접근) 경고 해소. 단, 방문자 전원이 익명 토큰을 받으므로 **쓰기가 관리자에게 제한된 건 아님**(경고만 끈 수준). **2026-06-04 후속**: Firebase가 다시 "로그인한 모든 사용자가 읽기/쓰기 가능" 경고 메일 발송(= 익명 인증 + `auth != null`의 예고된 결과). 사용자에게 길 A(관리자 Firebase 로그인 + `/admins/{uid}` 화이트리스트) / B(`.write:false` + Vercel 서버함수 + 서비스계정) / C(현상 유지 + 경고 메일 음소거) 제시 → **사용자가 길 C 선택**. 데이터는 공개 곡 정보뿐, 실재 위험은 복구 가능한 '쓰기 반달리즘'뿐이라 현 수준을 의도적으로 수용. 진짜 강화(관리자 신분 → 쓰기 제한)는 Phase 6로 **보류**(긴급 버그 아님). 읽기 경고는 회원 비로그인 열람이 필요해 어느 길로 가도 잔존 가능.
 - **검증 완료** (로컬 + prod): admin에서 곡 추가 → RTDB 즉시 반영 → 다른 디바이스(시크릿 창)에서도 즉시 노출 → 삭제 동기화까지 확인.
 
 ## ⚠️ 알려진 부수 결함 (우선순위순)
 
-1. **🔴 보안 규칙 open** (`database.rules.json`) — 누구나 RTDB 쓰기 가능. Firebase Auth(이메일/비번) + `auth.uid` 화이트리스트 노드(`/admins/{uid}: true`)로 강화 필요. AdminPage 로그인도 평문 비번 1234 → Firebase Auth 로그인으로 교체.
+1. **🟡 보안 규칙 — 현 수준 의도적 수용(2026-06-04 사용자 결정, 길 C)** (`database.rules.json`) — 2026-06-01 `.read/.write: "auth != null"` + 익명 인증 활성화로 1차 경고 해소(gcloud Identity Toolkit Admin API로 적용·REST로 검증: 미인증 401 / 익명 토큰 200 / 콘솔 UI "사용 설정됨"). 익명 토큰을 누구나 받으므로 쓰기 제한은 없음 → 2026-06-04 Firebase가 "로그인한 모든 사용자 읽기/쓰기" 재경고. **사용자가 현상 유지 + 메일 음소거(길 C) 선택** — 데이터는 공개 곡 정보뿐, 실재 위험은 복구 가능한 '쓰기 반달리즘'뿐. **불러서 고치지 말 것(긴급 버그 아님).** 향후 강화 옵션 보존: 길 A(`/admins/{uid}: true` 화이트리스트 + AdminPage 평문 비번 1234 → Firebase Auth 로그인) 또는 길 B(`.write:false` + Vercel 서버함수 + 서비스계정 키). 이메일 음소거는 계정 알림 설정이라 사용자 본인이 처리(마담은 계정 설정 안 건드림).
 2. **🟡 songSchedule 미반영** — 새 곡은 `addedDate`만 갖고 `songs.js`의 `songSchedule` 객체에는 들어가지 않아 "★ 이번주 수업곡" 자동 표시가 일관적이지 않음. `getThisWeekSong`이 첫 로컬곡을 반환하는 보정이 있긴 하지만 보강 필요.
 3. **🟡 자동 추출 실패 UX** — admin에서 유튜브 URL 붙여넣었는데 noembed가 메타데이터를 못 가져오면 조용히 실패해 제목이 빈 채로 저장됨 (DataContext fallback이 "제목 없음"). 토스트 안내 + submit 시 제목 빈 검증 필요.
 4. **🟢 데드 코드** — `AdminPage.songInfo.location`은 handleAddSong에서 `locParam`으로 어차피 덮어씌워짐.

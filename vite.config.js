@@ -11,7 +11,7 @@ export default defineConfig({
       // 활성화되고 옛 캐시가 정리되도록 한다.
       registerType: 'autoUpdate',
       injectRegister: 'auto',
-      includeAssets: ['favicon.png', 'logo-192.png'],
+      includeAssets: ['favicon.png', 'logo-192.png', 'logo-512.png'],
       manifest: {
         name: '스텝바이스텝',
         short_name: '스텝바이스텝',
@@ -21,6 +21,11 @@ export default defineConfig({
           {
             src: 'logo-192.png',
             sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: 'logo-512.png',
+            sizes: '512x512',
             type: 'image/png'
           }
         ]

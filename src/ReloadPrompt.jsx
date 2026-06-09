@@ -2,10 +2,11 @@ import React from 'react'
 import { useRegisterSW } from 'virtual:pwa-register/react'
 
 function ReloadPrompt() {
+  // registerType이 'autoUpdate'(vite.config.js)라 새 SW는 자동 활성화·자동 reload된다.
+  // 따라서 needRefresh('업데이트' 버튼 UI)는 발화하지 않는 죽은 분기여서 제거하고
+  // 오프라인 준비 안내만 남긴다.
   const {
     offlineReady: [offlineReady, setOfflineReady],
-    needRefresh: [needRefresh, setNeedRefresh],
-    updateServiceWorker,
   } = useRegisterSW({
     onRegistered(r) {
       // 5분마다 백그라운드에서 업데이트 확인
@@ -22,10 +23,9 @@ function ReloadPrompt() {
 
   const close = () => {
     setOfflineReady(false)
-    setNeedRefresh(false)
   }
 
-  if (!offlineReady && !needRefresh) return null
+  if (!offlineReady) return null
 
   return (
     <div style={{
@@ -47,26 +47,16 @@ function ReloadPrompt() {
       fontFamily: 'sans-serif'
     }}>
       <p style={{ margin: '0 0 12px 0', fontSize: '15px', lineHeight: '1.5', fontWeight: 'bold' }}>
-        {offlineReady
-          ? <span>✨ 앱이 오프라인에서<br/>작동할 준비가 되었습니다!</span>
-          : <span>✨ 스텝바이스텝 앱의<br/>새로운 내용이 추가되었습니다!</span>}
+        <span>✨ 앱이 오프라인에서<br/>작동할 준비가 되었습니다!</span>
       </p>
-      
+
       <div style={{ display: 'flex', gap: '10px' }}>
-        <button 
-          onClick={() => close()} 
+        <button
+          onClick={() => close()}
           style={{ flex: 1, padding: '10px', borderRadius: '8px', border: 'none', background: '#333', color: '#ccc', fontWeight: 'bold', cursor: 'pointer' }}
         >
-          나중에
+          닫기
         </button>
-        {needRefresh && (
-          <button 
-            onClick={() => updateServiceWorker(true)} 
-            style={{ flex: 1, padding: '10px', borderRadius: '8px', border: 'none', background: '#ff2d55', color: '#fff', fontWeight: 'bold', cursor: 'pointer' }}
-          >
-            업데이트
-          </button>
-        )}
       </div>
     </div>
   )

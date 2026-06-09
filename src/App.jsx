@@ -35,19 +35,36 @@ import ReloadPrompt from './ReloadPrompt';
 
 // 🚀 State Reset (충돌 방지 버전 관리)
 const APP_VERSION = 'v1.5';
+
+// ⚠️ 사용자 데이터 보존 목록 — 새 localStorage 키를 추가하면 반드시 여기에도 등록할 것.
+//    (버전이 바뀌면 아래 목록 외의 키는 전부 삭제된다)
+const PRESERVE_KEYS = [
+  'sbs-favorites',         // 찜 목록 (FavoritesContext)
+  'sbs-practiced',         // 연습 기록 (PracticeContext)
+  'sbs-challenges',        // 자이브 챌린지 진행도 (ChallengeContext)
+  'sbs-challenge-videos',  // 챌린지 영상 링크 (ChallengeContext)
+  'sbs-theme',             // 테마 (ThemeContext)
+  'stepbystep-location',   // 장소 선택 (LocationContext)
+  'isVipUser',             // VIP 접근 플래그 (HomePage)
+  'community_posts',       // 커뮤니티 게시글 (CommunityPage)
+  'community_nickname',    // 커뮤니티 닉네임 (CommunityPage)
+  'stepApp_likedIds',      // 영상 좋아요 (VideoPage)
+  'sbs-install-dismissed', // PWA 설치 배너 닫음 (InstallBanner)
+];
+const PRESERVE_PREFIXES = ['bookmarks_']; // 영상별 구간 북마크 (useVideoDetail)
+
 const currentVersion = localStorage.getItem('app_version');
 if (currentVersion !== APP_VERSION) {
-  // 사용자의 소중한 데이터(커스텀 곡, 즐겨찾기, 연습 기록 등)는 보존!
-  const customSongs = localStorage.getItem('custom_songs');
-  const favorites = localStorage.getItem('favorites');
-  const practiceData = localStorage.getItem('practiceData');
-  
+  const backup = {};
+  Object.keys(localStorage).forEach((key) => {
+    if (PRESERVE_KEYS.includes(key) || PRESERVE_PREFIXES.some(p => key.startsWith(p))) {
+      backup[key] = localStorage.getItem(key);
+    }
+  });
+
   localStorage.clear(); // 기존 설정 초기화
-  
-  if (customSongs) localStorage.setItem('custom_songs', customSongs);
-  if (favorites) localStorage.setItem('favorites', favorites);
-  if (practiceData) localStorage.setItem('practiceData', practiceData);
-  
+
+  Object.entries(backup).forEach(([key, value]) => localStorage.setItem(key, value));
   localStorage.setItem('app_version', APP_VERSION);
   console.log(`[App] Version updated to ${APP_VERSION}. Critical user data preserved.`);
 }

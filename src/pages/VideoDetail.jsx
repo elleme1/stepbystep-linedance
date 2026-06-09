@@ -23,7 +23,7 @@ export default function VideoDetail() {
 
     // ── 장소별 곡 데이터 ──
     const { selectedLocation } = useLocation();
-    const { getSongsForLocation } = useData();
+    const { getSongsForLocation, isLoaded } = useData();
     const locationSongs = useMemo(() => getSongsForLocation(selectedLocation), [selectedLocation, getSongsForLocation]);
 
     const currentIndex = locationSongs.findIndex(song => String(song.id) === String(id));
@@ -59,6 +59,15 @@ export default function VideoDetail() {
 
     // ── 영상 없음 ──
     if (!videoData) {
+        // Firebase 첫 스냅샷이 오기 전(공유 링크 직접 진입·새로고침)에는
+        // '없음'이 아니라 로딩 중일 수 있으므로 오류 화면 대신 대기 표시
+        if (!isLoaded) {
+            return (
+                <div className="video-detail" style={{ justifyContent: 'center', alignItems: 'center' }}>
+                    <p style={{ fontSize: '16px', color: '#888' }}>영상을 불러오는 중...</p>
+                </div>
+            );
+        }
         return (
             <div className="video-detail" style={{ justifyContent: 'center', alignItems: 'center' }}>
                 <p style={{ fontSize: '18px', color: '#888' }}>영상을 찾을 수 없습니다</p>

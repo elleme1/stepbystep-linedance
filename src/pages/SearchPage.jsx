@@ -1,12 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-// 🚨 [핵심!] 가짜 마네킹을 버리고, 원장님의 40곡 진짜 보물창고(songs.js)를 드디어 연결합니다!
-import songs from '../data/songs';
+// 검색 대상은 DataContext 기준 — 관리자 업로드곡(Firebase) 포함, 숨김/덮어쓰기 반영,
+// 현재 선택 장소의 곡만 검색 (다른 장소 곡을 클릭하면 상세에서 '찾을 수 없음'이 되므로)
+import { useData } from '../context/DataContext';
+import { useLocation } from '../context/LocationContext';
 import { levelStars, levelText } from '../data/constants';
 
 export default function SearchPage() {
     const navigate = useNavigate();
     const [keyword, setKeyword] = useState('');
+    const { getSongsForLocation } = useData();
+    const { selectedLocation } = useLocation();
+    const songs = useMemo(() => getSongsForLocation(selectedLocation), [selectedLocation, getSongsForLocation]);
 
     // 💡 [똑똑한 검색 마법] 원장님이 입력한 글자가 '제목, 안무가, 장르, 레벨'에 있는지 실시간으로 뒤져서 가져옵니다!
     const searchResults = !keyword.trim()

@@ -1,14 +1,19 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import { ref, onValue, set, remove, update } from 'firebase/database';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
+import { ref, onValue, set, remove, update, get, runTransaction } from 'firebase/database';
 import { db, authReady } from '../lib/firebase';
 import rawProcessedSongs, { getThisWeekSong as getRawThisWeek } from '../data/songs';
 
 const DataContext = createContext();
 
+// 한국시간 기준 오늘 날짜 (YYYY-MM-DD) — toISOString은 UTC라 KST 00~09시 업로드가 전날로 찍힘
+export const todayLocal = () => new Date().toLocaleDateString('sv-SE');
+
 export const DataProvider = ({ children }) => {
   const [localSongs, setLocalSongs] = useState([]);
   const [hiddenSongIds, setHiddenSongIds] = useState([]);
   const [songOverrides, setSongOverrides] = useState({});
+  // Firebase 첫 스냅샷 수신 여부 — 딥링크 진입 시 '없음'과 '로딩 중'을 구분하기 위함
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // 🔥 Firebase RTDB 실시간 구독 — 모든 디바이스에 즉시 반영
   //    익명 세션(authReady)이 잡힌 뒤에 구독을 붙인다. 보안 규칙이
@@ -36,6 +41,7 @@ export const DataProvider = ({ children }) => {
             return (b.id || 0) - (a.id || 0);
           });
         setLocalSongs(arr);
+        setIsLoaded(true);
       });
 
       const unsubHidden = onValue(ref(db, 'hiddenSongs'), (snap) => {
@@ -62,11 +68,15 @@ export const DataProvider = ({ children }) => {
 
   // 새로운 곡 추가
   const addSong = async (newSongData) => {
-    const allIds = [...rawProcessedSongs, ...localSongs].map(s => s.id);
-    const nextId = Math.max(0, ...allIds) + 1;
+    // ID는 서버의 실제 /songs 기준으로 계산 — 구독 스냅샷이 아직 안 와 있어도
+    // 기존 곡을 덮어쓰지 않는다.
+    const snap = await get(ref(db, 'songs'));
+    const serverIds = Object.values(snap.val() || {}).map(s => s.id || 0);
+    const baseIds = rawProcessedSongs.map(s => s.id);
+    let nextId = Math.max(0, ...baseIds, ...serverIds) + 1;
 
-    const newSong = {
-      id: nextId,
+    const buildSong = (id) => ({
+      id,
       title: newSongData.title || '제목 없음',
       artist: newSongData.artist || '가수 미상',
       youtubeId: newSongData.youtubeId || '',
@@ -75,17 +85,26 @@ export const DataProvider = ({ children }) => {
         ? `https://img.youtube.com/vi/${newSongData.youtubeId}/hqdefault.jpg`
         : '',
       location: newSongData.location || 'kolon',
-      addedDate: newSongData.date || new Date().toISOString().split('T')[0],
+      addedDate: newSongData.date || todayLocal(),
       isLocal: true,
       genre: newSongData.genre || '장르 미상',
       level: newSongData.level || 2,
       choreographer: newSongData.choreographer || '안무가 미상',
       steps: newSongData.steps || [],
       tags: newSongData.tags || []
-    };
+    });
 
-    await set(ref(db, `songs/${nextId}`), newSong);
-    return newSong;
+    // 관리자 2명(코오롱/중리)이 동시에 등록해도 충돌하지 않도록,
+    // 해당 ID 슬롯이 비어 있을 때만 생성하고 점유돼 있으면 +1로 재시도.
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const result = await runTransaction(ref(db, `songs/${nextId}`), (cur) => {
+        if (cur !== null) return; // 다른 관리자가 방금 선점 → abort
+        return buildSong(nextId);
+      });
+      if (result.committed) return result.snapshot.val();
+      nextId += 1;
+    }
+    throw new Error('곡 ID 충돌이 반복됩니다. 잠시 후 다시 시도해주세요.');
   };
 
   // 곡 삭제 — 로컬곡은 RTDB에서 직접 제거, 기본곡은 hiddenSongs에 등록
@@ -142,24 +161,27 @@ export const DataProvider = ({ children }) => {
     });
   }, [localSongs, hiddenSongIds, songOverrides]);
 
-  const getSongsForLocation = (locationId) => {
+  // useCallback으로 안정화 — allSongs가 바뀔 때만 함수 identity가 바뀌므로,
+  // 소비처가 이 함수를 useMemo/useEffect 의존성에 넣으면 Firebase 갱신이 화면에 반영된다.
+  const getSongsForLocation = useCallback((locationId) => {
     const filtered = allSongs.filter(s => s.location === locationId || s.location === 'both');
     const local = filtered.filter(s => s.isLocal);
     const original = filtered.filter(s => !s.isLocal);
     return [...local, ...original];
-  };
+  }, [allSongs]);
 
-  const getThisWeekSong = (locationId) => {
+  const getThisWeekSong = useCallback((locationId) => {
     // allSongs에 동적으로 찍힌 이번주 플래그를 그대로 사용 → 홈/안무보관함/연속재생 일관성
     const flag = locationId === 'kolon' ? 'isThisWeekKolon'
       : locationId === 'sindun' ? 'isThisWeekSindun'
       : 'isThisWeek';
     return allSongs.find(s => s[flag]) || getRawThisWeek(locationId);
-  };
+  }, [allSongs]);
 
   const value = {
     allSongs,
     localSongs,
+    isLoaded,
     addSong,
     removeSong,
     updateSong,

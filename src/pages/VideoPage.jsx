@@ -40,8 +40,9 @@ export default function VideoPage() {
     const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
     const scrollToBottom = () => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
 
-    // 장소별 곡 필터링
-    const locationSongs = useMemo(() => getSongsForLocation(selectedLocation), [selectedLocation]);
+    // 장소별 곡 필터링 — getSongsForLocation은 allSongs 기반 useCallback이라
+    // 의존성에 넣어야 Firebase 실시간 갱신(곡 추가/삭제)이 목록에 반영됨
+    const locationSongs = useMemo(() => getSongsForLocation(selectedLocation), [selectedLocation, getSongsForLocation]);
 
     // isThisWeek를 장소별로 판단
     const isThisWeekForLocation = (song) => {

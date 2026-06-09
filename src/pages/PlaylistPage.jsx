@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import songs from '../data/songs';
 import { levelStars } from '../data/constants';
 import { useLocation } from '../context/LocationContext';
 import { useData } from '../context/DataContext';
@@ -27,6 +26,7 @@ export default function PlaylistPage() {
     const containerRef = useRef(null);
     const progressInterval = useRef(null);
     const playlistRef = useRef(null);
+    const pendingTimersRef = useRef([]);   // 곡 전환 시 예약한 setTimeout ID들 (언마운트 시 정리)
 
     // 유튜브 API 콜백에서 항상 최신 상태를 유지하기 위한 저장소
     const stateRef = useRef({});
@@ -50,8 +50,9 @@ export default function PlaylistPage() {
         const locationSongs = getSongsForLocation(selectedLocation);
         if (mode === 'archive') return locationSongs; // 전체곡 재생이므로 필터링 없이 모두 반환
         const thisWeekSongs = locationSongs.filter(s => isThisWeekForLocation(s));
-        return thisWeekSongs.length > 0 ? thisWeekSongs : [locationSongs[0] || songs[0]];
-    }, [mode, selectedLocation]);
+        if (thisWeekSongs.length > 0) return thisWeekSongs;
+        return locationSongs.length > 0 ? [locationSongs[0]] : [];
+    }, [mode, selectedLocation, getSongsForLocation]);
     const totalSongs = playlistSongs.length;
 
     const generateShuffleOrder = useCallback(() => {
@@ -145,8 +146,11 @@ export default function PlaylistPage() {
     });
 
     // 곡 변경 시 스크롤 + 속도 적용 + 재생 보장
+    // 의존성은 '실제 영상 교체'(currentVideoId)에만 둔다 — 속도 버튼·셔플 토글이나
+    // Firebase 목록 갱신으로 객체 identity만 바뀐 경우에 화면을 최상단으로 튕기거나
+    // 진행바를 0:00으로 리셋하지 않기 위함. (속도는 stateRef로 최신값 사용)
     useEffect(() => {
-        if (!player.isReady || !currentSong) return;
+        if (!player.isReady || !currentVideoId) return;
 
         // 화면 스크롤
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -158,8 +162,8 @@ export default function PlaylistPage() {
             pageContainer.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // 속도 적용
-        player.setSpeed(speed);
+        // 속도 적용 (곡이 바뀌어도 선택한 배속 유지)
+        player.setSpeed(stateRef.current.speed);
 
         // Safari 먹통 화면 방지
         try {
@@ -179,27 +183,32 @@ export default function PlaylistPage() {
         if (wantPlayRef.current) {
             wantPlayRef.current = false;
             // loadVideoById 후 약간의 딜레이를 두고 play 보장
-            setTimeout(() => {
+            // (언마운트 후 발화하면 정리 불가능한 인터벌이 생기므로 타이머를 추적)
+            pendingTimersRef.current.push(setTimeout(() => {
                 player.play();
                 setIsPlaying(true);
                 startProgressTracking();
-            }, 300);
+            }, 300));
         }
 
         // 재생목록 스크롤
-        setTimeout(() => {
+        pendingTimersRef.current.push(setTimeout(() => {
             const listContainer = playlistRef.current;
             const activeItem = listContainer?.querySelector('.playlist-item.active');
             if (listContainer && activeItem) {
                 const offset = activeItem.offsetTop - listContainer.offsetTop - (listContainer.clientHeight / 2) + (activeItem.clientHeight / 2);
                 listContainer.scrollTo({ top: Math.max(0, offset), behavior: 'smooth' });
             }
-        }, 100);
-    }, [currentIndex, player.isReady, isShuffle, shuffledOrder, currentSong, speed]);
+        }, 100));
+    }, [currentVideoId, player.isReady]);
 
-    // 언마운트 시 정리
+    // 언마운트 시 정리 — progress 인터벌과 예약된 타이머 모두
     useEffect(() => {
-        return () => stopProgressTracking();
+        return () => {
+            stopProgressTracking();
+            pendingTimersRef.current.forEach(clearTimeout);
+            pendingTimersRef.current = [];
+        };
     }, []);
 
     // =============================

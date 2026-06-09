@@ -105,7 +105,8 @@ export default function useVideoDetail({ playerRef, mainVideoId, tutorialVideoId
     const setAPoint = useCallback(() => {
         const t = getCurrentTime();
         setPointA(t);
-        if (pointB !== null && t >= pointB) setPointB(null);
+        // B점이 무효화되면 루프 활성 표시(배지)도 함께 꺼야 상태가 일치한다
+        if (pointB !== null && t >= pointB) { setPointB(null); setAbLoopActive(false); }
     }, [getCurrentTime, pointB]);
 
     const setBPoint = useCallback(() => {

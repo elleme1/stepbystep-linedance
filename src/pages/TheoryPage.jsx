@@ -232,7 +232,10 @@ export default function TheoryPage() {
   // ====================================
   useEffect(() => {
     setPointA(null); setPointB(null); setAbLoopActive(false);
-    activePlayerRef.current = null;
+    // 주의: activePlayerRef는 여기서 null로 지우지 않는다.
+    // 같은 위치에서 영상만 바뀌면 loadVideoById로 교체되어 onReady가 다시
+    // 발화하지 않으므로, 지우면 A/B 버튼이 복구 불가능하게 죽는다.
+    // 플레이어가 새로 마운트되면 handlePlayerReady가 알아서 갱신한다.
   }, [activeVideo?.videoId, activeVideo?.cardN]);
 
   // ====================================
@@ -295,7 +298,8 @@ export default function TheoryPage() {
   const handleSetA = () => {
     const t = getCurrentTime();
     setPointA(t);
-    if (pointB !== null && t >= pointB) setPointB(null);
+    // B점이 무효화되면 루프 활성 표시(배지)도 함께 꺼야 상태가 일치한다
+    if (pointB !== null && t >= pointB) { setPointB(null); setAbLoopActive(false); }
   };
   const handleSetB = () => {
     const t = getCurrentTime();

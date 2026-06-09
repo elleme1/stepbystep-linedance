@@ -37,9 +37,26 @@
 ## ⚠️ 알려진 부수 결함 (우선순위순)
 
 1. **🟡 보안 규칙 — 현 수준 의도적 수용(2026-06-04 사용자 결정, 길 C)** (`database.rules.json`) — 2026-06-01 `.read/.write: "auth != null"` + 익명 인증 활성화로 1차 경고 해소(gcloud Identity Toolkit Admin API로 적용·REST로 검증: 미인증 401 / 익명 토큰 200 / 콘솔 UI "사용 설정됨"). 익명 토큰을 누구나 받으므로 쓰기 제한은 없음 → 2026-06-04 Firebase가 "로그인한 모든 사용자 읽기/쓰기" 재경고. **사용자가 현상 유지 + 메일 음소거(길 C) 선택** — 데이터는 공개 곡 정보뿐, 실재 위험은 복구 가능한 '쓰기 반달리즘'뿐. **불러서 고치지 말 것(긴급 버그 아님).** 향후 강화 옵션 보존: 길 A(`/admins/{uid}: true` 화이트리스트 + AdminPage 평문 비번 1234 → Firebase Auth 로그인) 또는 길 B(`.write:false` + Vercel 서버함수 + 서비스계정 키). 이메일 음소거는 계정 알림 설정이라 사용자 본인이 처리(마담은 계정 설정 안 건드림).
-2. **🟡 songSchedule 미반영** — 새 곡은 `addedDate`만 갖고 `songs.js`의 `songSchedule` 객체에는 들어가지 않아 "★ 이번주 수업곡" 자동 표시가 일관적이지 않음. `getThisWeekSong`이 첫 로컬곡을 반환하는 보정이 있긴 하지만 보강 필요.
-3. **🟡 자동 추출 실패 UX** — admin에서 유튜브 URL 붙여넣었는데 noembed가 메타데이터를 못 가져오면 조용히 실패해 제목이 빈 채로 저장됨 (DataContext fallback이 "제목 없음"). 토스트 안내 + submit 시 제목 빈 검증 필요.
-4. **🟢 데드 코드** — `AdminPage.songInfo.location`은 handleAddSong에서 `locParam`으로 어차피 덮어씌워짐.
+2. ~~🟡 songSchedule 미반영~~ — **해소(2026-06-10, `2a6f4e9`)**: DataContext.allSongs가 병합곡 전체의 지점별 최신 `addedDate` 기준으로 `isThisWeek*` 플래그를 동적 재계산. songSchedule은 이제 기본곡의 날짜/장소 원천일 뿐 "이번주" 판정에 단독 권위가 없음.
+3. ~~🟡 자동 추출 실패 UX~~ — **해소(2026-06-10 전반 점검)**: noembed 실패 시 토스트 안내 + 제출 시 빈 제목 차단(AdminPage).
+4. **🟢 데드 코드** — `AdminPage.songInfo.location`은 handleAddSong에서 `locParam`으로 어차피 덮어씌워짐(동작 영향 없음). `songs.js`의 `getSongsForLocation`/`kolonOrder`/`sindunOrder`도 어디서도 import되지 않는 죽은 코드 — 단 두 order 배열은 "수업 순서" 큐레이션 기록이라 **운영 의도 확인 전 삭제 보류**(화면 순서에 적용할지 / 지울지는 사용자 결정 필요).
+
+## 🔧 2026-06-10 전반 점검(87-에이전트 감사) 수리 내역
+
+6개 차원 병렬 감사 + 발견 건별 3-렌즈 교차 검증으로 23건 확정 → 일괄 수리:
+
+- **App.jsx 보존 키 전면 교체(최중요)** — 기존 백업 목록 3개(`custom_songs`/`favorites`/`practiceData`)는 코드 어디서도 안 쓰는 죽은 키였음. 실사용 키 11종 + `bookmarks_` 접두 키로 교체. **이 수리 전에 APP_VERSION을 올렸다면 전 회원 찜·챌린지·게시글·VIP가 전부 소실됐을 것.**
+- **stale 구독 해소** — DataContext의 `getSongsForLocation`/`getThisWeekSong`을 `useCallback([allSongs])`로 안정화하고 VideoPage/PlaylistPage useMemo 의존성에 포함. Firebase 데이터 도착/실시간 변경이 화면에 즉시 반영됨.
+- **SearchPage** — songs.js 직접 import → DataContext 기반으로 교체(Firebase 업로드곡 검색 가능, 숨김/덮어쓰기 반영, 현재 장소 필터).
+- **VideoDetail 딥링크** — DataContext에 `isLoaded` 플래그 추가, 첫 스냅샷 전엔 '불러오는 중' 표시(이전엔 즉시 '찾을 수 없습니다').
+- **addSong 원자화** — 서버 `/songs` 실측 max+1 + `runTransaction`(빈 슬롯만 생성, 충돌 시 +1 재시도). 관리자 2명 동시 등록 덮어쓰기 방지. 날짜는 KST(`todayLocal`) — 기존 UTC는 0~9시 업로드가 전날로 찍혔음.
+- **A-B 구간반복(자이브 탭)** — 영상 전환 시 `activePlayerRef`를 null로 지우던 코드 제거(loadVideoById는 onReady를 재발화하지 않아 A/B가 복구 불가로 죽었음). A점 재설정으로 B 무효화 시 유령 배지 제거(TheoryPage + useVideoDetail 동일 수정).
+- **PlaylistPage** — 곡 전환 effect를 `currentVideoId` 키로 분리(속도/셔플 토글 시 화면 최상단 튐 + 진행바 0:00 리셋 방지), 300ms 재생 타임아웃 언마운트 정리(인터벌 누수 차단).
+- **AdminPage** — `addSong`/`removeSong` await(실패 시 가짜 성공 토스트 차단), 곡 '수정' 시 큐앱 동기화에 삭제 경로와 같은 가드 추가(`updateCueAppIfCurrentMain`: 큐앱 현재 메인이 이 곡일 때만, 일치 role에만 POST — 옛 곡 오타 수정이 큐앱 메인을 덮어쓰던 결함), 삭제 시 큐앱 정리 실패를 토스트에 구분 표시.
+- **PWA** — `public/logo-512.png` 실파일 생성(manifest.json이 참조하는데 파일이 없어 안드로이드 스플래시가 저해상 폴백이었음; rewrite 탓에 200 text/html로 조용히 실패), vite.config manifest에도 512 등록, ReloadPrompt의 도달 불가 '업데이트' 버튼 분기 제거(autoUpdate 체제에선 needRefresh가 발화하지 않음).
+- 검증: 빌드 통과 + 로컬 프리뷰에서 곡 순서/뱃지/이번주 연속재생/검색/마이그레이션 보존 실측 확인. 콘솔 오류 0.
+
+수리 보류(사용자 결정 대기): `kolonOrder`/`sindunOrder` 큐레이션 순서를 화면에 적용할지 vs 삭제할지.
 
 ## 🔍 운영 의도 vs 옛 데이터 잔상
 
@@ -117,10 +134,10 @@ src/
 
 ## 핵심 동작 / 함정
 
-### 1. App 버전 마이그레이션 (App.jsx line ~37)
+### 1. App 버전 마이그레이션 (App.jsx 상단)
 - `APP_VERSION = 'v1.5'` 와 `localStorage.app_version`이 다르면 **localStorage 전체를 clear**.
-- 단, **`custom_songs`, `favorites`, `practiceData`는 백업 후 복원** — 이 3개는 사용자 데이터이므로 절대 잃으면 안 됨.
-- 새 사용자 데이터 키를 추가할 거면 이 보존 목록도 함께 업데이트할 것. 안 그러면 다음 버전 올릴 때 데이터 날아감.
+- 단, **`PRESERVE_KEYS` 배열(찜·연습·챌린지·테마·장소·VIP·커뮤니티·좋아요·설치배너) + `bookmarks_` 접두 키는 백업 후 복원** — 사용자 데이터이므로 절대 잃으면 안 됨. (2026-06-10 수리: 그 전엔 죽은 키 3개만 백업해서 사실상 전부 날아가는 상태였음.)
+- **새 사용자 데이터 localStorage 키를 추가하면 반드시 App.jsx의 `PRESERVE_KEYS`에도 등록할 것.** 안 그러면 다음 버전 올릴 때 그 데이터만 날아감.
 
 ### 2. YouTubePlayer 패턴 (`라인댄스앱-walkthrough.md` 참조)
 - 곡 전환 시 iframe을 파괴/재생성하지 말고 `loadVideoById()`만 호출.
@@ -138,10 +155,11 @@ src/
 
 ## PWA
 
-- `vite-plugin-pwa` with `registerType: 'prompt'` — 새 SW는 사용자 액션으로 활성화.
-- manifest: `public/manifest.json` (앱 이름 "스텝바이스텝 💃").
-- icons: `public/logo-192.png`, `logo-512.png`, `favicon.png`.
+- `vite-plugin-pwa` with `registerType: 'autoUpdate'` + skipWaiting/clientsClaim — 새 SW는 다음 로드 시 자동 활성화·자동 reload (2026-05-26 `7cfd5b2`에서 'prompt'→전환: 옛 번들 갇힘 해소 목적. ReloadPrompt는 오프라인 준비 안내만 표시).
+- manifest: `public/manifest.json` (앱 이름 "스텝바이스텝 💃") — index.html이 직접 링크. vite-plugin-pwa가 생성하는 `manifest.webmanifest`도 공존(내용은 vite.config.js manifest 블록).
+- icons: `public/logo-192.png`, `logo-512.png`(2026-06-10 생성 — 그 전엔 manifest가 참조만 하고 파일이 없었음), `favicon.png`.
 - 별도 정적: `public/jive-guide.html` (SPA rewrite 예외 — 직접 접근).
+- ⚠️ vercel.json rewrite는 존재하지 않는 파일 경로도 index.html(200)로 돌리므로, 자산 누락이 404 대신 조용한 text/html 응답으로 가려짐 — 자산 추가 시 prod에서 `curl -I`로 Content-Type 확인 권장.
 
 ## Chrome PWA 단축키 (안티그래비티가 설치)
 

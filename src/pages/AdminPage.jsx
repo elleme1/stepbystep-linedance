@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useData } from '../context/DataContext';
+import { useData, todayLocal } from '../context/DataContext';
 
 /**
  * 👑 Step-by-Step 코오롱 전용 관리자 대시보드
@@ -32,7 +32,7 @@ const AdminPage = () => {
     youtubeId: '',
     tutorialUrl: '',
     tutorialId: '',
-    date: new Date().toISOString().split('T')[0],
+    date: todayLocal(),
     location: locParam
   });
 
@@ -70,15 +70,18 @@ const AdminPage = () => {
   // 🗑 큐앱 동기화 — 어드민에서 곡 삭제 시 호출
   // 큐앱의 현재 메인이 삭제 대상과 같은 youtubeId일 때만 DELETE
   // (다른 곡이 큐앱 메인인데 옛 곡을 삭제했다고 메인 슬롯을 비우면 안 됨)
+  // 반환 { removed, failed } — failed는 '일치했지만 정리에 실패한' role.
+  // 호출자가 이를 토스트에 구분 표시해야 큐앱에 지운 곡이 남아 있는 걸 알 수 있다.
   const removeMainTrackFromCueAppIfMatches = async ({ youtubeIdToRemove }) => {
     const apiUrl = import.meta.env.VITE_DANCE_CUE_API;
     const token = import.meta.env.VITE_DANCE_CUE_TOKEN;
-    if (!apiUrl || !token || !youtubeIdToRemove) return { removed: [] };
+    if (!apiUrl || !token || !youtubeIdToRemove) return { removed: [], failed: [] };
     try {
       const cur = await fetch(apiUrl, { headers: { Authorization: `Bearer ${token}` } });
-      if (!cur.ok) return { removed: [] };
+      if (!cur.ok) return { removed: [], failed: [] };
       const data = await cur.json();
       const removed = [];
+      const failed = [];
       // 두 role 모두 검사 — 'both' 곡이거나 사용자가 다른 탭에서 보더라도 안전
       for (const role of ['kolong', 'jungri']) {
         const url = data?.[role]?.url || '';
@@ -88,13 +91,44 @@ const AdminPage = () => {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (del.ok) removed.push(role);
-          else console.warn('[DanceCue] 삭제 실패:', role, del.status);
+          else { failed.push(role); console.warn('[DanceCue] 삭제 실패:', role, del.status); }
         }
       }
-      return { removed };
+      return { removed, failed };
     } catch (err) {
       console.warn('[DanceCue] 삭제 동기화 네트워크 오류:', err);
-      return { removed: [] };
+      return { removed: [], failed: [] };
+    }
+  };
+
+  // ✏️ 큐앱 동기화 — 곡 '수정' 시 호출. 큐앱의 현재 메인이 바로 이 곡일 때만 갱신.
+  // (삭제 경로와 같은 가드 — 몇 주 전 곡의 오타만 고쳐도 그 곡이 큐앱 메인을
+  //  덮어쓰던 문제 방지. 일치하는 role에만, role별로 정확히 POST한다.)
+  const updateCueAppIfCurrentMain = async ({ prevYoutubeId, youtubeId, title }) => {
+    const apiUrl = import.meta.env.VITE_DANCE_CUE_API;
+    const token = import.meta.env.VITE_DANCE_CUE_TOKEN;
+    if (!apiUrl || !token || !prevYoutubeId) return { ok: true, updated: [], skipped: true };
+    try {
+      const cur = await fetch(apiUrl, { headers: { Authorization: `Bearer ${token}` } });
+      if (!cur.ok) return { ok: false, updated: [], reason: `http-${cur.status}` };
+      const data = await cur.json();
+      const roles = ['kolong', 'jungri'].filter(r => (data?.[r]?.url || '').includes(prevYoutubeId));
+      if (roles.length === 0) return { ok: true, updated: [], skipped: true }; // 이 곡이 메인이 아님 → 건드리지 않음
+      const updated = [];
+      const url = `https://www.youtube.com/watch?v=${youtubeId}`;
+      for (const role of roles) {
+        const res = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ role, url, name: title || '' }),
+        });
+        if (res.ok) updated.push(role);
+        else console.warn('[DanceCue] 수정 동기화 실패:', role, res.status);
+      }
+      return { ok: updated.length === roles.length, updated };
+    } catch (err) {
+      console.warn('[DanceCue] 수정 동기화 네트워크 오류:', err);
+      return { ok: false, updated: [], reason: 'network-error' };
     }
   };
 
@@ -130,9 +164,18 @@ const AdminPage = () => {
             title: titleParts.length > 1 ? titleParts[1] : titleParts[0],
             artist: titleParts.length > 1 ? titleParts[0] : 'Various'
           }));
+        } else {
+          // noembed가 비공개/삭제 영상 등으로 메타데이터를 못 가져온 경우 — 조용히 넘기면
+          // '제목 없음'으로 저장되므로 관리자에게 직접 입력을 안내
+          setToastMsg('⚠️ 영상 제목을 자동으로 가져오지 못했습니다. 제목을 직접 입력해주세요.');
+          setShowToast(true);
+          setTimeout(() => setShowToast(false), 4000);
         }
       } catch (err) {
         console.error('메타데이터 조회 실패:', err);
+        setToastMsg('⚠️ 영상 정보를 가져오지 못했습니다. 제목을 직접 입력해주세요.');
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 4000);
       } finally {
         setLoadingMetadata(false);
       }
@@ -173,11 +216,17 @@ const AdminPage = () => {
       alert('메인 곡 URL을 먼저 입력해주세요.\n튜토리얼은 메인 곡에 첨부되는 보조 영상입니다.');
       return;
     }
+    // 자동 추출이 실패하면 제목이 빈 채로 '제목 없음'으로 저장되므로 제출 시점에 차단
+    if (!songInfo.title.trim()) {
+      alert('곡 제목이 비어 있습니다.\n자동 추출이 실패한 경우 제목을 직접 입력해주세요.');
+      return;
+    }
 
     setIsSaving(true);
     try {
       // 🛡️ CTO 비기: 기존 songInfo를 복사하되, location만 현재 탭의 진짜 위치로 강제 덮어쓰기!
-      addSong({ ...songInfo, location: locParam });
+      // await 필수 — Firebase 쓰기 실패가 catch에 잡혀야 가짜 성공 토스트가 안 뜬다
+      await addSong({ ...songInfo, location: locParam });
       // 🎵 댄스 큐 앱에도 메인곡 동기화 — 결과를 토스트에 반영해 사용자가 도달 여부 확인
       const cue = await syncMainTrackToCueApp({ location: locParam, youtubeId: songInfo.youtubeId, title: songInfo.title });
       setToastMsg(cue.ok
@@ -187,11 +236,12 @@ const AdminPage = () => {
       setTimeout(() => setShowToast(false), 4000);
       setSongInfo({
         title: '', artist: 'Various', youtubeUrl: '', youtubeId: '',
-        tutorialUrl: '', tutorialId: '', date: new Date().toISOString().split('T')[0],
+        tutorialUrl: '', tutorialId: '', date: todayLocal(),
         location: locParam
       });
     } catch (err) {
-      alert('저장 중 오류가 발생했습니다.');
+      console.error('곡 저장 실패:', err);
+      alert('저장 중 오류가 발생했습니다. 네트워크 상태를 확인하고 다시 시도해주세요.');
     } finally {
       setIsSaving(false);
     }
@@ -424,11 +474,19 @@ const AdminPage = () => {
                         <button
                           onClick={async () => {
                             if (!confirm(`"${song.title}"을(를) 삭제하시겠습니까?`)) return;
-                            removeSong(song.id);
-                            // 큐앱 메인 슬롯과 일치하면 같이 정리
-                            const { removed } = await removeMainTrackFromCueAppIfMatches({ youtubeIdToRemove: song.youtubeId });
+                            try {
+                              // await 필수 — 실패해도 성공 토스트가 뜨면 안 됨
+                              await removeSong(song.id);
+                            } catch (err) {
+                              console.error('곡 삭제 실패:', err);
+                              alert('삭제 중 오류가 발생했습니다. 네트워크 상태를 확인해주세요.');
+                              return;
+                            }
+                            // 큐앱 메인 슬롯과 일치하면 같이 정리 — 실패는 토스트에 구분 표시
+                            const { removed, failed } = await removeMainTrackFromCueAppIfMatches({ youtubeIdToRemove: song.youtubeId });
                             const suffix = removed.length ? ` (큐앱 ${removed.join(', ')}도 비움)` : '';
-                            setToastMsg(`🗑️ 곡이 삭제되었습니다.${suffix}`); setShowToast(true); setTimeout(() => setShowToast(false), 3000);
+                            const warn = failed.length ? ` ⚠️ 큐앱 ${failed.join(', ')} 정리 실패 — 큐앱에 옛 곡이 남아 있을 수 있습니다` : '';
+                            setToastMsg(`🗑️ 곡이 삭제되었습니다.${suffix}${warn}`); setShowToast(true); setTimeout(() => setShowToast(false), failed.length ? 5000 : 3000);
                           }}
                           style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(239,68,68,0.3)', background: 'transparent', color: '#ef4444', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}
                         >삭제</button>
@@ -530,15 +588,17 @@ const AdminPage = () => {
                               try {
                                 await updateSong(song.id, updates);
                                 // 🎵 메인 영상(youtubeId) 또는 제목이 바뀌었으면 댄스 큐 앱에도 반영
-                                // 곡 자체가 'both'일 수 있으므로 현재 어드민 탭(locParam) 기준으로 role 결정
+                                // 단, 큐앱의 현재 메인이 '이 곡'일 때만 — 옛 곡 수정이 메인 슬롯을 덮어쓰지 않게
                                 let cueResultMsg = '';
                                 if (updates.youtubeId || updates.title) {
-                                  const cue = await syncMainTrackToCueApp({
-                                    location: locParam,
+                                  const cue = await updateCueAppIfCurrentMain({
+                                    prevYoutubeId: song.youtubeId,
                                     youtubeId: updates.youtubeId || song.youtubeId,
                                     title: updates.title || song.title,
                                   });
-                                  cueResultMsg = cue.ok ? ' · 큐 앱 동기화됨' : ` · ⚠️ 큐 앱 실패(${cue.reason})`;
+                                  if (!cue.skipped) {
+                                    cueResultMsg = cue.ok ? ` · 큐 앱(${cue.updated.join(', ')}) 동기화됨` : ` · ⚠️ 큐 앱 실패(${cue.reason || '일부 role'})`;
+                                  }
                                 }
                                 setEditingSongId(null); setEditSongUrl(''); setEditSongTitle(''); setEditSongArtist(''); setEditSongTutorialUrl('');
                                 setToastMsg('✅ 곡 정보가 수정되었습니다.' + cueResultMsg); setShowToast(true); setTimeout(() => setShowToast(false), 4000);

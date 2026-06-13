@@ -163,11 +163,19 @@ export const DataProvider = ({ children }) => {
 
   // useCallback으로 안정화 — allSongs가 바뀔 때만 함수 identity가 바뀌므로,
   // 소비처가 이 함수를 useMemo/useEffect 의존성에 넣으면 Firebase 갱신이 화면에 반영된다.
+  // 정렬은 수업일(addedDate) 내림차순 — 최신 수업곡이 위, 과거가 아래로 일관되게.
+  //   (예전엔 [관리자업로드, 기본곡(파일배열순)]으로 잇기만 해서, rawSongs 배열이
+  //    뒤섞인 중리 쪽 꼬리가 날짜순을 벗어나 뒤틀려 보였음.)
   const getSongsForLocation = useCallback((locationId) => {
-    const filtered = allSongs.filter(s => s.location === locationId || s.location === 'both');
-    const local = filtered.filter(s => s.isLocal);
-    const original = filtered.filter(s => !s.isLocal);
-    return [...local, ...original];
+    return allSongs
+      .filter(s => s.location === locationId || s.location === 'both')
+      .sort((a, b) => {
+        const dc = (b.addedDate || '').localeCompare(a.addedDate || '');
+        if (dc !== 0) return dc;
+        // 같은 날짜면 관리자 업로드를 먼저, 그다음 id 내림차순
+        if (!!a.isLocal !== !!b.isLocal) return a.isLocal ? -1 : 1;
+        return (b.id || 0) - (a.id || 0);
+      });
   }, [allSongs]);
 
   const getThisWeekSong = useCallback((locationId) => {

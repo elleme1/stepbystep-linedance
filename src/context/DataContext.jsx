@@ -136,16 +136,15 @@ export const DataProvider = ({ children }) => {
 
     // 🗓️ "이번주 수업곡" 판정을 병합된 전체 곡 기준으로 동적 재계산.
     //    songs.js의 songSchedule 고정 날짜가 아니라, 관리자 업로드(Firebase)까지
-    //    포함한 '지점별 실제 최신 addedDate'를 기준으로 삼는다. 이렇게 해야
-    //    새로 올린 '오늘 배운곡'이 1번 + 이번주 뱃지 + 이번주 연속재생 대상이 된다.
-    //    (예전엔 songSchedule 최신이 옛 곡에 고정돼 신규 업로드가 2번으로 밀렸음.)
-    const latestFor = (loc) => merged.reduce((max, s) => {
-      const matches = s.location === loc || s.location === 'both';
-      const d = s.addedDate || '';
-      return matches && d > max ? d : max;
-    }, '');
-    const latestKolon = latestFor('kolon');
-    const latestSindun = latestFor('sindun');
+    //    포함한 addedDate를 기준으로, '오늘부터 최근 7일 이내'에 배운 곡을 이번주로 삼는다.
+    //    (2026-06-24: 예전엔 '지점별 가장 최근 하루'만 잡아, 그 날 곡이 1개뿐이면
+    //     연속재생이 첫 곡에서 멈췄음 → 그 주에 배운 곡들이 모두 연속재생 대상이
+    //     되도록 7일로 넓힘.) addedDate는 'YYYY-MM-DD'(sv-SE)라 문자열 비교로 범위 판정.
+    const today = todayLocal();
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    const weekAgoStr = weekAgo.toLocaleDateString('sv-SE');
+    const isWithinWeek = (d) => !!d && d >= weekAgoStr && d <= today;
 
     return merged.map(s => {
       const d = s.addedDate || '';
@@ -153,10 +152,10 @@ export const DataProvider = ({ children }) => {
       const inSindun = s.location === 'sindun' || s.location === 'both';
       return {
         ...s,
-        isThisWeekKolon: inKolon && !!d && d === latestKolon,
-        isThisWeekSindun: inSindun && !!d && d === latestSindun,
-        // 하위 호환(전체 폴백): 어느 지점이든 이번주면 true
-        isThisWeek: !!d && (d === latestKolon || d === latestSindun),
+        isThisWeekKolon: inKolon && isWithinWeek(d),
+        isThisWeekSindun: inSindun && isWithinWeek(d),
+        // 하위 호환(전체 폴백): 어느 지점이든 최근 7일이면 true
+        isThisWeek: isWithinWeek(d) && (inKolon || inSindun),
       };
     });
   }, [localSongs, hiddenSongIds, songOverrides]);

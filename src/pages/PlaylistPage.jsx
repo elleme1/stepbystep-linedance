@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { levelStars } from '../data/constants';
 import { useLocation } from '../context/LocationContext';
@@ -36,7 +36,7 @@ export default function PlaylistPage() {
     const wantPlayRef = useRef(false);
 
     const { selectedLocation } = useLocation();
-    const { getSongsForLocation } = useData();
+    const { getSongsForLocation, isLoaded } = useData();
     const speeds = [0.5, 0.75, 0.8, 0.9, 1, 1.25];
 
     // 📍 장소별 곡 필터링
@@ -46,13 +46,29 @@ export default function PlaylistPage() {
         return song.isThisWeek;
     };
 
-    const playlistSongs = useMemo(() => {
+    // 재생목록 빌드 — 현재 데이터로 한 번 계산
+    const buildPlaylist = () => {
         const locationSongs = getSongsForLocation(selectedLocation);
-        if (mode === 'archive') return locationSongs; // 전체곡 재생이므로 필터링 없이 모두 반환
+        if (mode === 'archive') return locationSongs; // 전체곡 재생
         const thisWeekSongs = locationSongs.filter(s => isThisWeekForLocation(s));
-        if (thisWeekSongs.length > 0) return thisWeekSongs;
-        return locationSongs.length > 0 ? [locationSongs[0]] : [];
-    }, [mode, selectedLocation, getSongsForLocation]);
+        return thisWeekSongs.length > 0
+            ? thisWeekSongs
+            : (locationSongs.length > 0 ? [locationSongs[0]] : []);
+    };
+
+    // 🧊 재생목록은 '한 번 만들고 세션 동안 고정'한다.
+    //    - lazy useState 초기화로 '첫 렌더에 동기 계산' → 플레이어가 빈 영상(embed/?)으로
+    //      생성되는 일이 없게 한다(데이터가 이미 와 있는 일반 진입 경로).
+    //    - 데이터가 늦게 도착(cold)하거나 mode·장소가 바뀌면 effect에서 다시 만든다.
+    //    - getSongsForLocation(=allSongs)은 의존성에서 빼서, 재생 중 관리자가 곡을 올려도
+    //      목록이 재정렬돼 현재 곡이 튀지 않게 한다(연속재생 끊김 방지).
+    const [playlistSongs, setPlaylistSongs] = useState(buildPlaylist);
+    useEffect(() => {
+        if (!isLoaded) return;
+        setPlaylistSongs(buildPlaylist());
+        setCurrentIndex(0); // 새 목록이면 처음부터
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isLoaded, mode, selectedLocation]);
     const totalSongs = playlistSongs.length;
 
     const generateShuffleOrder = useCallback(() => {

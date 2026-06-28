@@ -83,18 +83,16 @@ export default function VideoPage() {
                 return false;
             })
             .sort((a, b) => {
-                const aLiked = likedIds.includes(a.id);
-                const bLiked = likedIds.includes(b.id);
-                if (aLiked && !bLiked) return -1;
-                if (!aLiked && bLiked) return 1;
-                // 이번주 곡 우선
+                // 보관함 순서는 항상 수업일 내림차순(최신 위) 유지.
+                // 찜(♥)은 표시만 — 순서를 바꾸지 않는다. (예전엔 찜한 곡을 맨 위로
+                // 끌어올려, 옛 곡을 찜하면 목록이 뒤죽박죽처럼 보였음.)
                 const aThisWeek = isThisWeekForLocation(a);
                 const bThisWeek = isThisWeekForLocation(b);
                 if (aThisWeek && !bThisWeek) return -1;
                 if (!aThisWeek && bThisWeek) return 1;
-                return 0;
+                return 0; // 나머지는 locationSongs(날짜 내림차순) 순서 유지
             });
-    }, [activeTab, likedIds, locationSongs, selectedLocation]);
+    }, [activeTab, locationSongs, selectedLocation]);
 
     return (
         <div className="video-page-root">

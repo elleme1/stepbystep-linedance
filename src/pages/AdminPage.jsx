@@ -20,6 +20,7 @@ const AdminPage = () => {
   const [editSongTitle, setEditSongTitle] = useState('');
   const [editSongArtist, setEditSongArtist] = useState('');
   const [editSongTutorialUrl, setEditSongTutorialUrl] = useState('');
+  const [editSongNote, setEditSongNote] = useState('');
   const locParam = searchParams.get('loc') || 'kolon';
   const locationName = locParam === 'kolon' ? '코오롱 스포렉스' : '중리 행정복지센터';
 
@@ -468,6 +469,7 @@ const AdminPage = () => {
                             setEditSongTitle(opening ? (song.title || '') : '');
                             setEditSongArtist(opening ? (song.artist || '') : '');
                             setEditSongTutorialUrl('');
+                            setEditSongNote(opening ? (song.description || '') : '');
                           }}
                           style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(212,168,83,0.3)', background: editingSongId === song.id ? 'rgba(212,168,83,0.2)' : 'transparent', color: '#e8c56d', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}
                         >수정</button>
@@ -553,9 +555,20 @@ const AdminPage = () => {
                             style={{ marginBottom: 0, padding: '10px', fontSize: '0.9rem' }}
                           />
                         </div>
+                        <div>
+                          <label style={{ fontSize: '0.75rem', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>📝 안무 노트 / 스텝시트 (줄바꿈 그대로 표시됨)</label>
+                          <textarea
+                            className="input-box"
+                            placeholder="스텝 설명을 붙여넣으세요. 영상 아래 '원장님의 안무 노트'에 표시됩니다."
+                            value={editSongNote}
+                            onChange={(e) => setEditSongNote(e.target.value)}
+                            rows={10}
+                            style={{ marginBottom: 0, padding: '10px', fontSize: '0.9rem', resize: 'vertical', lineHeight: 1.6, fontFamily: 'inherit' }}
+                          />
+                        </div>
                         <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
                           <button
-                            onClick={() => { setEditingSongId(null); setEditSongUrl(''); setEditSongTitle(''); setEditSongArtist(''); setEditSongTutorialUrl(''); }}
+                            onClick={() => { setEditingSongId(null); setEditSongUrl(''); setEditSongTitle(''); setEditSongArtist(''); setEditSongTutorialUrl(''); setEditSongNote(''); }}
                             style={{ padding: '10px 16px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#94a3b8', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}
                           >취소</button>
                           <button
@@ -580,6 +593,10 @@ const AdminPage = () => {
                                 if (newTutId !== song.tutorialId) updates.tutorialId = newTutId;
                               }
 
+                              if (editSongNote.trim() !== (song.description || '').trim()) {
+                                updates.description = editSongNote.trim();
+                              }
+
                               if (Object.keys(updates).length === 0) {
                                 setEditingSongId(null);
                                 return;
@@ -600,7 +617,7 @@ const AdminPage = () => {
                                     cueResultMsg = cue.ok ? ` · 큐 앱(${cue.updated.join(', ')}) 동기화됨` : ` · ⚠️ 큐 앱 실패(${cue.reason || '일부 role'})`;
                                   }
                                 }
-                                setEditingSongId(null); setEditSongUrl(''); setEditSongTitle(''); setEditSongArtist(''); setEditSongTutorialUrl('');
+                                setEditingSongId(null); setEditSongUrl(''); setEditSongTitle(''); setEditSongArtist(''); setEditSongTutorialUrl(''); setEditSongNote('');
                                 setToastMsg('✅ 곡 정보가 수정되었습니다.' + cueResultMsg); setShowToast(true); setTimeout(() => setShowToast(false), 4000);
                               } catch (err) {
                                 alert('수정 중 오류가 발생했습니다.');

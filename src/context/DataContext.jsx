@@ -178,12 +178,16 @@ export const DataProvider = ({ children }) => {
   }, [allSongs]);
 
   const getThisWeekSong = useCallback((locationId) => {
-    // allSongs에 동적으로 찍힌 이번주 플래그를 그대로 사용 → 홈/안무보관함/연속재생 일관성
+    // allSongs에 동적으로 찍힌 이번주(최근 7일) 플래그를 먼저 사용 → 홈/안무보관함/연속재생 일관성
     const flag = locationId === 'kolon' ? 'isThisWeekKolon'
       : locationId === 'sindun' ? 'isThisWeekSindun'
       : 'isThisWeek';
-    return allSongs.find(s => s[flag]) || getRawThisWeek(locationId);
-  }, [allSongs]);
+    const flagged = allSongs.find(s => s[flag]);
+    if (flagged) return flagged;
+    // 최근 7일 내 수업이 없으면(예: 중리가 한 주 쉰 경우) 옛 기본곡(getRawThisWeek)으로
+    // 떨어지지 말고, 그 지점의 '실제 최신 수업곡'(날짜 내림차순 첫 곡)을 보여준다.
+    return getSongsForLocation(locationId)[0] || getRawThisWeek(locationId);
+  }, [allSongs, getSongsForLocation]);
 
   const value = {
     allSongs,

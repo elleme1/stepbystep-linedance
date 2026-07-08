@@ -34,6 +34,8 @@ export default function PlaylistPage() {
 
     // 🔑 곡 전환 후 재생을 원하는지 플래그 (ENDED → 다음 곡 전환 → 로드 완료 → play)
     const wantPlayRef = useRef(false);
+    // 🔑 목록 끝 도달 → 처음으로 '되감기만' 하는 경우 loadVideoById의 자동 재생을 상쇄
+    const stopAfterLoadRef = useRef(false);
 
     const { selectedLocation } = useLocation();
     const { getSongsForLocation, isLoaded } = useData();
@@ -71,15 +73,6 @@ export default function PlaylistPage() {
     }, [isLoaded, mode, selectedLocation]);
     const totalSongs = playlistSongs.length;
 
-    const generateShuffleOrder = useCallback(() => {
-        const order = playlistSongs.map((_, i) => i);
-        for (let i = order.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [order[i], order[j]] = [order[j], order[i]];
-        }
-        setShuffledOrder(order);
-    }, [totalSongs, playlistSongs]);
-
     const getActualIndex = useCallback((idx) => {
         if (isShuffle && shuffledOrder.length > 0) {
             return shuffledOrder[idx] ?? idx;
@@ -89,6 +82,7 @@ export default function PlaylistPage() {
 
     const currentSong = playlistSongs[getActualIndex(currentIndex)];
     const currentVideoId = currentSong?.mainVideoId || currentSong?.youtubeId || '';
+    const currentSongId = currentSong?.id ?? null;
 
     // =============================
     // 프로그래스 트래킹
@@ -150,9 +144,13 @@ export default function PlaylistPage() {
                     if (s.currentIndex < totalSongs - 1) {
                         setCurrentIndex(s.currentIndex + 1);
                     } else {
+                        // 목록 끝: 처음으로 '되감기만' — loadVideoById는 항상 자동
+                        // 재생을 시작하므로, 플래그를 세워 로드 직후 pause()로 상쇄
+                        // (안 하면 목록 전체가 영원히 반복 재생됨)
                         setIsPlaying(false);
-                        setCurrentIndex(0);
                         wantPlayRef.current = false;
+                        stopAfterLoadRef.current = true;
+                        setCurrentIndex(0);
                     }
                 } else {
                     setIsPlaying(false);
@@ -162,9 +160,11 @@ export default function PlaylistPage() {
     });
 
     // 곡 변경 시 스크롤 + 속도 적용 + 재생 보장
-    // 의존성은 '실제 영상 교체'(currentVideoId)에만 둔다 — 속도 버튼·셔플 토글이나
-    // Firebase 목록 갱신으로 객체 identity만 바뀐 경우에 화면을 최상단으로 튕기거나
-    // 진행바를 0:00으로 리셋하지 않기 위함. (속도는 stateRef로 최신값 사용)
+    // 의존성은 '곡 교체'(currentSongId)에 둔다 — 속도 버튼이나 Firebase 목록 갱신으로
+    // 객체 identity만 바뀐 경우에 화면을 최상단으로 튕기거나 진행바를 0:00으로
+    // 리셋하지 않기 위함. (videoId가 아니라 곡 id를 쓰는 이유: 인접한 두 곡이 같은
+    // 영상을 쓰면 videoId가 안 바뀌어 연속재생이 그 지점에서 멈추기 때문 — 그 경우
+    // 아래에서 seekTo(0)+play로 직접 재시작한다. 속도는 stateRef로 최신값 사용)
     useEffect(() => {
         if (!player.isReady || !currentVideoId) return;
 
@@ -196,15 +196,27 @@ export default function PlaylistPage() {
 
         // 🔑 곡 전환 후 재생 보장
         // loadVideoById가 영상을 로드하면 자동 재생되지만, 안전장치로 play() 호출
+        // (같은 videoId로 곡만 바뀐 경우 loadVideoById가 발화하지 않으므로
+        //  seekTo(0)+play가 유일한 재생 경로가 된다)
         if (wantPlayRef.current) {
             wantPlayRef.current = false;
+            stopAfterLoadRef.current = false;
             // loadVideoById 후 약간의 딜레이를 두고 play 보장
             // (언마운트 후 발화하면 정리 불가능한 인터벌이 생기므로 타이머를 추적)
             pendingTimersRef.current.push(setTimeout(() => {
+                player.seekTo(0);
                 player.play();
                 setIsPlaying(true);
                 startProgressTracking();
             }, 300));
+        } else if (stopAfterLoadRef.current) {
+            // 목록 끝 → 처음으로 되감기만: loadVideoById의 자동 재생을 pause로 상쇄
+            stopAfterLoadRef.current = false;
+            pendingTimersRef.current.push(setTimeout(() => {
+                player.pause();
+                setIsPlaying(false);
+                stopProgressTracking();
+            }, 350));
         }
 
         // 재생목록 스크롤
@@ -216,7 +228,8 @@ export default function PlaylistPage() {
                 listContainer.scrollTo({ top: Math.max(0, offset), behavior: 'smooth' });
             }
         }, 100));
-    }, [currentVideoId, player.isReady]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentSongId, player.isReady]);
 
     // 언마운트 시 정리 — progress 인터벌과 예약된 타이머 모두
     useEffect(() => {
@@ -230,14 +243,22 @@ export default function PlaylistPage() {
     // =============================
     // 컨트롤 핸들러
     // =============================
+    // 같은 곡을 다시 선택/⏭⏮한 경우 — 인덱스가 안 바뀌어 effect가 발화하지 않으므로
+    // 직접 재시작한다. (없으면 1곡 목록에서 곡 종료 후 모든 버튼이 무반응이 되고,
+    // isPlaying만 가짜 true가 되어 ▶⏸까지 잠겼음)
+    const restartCurrent = () => {
+        player.seekTo(0);
+        player.play();
+        // isPlaying은 실제 PLAYING 이벤트가 올리도록 둔다
+    };
+
     const handleSongSelect = (idx) => {
+        const target = isShuffle
+            ? (shuffledOrder.indexOf(idx) !== -1 ? shuffledOrder.indexOf(idx) : idx)
+            : idx;
+        if (target === currentIndex) { restartCurrent(); return; }
         wantPlayRef.current = true;
-        if (isShuffle) {
-            const shuffleIdx = shuffledOrder.indexOf(idx);
-            setCurrentIndex(shuffleIdx !== -1 ? shuffleIdx : idx);
-        } else {
-            setCurrentIndex(idx);
-        }
+        setCurrentIndex(target);
         setIsPlaying(true);
     };
 
@@ -245,15 +266,19 @@ export default function PlaylistPage() {
         if (currentTime > 3) {
             player.seekTo(0);
         } else {
+            const prev = currentIndex > 0 ? currentIndex - 1 : totalSongs - 1;
+            if (prev === currentIndex) { restartCurrent(); return; } // 1곡 목록
             wantPlayRef.current = true;
-            setCurrentIndex(prev => prev > 0 ? prev - 1 : totalSongs - 1);
+            setCurrentIndex(prev);
             setIsPlaying(true);
         }
     };
 
     const handleNext = () => {
+        const next = currentIndex < totalSongs - 1 ? currentIndex + 1 : 0;
+        if (next === currentIndex) { restartCurrent(); return; } // 1곡 목록
         wantPlayRef.current = true;
-        setCurrentIndex(prev => prev < totalSongs - 1 ? prev + 1 : 0);
+        setCurrentIndex(next);
         setIsPlaying(true);
     };
 
@@ -287,8 +312,25 @@ export default function PlaylistPage() {
     };
 
     const handleShuffleToggle = () => {
-        if (!isShuffle) generateShuffleOrder();
-        setIsShuffle(!isShuffle);
+        if (!isShuffle) {
+            // 셔플 순서를 만들되 '현재 곡'은 지금 자리에 고정 — 토글이 재생을 끊지 않게
+            const actual = getActualIndex(currentIndex);
+            const order = playlistSongs.map((_, i) => i);
+            for (let i = order.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [order[i], order[j]] = [order[j], order[i]];
+            }
+            const pos = order.indexOf(actual);
+            if (pos !== -1 && pos !== currentIndex) {
+                [order[currentIndex], order[pos]] = [order[pos], order[currentIndex]];
+            }
+            setShuffledOrder(order);
+            setIsShuffle(true);
+        } else {
+            // 셔플 해제 시 현재 '실제 곡' 인덱스로 환산 — 듣던 곡이 바뀌지 않게
+            setCurrentIndex(getActualIndex(currentIndex));
+            setIsShuffle(false);
+        }
     };
 
     const formatTime = (seconds) => {

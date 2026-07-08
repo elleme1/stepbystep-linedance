@@ -38,6 +38,7 @@ const AdminPage = () => {
     youtubeId: '',
     tutorialUrl: '',
     tutorialId: '',
+    description: '',
     date: todayLocal(),
     location: locParam
   });
@@ -248,7 +249,7 @@ const AdminPage = () => {
       setTimeout(() => setShowToast(false), 4000);
       setSongInfo({
         title: '', artist: 'Various', youtubeUrl: '', youtubeId: '',
-        tutorialUrl: '', tutorialId: '', date: todayLocal(),
+        tutorialUrl: '', tutorialId: '', description: '', date: todayLocal(),
         location: locParam
       });
     } catch (err) {
@@ -434,6 +435,21 @@ const AdminPage = () => {
                 style={{ opacity: songInfo.youtubeId ? 1 : 0.5, cursor: songInfo.youtubeId ? 'text' : 'not-allowed' }}
               />
               {songInfo.tutorialId && <div style={{fontSize:'.8rem', color:'#10b981', marginTop:'10px', fontWeight:600}}>✅ 튜토리얼 영상이 포함되었습니다.</div>}
+            </div>
+
+            <div className="field-group">
+              <label className="field-label" style={{ opacity: songInfo.youtubeId ? 1 : 0.4 }}>
+                <span className="badge">3</span> 안무 노트 / 스텝시트 (선택)
+              </label>
+              <textarea
+                className="input-box"
+                placeholder={songInfo.youtubeId ? "스텝 설명을 붙여넣으세요. 영상 아래 '원장님의 안무 노트'에 표시됩니다." : "메인 곡 URL을 먼저 입력해주세요"}
+                value={songInfo.description}
+                onChange={(e) => setSongInfo(prev => ({ ...prev, description: e.target.value }))}
+                disabled={!songInfo.youtubeId}
+                rows={6}
+                style={{ resize: 'vertical', lineHeight: 1.6, fontFamily: 'inherit', opacity: songInfo.youtubeId ? 1 : 0.5, cursor: songInfo.youtubeId ? 'text' : 'not-allowed' }}
+              />
             </div>
 
             <button className="submit-button" disabled={isSaving || !songInfo.youtubeId || loadingMetadata}>

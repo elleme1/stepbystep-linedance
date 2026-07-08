@@ -90,6 +90,7 @@ export const DataProvider = ({ children }) => {
       genre: newSongData.genre || '장르 미상',
       level: newSongData.level || 2,
       choreographer: newSongData.choreographer || '안무가 미상',
+      description: (newSongData.description || '').trim(),
       steps: newSongData.steps || [],
       tags: newSongData.tags || []
     });

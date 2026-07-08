@@ -19,6 +19,12 @@ export default function VideoPage() {
     useEffect(() => {
         localStorage.setItem('stepApp_likedIds', JSON.stringify(likedIds));
     }, [likedIds]);
+
+    // 장소 전환 시 탭 리셋 — 이전 장소에만 있던 장르 탭(예: 코오롱 '차차')이
+    // 남아 빈 목록 + 활성 탭 실종이 되는 것 방지
+    useEffect(() => {
+        setActiveTab('전체');
+    }, [selectedLocation]);
     const [showScrollTop, setShowScrollTop] = useState(false);
     const [showScrollBottom, setShowScrollBottom] = useState(true);
 

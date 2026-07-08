@@ -77,6 +77,14 @@ export default function useVideoDetail({ playerRef, mainVideoId, tutorialVideoId
         setAbLoopActive(false);
     }, [id]);
 
+    // 영상 전환(실전↔튜토리얼 토글 포함) 시 A-B 초기화 — 다른 영상 기준의 구간이
+    // 새 영상에 그대로 적용돼 그 지점을 못 넘어가는 문제 방지 (TheoryPage와 동일 패턴)
+    useEffect(() => {
+        setPointA(null);
+        setPointB(null);
+        setAbLoopActive(false);
+    }, [currentVideoId]);
+
     // ===========================
     // 플레이어 콜백
     // ===========================

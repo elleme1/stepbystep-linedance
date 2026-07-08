@@ -135,27 +135,40 @@ export const DataProvider = ({ children }) => {
     const merged = [...localSongs, ...base];
 
     // 🗓️ "이번주 수업곡" 판정을 병합된 전체 곡 기준으로 동적 재계산.
-    //    songs.js의 songSchedule 고정 날짜가 아니라, 관리자 업로드(Firebase)까지
-    //    포함한 addedDate를 기준으로, '오늘부터 최근 7일 이내'에 배운 곡을 이번주로 삼는다.
-    //    (2026-06-24: 예전엔 '지점별 가장 최근 하루'만 잡아, 그 날 곡이 1개뿐이면
-    //     연속재생이 첫 곡에서 멈췄음 → 그 주에 배운 곡들이 모두 연속재생 대상이
-    //     되도록 7일로 넓힘.) addedDate는 'YYYY-MM-DD'(sv-SE)라 문자열 비교로 범위 판정.
-    const today = todayLocal();
-    const weekAgo = new Date();
-    weekAgo.setDate(weekAgo.getDate() - 7);
-    const weekAgoStr = weekAgo.toLocaleDateString('sv-SE');
-    const isWithinWeek = (d) => !!d && d >= weekAgoStr && d <= today;
+    //    기준 창은 '오늘'이 아니라 **그 지점의 마지막 수업일(최신 addedDate)** 기준
+    //    최근 7일이다. (2026-07-08 개편: '오늘 기준 7일'은 지점이 한 주라도 쉬면
+    //    창이 텅 비어 — 이번주 탭 빈 화면·뱃지 실종·홈과 모순이 생겼음. 마지막
+    //    수업일에 앵커하면 언제 봐도 '가장 최근 수업주'의 곡들이 일관되게 잡히고,
+    //    시계(new Date) 의존이 사라져 자정 넘김 stale 문제도 없다.)
+    //    addedDate는 'YYYY-MM-DD'(sv-SE)라 문자열 비교로 범위 판정.
+    const latestFor = (loc) => merged.reduce((max, s) => {
+      const matches = s.location === loc || s.location === 'both';
+      const d = s.addedDate || '';
+      return matches && d > max ? d : max;
+    }, '');
+    const weekWindowFor = (latest) => {
+      if (!latest) return () => false;
+      const end = new Date(latest + 'T12:00:00'); // 정오 기준 — 타임존 경계 안전
+      const start = new Date(end);
+      start.setDate(start.getDate() - 6);
+      const startStr = start.toLocaleDateString('sv-SE');
+      return (d) => !!d && d >= startStr && d <= latest;
+    };
+    const inKolonWeek = weekWindowFor(latestFor('kolon'));
+    const inSindunWeek = weekWindowFor(latestFor('sindun'));
 
     return merged.map(s => {
       const d = s.addedDate || '';
       const inKolon = s.location === 'kolon' || s.location === 'both';
       const inSindun = s.location === 'sindun' || s.location === 'both';
+      const kolonFlag = inKolon && inKolonWeek(d);
+      const sindunFlag = inSindun && inSindunWeek(d);
       return {
         ...s,
-        isThisWeekKolon: inKolon && isWithinWeek(d),
-        isThisWeekSindun: inSindun && isWithinWeek(d),
-        // 하위 호환(전체 폴백): 어느 지점이든 최근 7일이면 true
-        isThisWeek: isWithinWeek(d) && (inKolon || inSindun),
+        isThisWeekKolon: kolonFlag,
+        isThisWeekSindun: sindunFlag,
+        // 하위 호환(전체 폴백): 어느 지점이든 이번주면 true
+        isThisWeek: kolonFlag || sindunFlag,
       };
     });
   }, [localSongs, hiddenSongIds, songOverrides]);

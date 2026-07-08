@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useData, todayLocal } from '../context/DataContext';
 
@@ -21,6 +21,11 @@ const AdminPage = () => {
   const [editSongArtist, setEditSongArtist] = useState('');
   const [editSongTutorialUrl, setEditSongTutorialUrl] = useState('');
   const [editSongNote, setEditSongNote] = useState('');
+  // 저장 시 diff 기준은 '폼을 연 시점' 스냅샷 — 편집 중 다른 관리자/기기가 원격
+  // 저장해도, 안 건드린 필드가 옛 값으로 되돌아가 그 저장을 덮어쓰지 않게 한다.
+  const editOriginalRef = useRef({ title: '', artist: '', note: '' });
+  // 유튜브 URL 연속 붙여넣기 시 noembed 응답 경합 방지 — 최신 요청만 반영
+  const metaSeqRef = useRef(0);
   const locParam = searchParams.get('loc') || 'kolon';
   const locationName = locParam === 'kolon' ? '코오롱 스포렉스' : '중리 행정복지센터';
 
@@ -154,10 +159,12 @@ const AdminPage = () => {
     setSongInfo(prev => ({ ...prev, youtubeUrl: url, youtubeId: id || '' }));
 
     if (id) {
+      const seq = ++metaSeqRef.current; // 이 요청의 순번 — 더 새 요청이 오면 이 응답은 폐기
       setLoadingMetadata(true);
       try {
         const response = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${id}`);
         const data = await response.json();
+        if (seq !== metaSeqRef.current) return; // 이전 URL의 늦은 응답 — 현재 폼을 덮어쓰지 않음
         if (data.title) {
           const titleParts = data.title.split('-').map(p => p.trim());
           setSongInfo(prev => ({
@@ -173,12 +180,13 @@ const AdminPage = () => {
           setTimeout(() => setShowToast(false), 4000);
         }
       } catch (err) {
+        if (seq !== metaSeqRef.current) return;
         console.error('메타데이터 조회 실패:', err);
         setToastMsg('⚠️ 영상 정보를 가져오지 못했습니다. 제목을 직접 입력해주세요.');
         setShowToast(true);
         setTimeout(() => setShowToast(false), 4000);
       } finally {
-        setLoadingMetadata(false);
+        if (seq === metaSeqRef.current) setLoadingMetadata(false);
       }
     }
   };
@@ -189,10 +197,12 @@ const AdminPage = () => {
 
     // 메인 곡이 없거나 메타데이터가 안 불렸을 때 튜토리얼에서라도 메타데이터를 가져옴
     if (id && !songInfo.youtubeId && !songInfo.title) {
+      const seq = ++metaSeqRef.current;
       setLoadingMetadata(true);
       try {
         const response = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${id}`);
         const data = await response.json();
+        if (seq !== metaSeqRef.current) return; // 늦은 응답 폐기
         if (data.title) {
           const titleParts = data.title.split('-').map(p => p.trim());
           setSongInfo(prev => ({
@@ -202,9 +212,10 @@ const AdminPage = () => {
           }));
         }
       } catch (err) {
+        if (seq !== metaSeqRef.current) return;
         console.error('메타데이터 조회 실패:', err);
       } finally {
-        setLoadingMetadata(false);
+        if (seq === metaSeqRef.current) setLoadingMetadata(false);
       }
     }
   };
@@ -470,6 +481,13 @@ const AdminPage = () => {
                             setEditSongArtist(opening ? (song.artist || '') : '');
                             setEditSongTutorialUrl('');
                             setEditSongNote(opening ? (song.description || '') : '');
+                            if (opening) {
+                              editOriginalRef.current = {
+                                title: song.title || '',
+                                artist: song.artist || '',
+                                note: song.description || '',
+                              };
+                            }
                           }}
                           style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(212,168,83,0.3)', background: editingSongId === song.id ? 'rgba(212,168,83,0.2)' : 'transparent', color: '#e8c56d', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}
                         >수정</button>
@@ -578,8 +596,10 @@ const AdminPage = () => {
                               if (!trimmedTitle) { alert('제목을 입력해주세요.'); return; }
 
                               const updates = {};
-                              if (trimmedTitle !== song.title) updates.title = trimmedTitle;
-                              if (trimmedArtist !== (song.artist || '')) updates.artist = trimmedArtist;
+                              // diff 기준은 라이브 song이 아니라 폼을 연 시점 스냅샷 —
+                              // 원격에서 바뀐 필드를 옛 값으로 되돌리지 않기 위함
+                              if (trimmedTitle !== editOriginalRef.current.title.trim()) updates.title = trimmedTitle;
+                              if (trimmedArtist !== editOriginalRef.current.artist.trim()) updates.artist = trimmedArtist;
 
                               if (editSongUrl.trim()) {
                                 const newId = getYoutubeId(editSongUrl);
@@ -593,7 +613,7 @@ const AdminPage = () => {
                                 if (newTutId !== song.tutorialId) updates.tutorialId = newTutId;
                               }
 
-                              if (editSongNote.trim() !== (song.description || '').trim()) {
+                              if (editSongNote.trim() !== editOriginalRef.current.note.trim()) {
                                 updates.description = editSongNote.trim();
                               }
 

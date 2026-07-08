@@ -28,9 +28,13 @@ export default function HomePage() {
     // 📍 선택된 장소의 이번 주 수업곡을 자동으로 불러옵니다.
     const thisWeekSong = getThisWeekSong(selectedLocation);
     const levelLabels = { 1: '입문', 2: '초급', 3: '중급', 4: '고급', 5: '최상급' };
+    // 관리자 업로드곡은 가수/장르가 기본값('Various'/'장르 미상')인 경우가 많으므로
+    // 플레이스홀더는 부제에서 생략 — '가수명 · 장르 미상' 같은 어색한 노출 방지
+    const heroArtist = ['Various', '가수 미상', ''].includes(thisWeekSong.artist || '') ? '' : thisWeekSong.artist;
+    const heroGenre = ['장르 미상', ''].includes(thisWeekSong.genre || '') ? '' : thisWeekSong.genre;
     const todayVideo = {
         titleEng: thisWeekSong.title,
-        titleKor: `${thisWeekSong.artist} · ${thisWeekSong.genre}`,
+        titleKor: [heroArtist, heroGenre].filter(Boolean).join(' · ') || '스텝바이스텝 라인댄스',
         level: levelLabels[thisWeekSong.level] || '초급',
         tip: thisWeekSong.steps?.[0] ? `첫 구간(${thisWeekSong.steps[0].count}): ${thisWeekSong.steps[0].move} — ${thisWeekSong.steps[0].desc}` : '기본 스텝에 집중해 보세요!',
         thumbnail: thisWeekSong.thumbnail

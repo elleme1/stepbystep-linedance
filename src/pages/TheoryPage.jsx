@@ -874,7 +874,11 @@ export default function TheoryPage() {
       {activeVideo && activeVideo.cardN === 'global' && (
         <div ref={playerScrollRef} style={{marginBottom:24}}>
           {activeVideo.driveId ? (
-            /* 구글 드라이브 영상 — 드라이브 내장 플레이어 iframe (A-B 미지원, 재생/전체화면만) */
+            /* 구글 드라이브 영상 — 드라이브 내장 플레이어 iframe.
+               ⚠️ A-B 구간반복은 기술적으로 불가: 드라이브가 외부 앱의 직접
+               스트리밍(<video> 핫링크)을 서버에서 403으로 차단하고(2026-07 실측),
+               내장 플레이어는 외부 제어 API가 없다. 구간반복이 필요한 영상은
+               유튜브(일부 공개)로 올리는 것이 정답. */
             <div>
               <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%', borderRadius: '12px', overflow: 'hidden', background: '#000' }}>
                 <iframe
@@ -884,6 +888,9 @@ export default function TheoryPage() {
                   title="구글 드라이브 수업 영상"
                   style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none' }}
                 />
+              </div>
+              <div style={{ fontSize: '.75rem', color: '#888', textAlign: 'center', marginTop: '6px' }}>
+                드라이브 영상은 재생·전체화면만 지원됩니다 (구간반복은 유튜브 영상만)
               </div>
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
                 <button className="jive-ab-btn clear-btn" onClick={() => setActiveVideo(null)}>✕ 닫기</button>

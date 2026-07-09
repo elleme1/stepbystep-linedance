@@ -10,6 +10,8 @@ export default function BottomNav() {
         { path: '/', icon: '🏠', label: '홈' },
         { path: '/video', icon: '🎬', label: '수업영상' },
         { path: '/theory', icon: '📘', label: '자이브' },
+        // 🎚️ 댄스 큐 — 자이브 코너 서브탭에서 하단 메뉴로 이식 (강사 전용 런처)
+        { path: '/dance-cue', icon: '🎚️', label: '댄스큐' },
         // ✏️ 등록 — 관리자용 게시 지름길. 현재 장소를 들고 /admin으로 이동
         //    (비밀번호 게이트가 있어 회원이 눌러도 입력 화면에서 멈춤)
         { path: `/admin?loc=${selectedLocation || 'kolon'}`, icon: '✏️', label: '등록' },

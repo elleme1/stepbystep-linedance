@@ -296,12 +296,7 @@ export default function TheoryPage() {
     }
   };
 
-  // 🎚️ 댄스 큐 연결 — 비밀번호 게이트 (스텝앱과 독립된 외부 앱)
-  const DANCE_CUE_APP_URL = 'https://dance-instructor-player.vercel.app/';
-  const DANCE_CUE_PAGE_PASSWORD = import.meta.env.VITE_DANCE_CUE_PAGE_PASSWORD || '0402';
-  const [cuePassword, setCuePassword] = useState('');
-  const [cueUnlocked, setCueUnlocked] = useState(false);
-  const [cueError, setCueError] = useState(false);
+  // (댄스 큐 연결은 하단 메뉴의 독립 화면으로 이식됨 — src/pages/DanceCuePage.jsx)
 
   // 🔁 A-B 반복구간 상태
   const [pointA, setPointA] = useState(null);
@@ -562,10 +557,6 @@ export default function TheoryPage() {
               style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: activeTab === 'education' ? 'var(--primary-color, #ef4444)' : 'var(--bg-secondary, rgba(0,0,0,0.05))', color: activeTab === 'education' ? '#fff' : 'var(--text-secondary, #888)', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
           >자이브 교육영상</button>
           <button
-              onClick={() => { setActiveTab('mix'); setActiveVideo(null); }}
-              style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: activeTab === 'mix' ? 'var(--primary-color, #ef4444)' : 'var(--bg-secondary, rgba(0,0,0,0.05))', color: activeTab === 'mix' ? '#fff' : 'var(--text-secondary, #888)', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
-          >댄스 큐</button>
-          <button
               onClick={() => { setActiveTab('classlog'); setActiveVideo(null); }}
               style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: activeTab === 'classlog' ? 'var(--primary-color, #ef4444)' : 'var(--bg-secondary, rgba(0,0,0,0.05))', color: activeTab === 'classlog' ? '#fff' : 'var(--text-secondary, #888)', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
           >🎥 수업기록</button>
@@ -708,82 +699,6 @@ export default function TheoryPage() {
                 );
               });
             })()}
-          </div>
-        </>
-      )}
-
-      {activeTab === 'mix' && (
-        <>
-          <div className="jive-section" style={{ marginTop: '0px' }}>
-            <div className="jive-section-title lv-beginner" style={{ marginBottom: '12px' }}>
-              <span className="jive-emoji">🎚️</span>
-              <h2 style={{ fontSize: '1rem' }}>댄스 큐</h2>
-              <span className="jive-badge">강사 전용 · 독립 앱</span>
-            </div>
-            <div style={{ background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)', borderRadius: '14px', padding: '20px' }}>
-              <p style={{ fontSize: '.85rem', color: '#a0a0c0', marginBottom: '18px', lineHeight: '1.6' }}>
-                수업 현장용 <strong>댄스 큐</strong> 앱으로 연결됩니다. 스텝앱과는 <strong>독립된 별도 앱</strong>이며 강사 전용이라 비밀번호가 필요합니다.
-              </p>
-
-              {!cueUnlocked ? (
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    if (cuePassword === DANCE_CUE_PAGE_PASSWORD) {
-                      setCueUnlocked(true);
-                      setCueError(false);
-                    } else {
-                      setCueError(true);
-                    }
-                  }}
-                  style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
-                >
-                  <input
-                    type="password"
-                    inputMode="numeric"
-                    placeholder="비밀번호 입력"
-                    value={cuePassword}
-                    onChange={(e) => { setCuePassword(e.target.value); setCueError(false); }}
-                    autoFocus
-                    style={{
-                      width: '100%', padding: '14px', borderRadius: '12px',
-                      border: `1px solid ${cueError ? '#ef4444' : 'rgba(255,255,255,0.15)'}`,
-                      background: 'rgba(0,0,0,0.3)', color: '#fff', fontSize: '1.05rem',
-                      textAlign: 'center', letterSpacing: '0.3em', outline: 'none', boxSizing: 'border-box',
-                    }}
-                  />
-                  {cueError && (
-                    <div style={{ fontSize: '.8rem', color: '#ef4444', textAlign: 'center' }}>
-                      비밀번호가 올바르지 않습니다.
-                    </div>
-                  )}
-                  <button
-                    type="submit"
-                    style={{
-                      width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
-                      background: 'linear-gradient(135deg, #6366f1, #818cf8)', color: '#fff',
-                      fontSize: '1rem', fontWeight: 700, cursor: 'pointer',
-                    }}
-                  >🔓 잠금 해제</button>
-                </form>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <button
-                    onClick={() => window.open(DANCE_CUE_APP_URL, '_blank', 'noopener,noreferrer')}
-                    style={{
-                      width: '100%', padding: '16px', borderRadius: '14px', border: 'none',
-                      background: 'linear-gradient(135deg, #8b5cf6, #a855f7)', color: '#fff',
-                      fontSize: '1.05rem', fontWeight: 800, cursor: 'pointer',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                      boxShadow: '0 8px 24px rgba(139,92,246,0.3)',
-                    }}
-                  >🎚️ 댄스 큐 열기 (새 탭)</button>
-                  <div style={{ fontSize: '.75rem', color: '#10b981', textAlign: 'center', fontWeight: 600 }}>
-                    ✅ 잠금 해제됨 — 버튼을 누르면 새 탭에서 열립니다.
-                  </div>
-                </div>
-              )}
-            </div>
           </div>
         </>
       )}

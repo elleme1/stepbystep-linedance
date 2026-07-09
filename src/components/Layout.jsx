@@ -37,6 +37,7 @@ export default function Layout() {
         if (path === '/') return '구향회 스텝바이스텝 💃';
         if (path === '/video') return '수업영상 보관함';
         if (path === '/theory') return '자이브';
+        if (path === '/dance-cue') return '댄스 큐';
         if (path === '/recommend') return '영상 모음';
         if (path.startsWith('/community')) return '회원 소통방';
         if (path.startsWith('/search')) return '통합 검색';

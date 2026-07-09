@@ -30,6 +30,7 @@ import VideoDetail from './pages/VideoDetail';
 import PlaylistPage from './pages/PlaylistPage';
 import AdminPage from './pages/AdminPage';
 import ChallengePage from './pages/ChallengePage';
+import DanceCuePage from './pages/DanceCuePage';
 
 import ReloadPrompt from './ReloadPrompt';
 
@@ -96,6 +97,7 @@ function AppContent() {
 
             {/* 서브 경로 */}
             <Route path="/community" element={<CommunityPage />} />
+            <Route path="/dance-cue" element={<DanceCuePage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/video/:id" element={<VideoDetail />} />
             <Route path="/playlist" element={<PlaylistPage />} />

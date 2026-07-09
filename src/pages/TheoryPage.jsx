@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ref, onValue, set, remove, push } from 'firebase/database';
+import { db, authReady } from '../lib/firebase';
+import { todayLocal } from '../context/DataContext';
 import './VideoPage.css';
 
 const jive375Data = [
@@ -199,6 +202,85 @@ export default function TheoryPage() {
   const [activeVideo, setActiveVideo] = useState(null);
   const [expandedSections, setExpandedSections] = useState({});
   const [activeTab, setActiveTab] = useState('sequence');
+
+  // 🎥 자이브 단체수업 기록 — Firebase /jiveClassVideos 실시간 구독 (모든 기기 동기화)
+  //    올리기/삭제는 관리자 비밀번호 게이트(등록 탭과 동일 모델), 열람은 자유.
+  const [classVideos, setClassVideos] = useState([]);
+  const [classUnlocked, setClassUnlocked] = useState(false);
+  const [showClassForm, setShowClassForm] = useState(false);
+  const [classPw, setClassPw] = useState('');
+  const [classUrl, setClassUrl] = useState('');
+  const [classTitle, setClassTitle] = useState('');
+  const [classDate, setClassDate] = useState(todayLocal());
+  const [classSaving, setClassSaving] = useState(false);
+  const CLASS_ADMIN_PW = import.meta.env.VITE_ADMIN_PASSWORD;
+
+  useEffect(() => {
+    let cancelled = false;
+    let cleanup = () => {};
+    authReady.then(() => {
+      if (cancelled) return;
+      cleanup = onValue(ref(db, 'jiveClassVideos'), (snap) => {
+        const data = snap.val() || {};
+        const arr = Object.entries(data)
+          .map(([key, v]) => ({ key, ...v }))
+          // 수업 날짜 내림차순, 같은 날이면 나중에 올린 것 먼저
+          .sort((a, b) => {
+            const dc = (b.date || '').localeCompare(a.date || '');
+            if (dc !== 0) return dc;
+            return (b.createdAt || 0) - (a.createdAt || 0);
+          });
+        setClassVideos(arr);
+      });
+    });
+    return () => { cancelled = true; cleanup(); };
+  }, []);
+
+  const getClassYoutubeId = (url) => {
+    const m = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/|youtube\.com\/shorts\/)([\w-]{11})/i.exec(url || '');
+    return m ? m[1] : null;
+  };
+
+  const handleClassUnlock = () => {
+    if (CLASS_ADMIN_PW && classPw === CLASS_ADMIN_PW) {
+      setClassUnlocked(true);
+      setClassPw('');
+    } else {
+      alert('비밀번호가 올바르지 않습니다.');
+    }
+  };
+
+  const handleAddClassVideo = async () => {
+    const vid = getClassYoutubeId(classUrl);
+    if (!vid) { alert('유효한 유튜브 링크를 붙여넣어주세요.'); return; }
+    if (!classDate) { alert('수업 날짜를 선택해주세요.'); return; }
+    setClassSaving(true);
+    try {
+      await set(push(ref(db, 'jiveClassVideos')), {
+        videoId: vid,
+        title: classTitle.trim() || `자이브 단체수업 (${classDate})`,
+        date: classDate,
+        createdAt: Date.now(),
+      });
+      setClassUrl(''); setClassTitle(''); setClassDate(todayLocal());
+      setShowClassForm(false);
+    } catch (e) {
+      console.error('수업 영상 저장 실패:', e);
+      alert('저장 중 오류가 발생했습니다. 네트워크를 확인해주세요.');
+    } finally {
+      setClassSaving(false);
+    }
+  };
+
+  const handleDeleteClassVideo = async (v) => {
+    if (!confirm(`"${v.title}" 영상을 삭제하시겠습니까?`)) return;
+    try {
+      await remove(ref(db, `jiveClassVideos/${v.key}`));
+    } catch (e) {
+      console.error('수업 영상 삭제 실패:', e);
+      alert('삭제 중 오류가 발생했습니다.');
+    }
+  };
 
   // 🎚️ 댄스 큐 연결 — 비밀번호 게이트 (스텝앱과 독립된 외부 앱)
   const DANCE_CUE_APP_URL = 'https://dance-instructor-player.vercel.app/';
@@ -465,10 +547,14 @@ export default function TheoryPage() {
               onClick={() => { setActiveTab('education'); setActiveVideo(null); }}
               style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: activeTab === 'education' ? 'var(--primary-color, #ef4444)' : 'var(--bg-secondary, rgba(0,0,0,0.05))', color: activeTab === 'education' ? '#fff' : 'var(--text-secondary, #888)', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
           >자이브 교육영상</button>
-          <button 
+          <button
               onClick={() => { setActiveTab('mix'); setActiveVideo(null); }}
               style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: activeTab === 'mix' ? 'var(--primary-color, #ef4444)' : 'var(--bg-secondary, rgba(0,0,0,0.05))', color: activeTab === 'mix' ? '#fff' : 'var(--text-secondary, #888)', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
           >댄스 큐</button>
+          <button
+              onClick={() => { setActiveTab('classlog'); setActiveVideo(null); }}
+              style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: activeTab === 'classlog' ? 'var(--primary-color, #ef4444)' : 'var(--bg-secondary, rgba(0,0,0,0.05))', color: activeTab === 'classlog' ? '#fff' : 'var(--text-secondary, #888)', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
+          >🎥 수업기록</button>
         </div>
       </div>
 
@@ -710,6 +796,117 @@ export default function TheoryPage() {
                   <h3 className="info-title-eng">{video.title}</h3>
                   <p className="info-title-kor">{video.choreographer}</p>
                 </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 🎥 수업기록 — 자이브 단체수업 촬영 영상 (날짜 내림차순) */}
+      {activeTab === 'classlog' && (
+        <div className="jive-header" style={{ paddingTop: '0', borderTop: 'none', marginTop: '-16px' }}>
+          <div className="jive-subtitle" style={{ marginBottom: '14px' }}>
+            자이브 단체수업 촬영 영상 — 최근 수업이 맨 위에 옵니다.<br/>
+            영상을 누르면 재생되고, A-B 구간반복으로 복습할 수 있어요. 🔁
+          </div>
+
+          {/* 올리기 단추 + 비밀번호 게이트 + 등록 폼 */}
+          {!showClassForm && (
+            <button
+              onClick={() => setShowClassForm(true)}
+              style={{ width: '100%', padding: '14px', borderRadius: '14px', border: 'none', background: 'var(--primary-color, #ef4444)', color: '#fff', fontSize: '16px', fontWeight: 800, cursor: 'pointer' }}
+            >📹 수업 영상 올리기</button>
+          )}
+
+          {showClassForm && !classUnlocked && (
+            <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '14px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div style={{ fontSize: '14px', color: '#aaa' }}>올리기는 관리자 전용입니다. 비밀번호를 입력해주세요.</div>
+              <input
+                type="password"
+                value={classPw}
+                onChange={(e) => setClassPw(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleClassUnlock(); }}
+                placeholder="관리자 비밀번호"
+                style={{ padding: '12px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.3)', color: '#fff', fontSize: '16px', textAlign: 'center' }}
+                autoFocus
+              />
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button onClick={() => { setShowClassForm(false); setClassPw(''); }} style={{ flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#aaa', fontWeight: 700, cursor: 'pointer' }}>취소</button>
+                <button onClick={handleClassUnlock} style={{ flex: 2, padding: '12px', borderRadius: '10px', border: 'none', background: 'var(--primary-color, #ef4444)', color: '#fff', fontWeight: 800, cursor: 'pointer' }}>확인</button>
+              </div>
+            </div>
+          )}
+
+          {showClassForm && classUnlocked && (
+            <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '14px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div>
+                <label style={{ fontSize: '13px', color: '#aaa', display: 'block', marginBottom: '4px' }}>유튜브 링크 (필수)</label>
+                <input
+                  type="text"
+                  value={classUrl}
+                  onChange={(e) => setClassUrl(e.target.value)}
+                  placeholder="촬영 영상의 유튜브 주소 붙여넣기"
+                  style={{ width: '100%', boxSizing: 'border-box', padding: '12px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.3)', color: '#fff', fontSize: '15px' }}
+                />
+              </div>
+              <div>
+                <label style={{ fontSize: '13px', color: '#aaa', display: 'block', marginBottom: '4px' }}>수업 날짜</label>
+                <input
+                  type="date"
+                  value={classDate}
+                  onChange={(e) => setClassDate(e.target.value)}
+                  style={{ width: '100%', boxSizing: 'border-box', padding: '12px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.3)', color: '#fff', fontSize: '15px' }}
+                />
+              </div>
+              <div>
+                <label style={{ fontSize: '13px', color: '#aaa', display: 'block', marginBottom: '4px' }}>메모/제목 (선택 — 비우면 "자이브 단체수업 (날짜)")</label>
+                <input
+                  type="text"
+                  value={classTitle}
+                  onChange={(e) => setClassTitle(e.target.value)}
+                  placeholder="예: 링크 턴 + 아메리칸 스핀 복습"
+                  style={{ width: '100%', boxSizing: 'border-box', padding: '12px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.3)', color: '#fff', fontSize: '15px' }}
+                />
+              </div>
+              <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+                <button onClick={() => setShowClassForm(false)} style={{ flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#aaa', fontWeight: 700, cursor: 'pointer' }}>닫기</button>
+                <button onClick={handleAddClassVideo} disabled={classSaving} style={{ flex: 2, padding: '12px', borderRadius: '10px', border: 'none', background: classSaving ? '#555' : 'var(--primary-color, #ef4444)', color: '#fff', fontWeight: 800, cursor: classSaving ? 'not-allowed' : 'pointer' }}>
+                  {classSaving ? '저장 중…' : '올리기'}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* 영상 목록 — 수업 날짜 내림차순 */}
+          <div className="video-list" style={{ marginTop: '16px' }}>
+            {classVideos.length === 0 && (
+              <div style={{ textAlign: 'center', color: '#888', padding: '28px 0', fontSize: '15px' }}>
+                아직 올린 수업 영상이 없습니다.<br/>위의 📹 단추로 첫 영상을 올려보세요!
+              </div>
+            )}
+            {classVideos.map(v => (
+              <div
+                key={v.key}
+                className="video-list-item"
+                onClick={() => setActiveVideo({ cardN: 'global', videoId: v.videoId })}
+              >
+                <div className="list-thumbnail">
+                  <img src={`https://img.youtube.com/vi/${v.videoId}/mqdefault.jpg`} alt={v.title} />
+                  <div className="list-play-icon">▶</div>
+                </div>
+                <div className="list-info">
+                  <div className="info-top">
+                    <span className="info-date">📅 {v.date}</span>
+                  </div>
+                  <h3 className="info-title-eng">{v.title}</h3>
+                </div>
+                {classUnlocked && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleDeleteClassVideo(v); }}
+                    aria-label="삭제"
+                    style={{ background: 'transparent', border: '1px solid rgba(239,68,68,0.4)', color: '#ef4444', borderRadius: '8px', padding: '8px 10px', cursor: 'pointer', flexShrink: 0 }}
+                  >🗑</button>
+                )}
               </div>
             ))}
           </div>

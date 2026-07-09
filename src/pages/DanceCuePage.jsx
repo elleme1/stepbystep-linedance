@@ -65,20 +65,35 @@ export default function DanceCuePage() {
                             >🔓 잠금 해제</button>
                         </form>
                     ) : (
+                        /* 잠금 해제 → 큐앱을 화면 '안에' 끼워 넣는다.
+                           새 탭으로 내보내면 (특히 설치형 PWA에서) 스텝앱으로 돌아올
+                           단추가 없어 갇히는 문제가 있었음 — 여기서는 하단 메뉴가
+                           그대로 살아 있어 언제든 다른 탭으로 나갈 수 있다. */
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                            <div style={{
+                                width: '100%', height: 'calc(100dvh - 320px)', minHeight: '420px',
+                                borderRadius: '14px', overflow: 'hidden',
+                                border: '1px solid rgba(255,255,255,.12)', background: '#000',
+                            }}>
+                                <iframe
+                                    src={DANCE_CUE_APP_URL}
+                                    title="댄스 큐"
+                                    allow="autoplay; fullscreen; encrypted-media"
+                                    allowFullScreen
+                                    style={{ width: '100%', height: '100%', border: 'none' }}
+                                />
+                            </div>
+                            <div style={{ fontSize: '.75rem', color: '#10b981', textAlign: 'center', fontWeight: 600 }}>
+                                ✅ 아래 메뉴를 누르면 언제든 다른 화면으로 이동할 수 있습니다.
+                            </div>
                             <button
                                 onClick={() => window.open(DANCE_CUE_APP_URL, '_blank', 'noopener,noreferrer')}
                                 style={{
-                                    width: '100%', padding: '16px', borderRadius: '14px', border: 'none',
-                                    background: 'linear-gradient(135deg, #8b5cf6, #a855f7)', color: '#fff',
-                                    fontSize: '1.05rem', fontWeight: 800, cursor: 'pointer',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                                    boxShadow: '0 8px 24px rgba(139,92,246,0.3)',
+                                    width: '100%', padding: '10px', borderRadius: '10px',
+                                    border: '1px solid rgba(139,92,246,0.4)', background: 'transparent',
+                                    color: '#a78bfa', fontSize: '.85rem', fontWeight: 700, cursor: 'pointer',
                                 }}
-                            >🎚️ 댄스 큐 열기 (새 탭)</button>
-                            <div style={{ fontSize: '.75rem', color: '#10b981', textAlign: 'center', fontWeight: 600 }}>
-                                ✅ 잠금 해제됨 — 버튼을 누르면 새 탭에서 열립니다.
-                            </div>
+                            >🔗 새 창에서 크게 열기</button>
                         </div>
                     )}
                 </div>

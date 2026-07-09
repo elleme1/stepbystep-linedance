@@ -201,7 +201,12 @@ export default function TheoryPage() {
   const [openCardId, setOpenCardId] = useState(null);
   const [activeVideo, setActiveVideo] = useState(null);
   const [expandedSections, setExpandedSections] = useState({});
-  const [activeTab, setActiveTab] = useState('sequence');
+  // 딥링크 지원: /theory?tab=classlog 처럼 특정 서브탭으로 바로 진입
+  // (카톡 등에 수업기록 링크를 공유하는 용도 — 유효하지 않은 값은 기본 탭)
+  const [activeTab, setActiveTab] = useState(() => {
+    const t = new URLSearchParams(window.location.search).get('tab');
+    return ['sequence', '375', 'education', 'classlog'].includes(t) ? t : 'sequence';
+  });
 
   // 🎥 자이브 단체수업 기록 — Firebase /jiveClassVideos 실시간 구독 (모든 기기 동기화)
   //    올리기/삭제는 관리자 비밀번호 게이트(등록 탭과 동일 모델), 열람은 자유.

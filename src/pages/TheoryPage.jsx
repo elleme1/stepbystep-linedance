@@ -210,6 +210,7 @@ export default function TheoryPage() {
   const [showClassForm, setShowClassForm] = useState(false);
   const [classPw, setClassPw] = useState('');
   const [classUrl, setClassUrl] = useState('');
+  const [classDriveUrl, setClassDriveUrl] = useState('');
   const [classTitle, setClassTitle] = useState('');
   const [classDate, setClassDate] = useState(todayLocal());
   const [classSaving, setClassSaving] = useState(false);
@@ -241,6 +242,15 @@ export default function TheoryPage() {
     return m ? m[1] : null;
   };
 
+  // 구글 드라이브 공유 링크에서 파일 ID 추출
+  // 지원: drive.google.com/file/d/{ID}/view..., drive.google.com/open?id={ID}
+  const getClassDriveId = (url) => {
+    const u = url || '';
+    if (!/drive\.google\.com/i.test(u)) return null;
+    const m = /\/file\/d\/([\w-]{20,})/.exec(u) || /[?&]id=([\w-]{20,})/.exec(u);
+    return m ? m[1] : null;
+  };
+
   const handleClassUnlock = () => {
     if (CLASS_ADMIN_PW && classPw === CLASS_ADMIN_PW) {
       setClassUnlocked(true);
@@ -252,17 +262,21 @@ export default function TheoryPage() {
 
   const handleAddClassVideo = async () => {
     const vid = getClassYoutubeId(classUrl);
-    if (!vid) { alert('유효한 유튜브 링크를 붙여넣어주세요.'); return; }
+    const driveId = getClassDriveId(classDriveUrl);
+    if (classUrl.trim() && !vid) { alert('유튜브 링크가 올바르지 않습니다. 다시 확인해주세요.'); return; }
+    if (classDriveUrl.trim() && !driveId) { alert('구글 드라이브 링크가 올바르지 않습니다.\n드라이브에서 [공유 → 링크 복사]한 주소를 붙여넣어주세요.'); return; }
+    if (!vid && !driveId) { alert('유튜브 또는 구글 드라이브 링크 중 하나를 붙여넣어주세요.'); return; }
+    if (vid && driveId) { alert('링크는 하나만 넣어주세요. (유튜브 또는 구글 드라이브 중 하나)'); return; }
     if (!classDate) { alert('수업 날짜를 선택해주세요.'); return; }
     setClassSaving(true);
     try {
       await set(push(ref(db, 'jiveClassVideos')), {
-        videoId: vid,
+        ...(vid ? { videoId: vid } : { driveId }),
         title: classTitle.trim() || `자이브 단체수업 (${classDate})`,
         date: classDate,
         createdAt: Date.now(),
       });
-      setClassUrl(''); setClassTitle(''); setClassDate(todayLocal());
+      setClassUrl(''); setClassDriveUrl(''); setClassTitle(''); setClassDate(todayLocal());
       setShowClassForm(false);
     } catch (e) {
       console.error('수업 영상 저장 실패:', e);
@@ -318,7 +332,7 @@ export default function TheoryPage() {
     // 같은 위치에서 영상만 바뀌면 loadVideoById로 교체되어 onReady가 다시
     // 발화하지 않으므로, 지우면 A/B 버튼이 복구 불가능하게 죽는다.
     // 플레이어가 새로 마운트되면 handlePlayerReady가 알아서 갱신한다.
-  }, [activeVideo?.videoId, activeVideo?.cardN]);
+  }, [activeVideo?.videoId, activeVideo?.driveId, activeVideo?.cardN]);
 
   // ====================================
   // 🎯 영상 켜지면 화면 정중앙으로 스크롤
@@ -330,7 +344,7 @@ export default function TheoryPage() {
       playerScrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
     return () => cancelAnimationFrame(raf);
-  }, [activeVideo?.videoId, activeVideo?.cardN]);
+  }, [activeVideo?.videoId, activeVideo?.driveId, activeVideo?.cardN]);
 
   // ✅ 독립 컴포넌트에서 플레이어 인스턴스를 받는 콜백
   const handlePlayerReady = useCallback((player) => {
@@ -840,14 +854,28 @@ export default function TheoryPage() {
           {showClassForm && classUnlocked && (
             <div style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '14px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <div>
-                <label style={{ fontSize: '13px', color: '#aaa', display: 'block', marginBottom: '4px' }}>유튜브 링크 (필수)</label>
+                <label style={{ fontSize: '13px', color: '#aaa', display: 'block', marginBottom: '4px' }}>① 유튜브 링크</label>
                 <input
                   type="text"
                   value={classUrl}
                   onChange={(e) => setClassUrl(e.target.value)}
-                  placeholder="촬영 영상의 유튜브 주소 붙여넣기"
+                  placeholder="유튜브에 올린 영상 주소 붙여넣기"
                   style={{ width: '100%', boxSizing: 'border-box', padding: '12px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.3)', color: '#fff', fontSize: '15px' }}
                 />
+              </div>
+              <div>
+                <label style={{ fontSize: '13px', color: '#aaa', display: 'block', marginBottom: '4px' }}>② 또는 구글 드라이브 링크</label>
+                <input
+                  type="text"
+                  value={classDriveUrl}
+                  onChange={(e) => setClassDriveUrl(e.target.value)}
+                  placeholder="드라이브 [공유 → 링크 복사] 주소 붙여넣기"
+                  style={{ width: '100%', boxSizing: 'border-box', padding: '12px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(0,0,0,0.3)', color: '#fff', fontSize: '15px' }}
+                />
+                <div style={{ fontSize: '12px', color: '#888', marginTop: '4px', lineHeight: 1.5 }}>
+                  드라이브 파일은 공유 설정을 <b>"링크가 있는 모든 사용자"</b>로 해야 재생됩니다.<br/>
+                  (드라이브 영상은 재생·전체화면만 — A-B 반복은 유튜브만 지원)
+                </div>
               </div>
               <div>
                 <label style={{ fontSize: '13px', color: '#aaa', display: 'block', marginBottom: '4px' }}>수업 날짜</label>
@@ -888,15 +916,24 @@ export default function TheoryPage() {
               <div
                 key={v.key}
                 className="video-list-item"
-                onClick={() => setActiveVideo({ cardN: 'global', videoId: v.videoId })}
+                onClick={() => setActiveVideo(v.driveId
+                  ? { cardN: 'global', driveId: v.driveId }
+                  : { cardN: 'global', videoId: v.videoId })}
               >
                 <div className="list-thumbnail">
-                  <img src={`https://img.youtube.com/vi/${v.videoId}/mqdefault.jpg`} alt={v.title} />
+                  <img
+                    src={v.driveId
+                      ? `https://drive.google.com/thumbnail?id=${v.driveId}&sz=w320`
+                      : `https://img.youtube.com/vi/${v.videoId}/mqdefault.jpg`}
+                    alt={v.title}
+                    onError={(e) => { e.target.style.background = '#222'; e.target.style.opacity = '0'; }}
+                  />
                   <div className="list-play-icon">▶</div>
                 </div>
                 <div className="list-info">
                   <div className="info-top">
                     <span className="info-date">📅 {v.date}</span>
+                    {v.driveId && <span className="info-date" style={{ opacity: .7 }}>드라이브</span>}
                   </div>
                   <h3 className="info-title-eng">{v.title}</h3>
                 </div>
@@ -916,20 +953,38 @@ export default function TheoryPage() {
       {/* 글로벌 플레이어 */}
       {activeVideo && activeVideo.cardN === 'global' && (
         <div ref={playerScrollRef} style={{marginBottom:24}}>
-          <div style={{ position: 'relative' }}>
-            {abLoopActive && <div className="jive-ab-badge">🔁 {formatTime(pointA)} → {formatTime(pointB)}</div>}
-            <JiveYouTubePlayer videoId={activeVideo.videoId} onPlayerReady={handlePlayerReady} />
-            {/* 🔁 A-B 구간 + 닫기 — 영상 하단 오버레이 */}
-            <div style={{ position:'absolute', bottom:0, left:0, right:0, background:'linear-gradient(transparent, rgba(0,0,0,0.85))', padding:'24px 10px 8px', borderRadius:'0 0 12px 12px', zIndex:5 }}>
-              <div style={{ display:'flex', gap:'6px', alignItems:'center', justifyContent:'center', flexWrap:'wrap' }}>
-                <button className="jive-ab-btn a-btn" onClick={handleSetA}>A {pointA !== null ? formatTime(pointA) : '설정'}</button>
-                <span style={{color:'#888',fontSize:'14px'}}>→</span>
-                <button className="jive-ab-btn b-btn" onClick={handleSetB}>B {pointB !== null ? formatTime(pointB) : '설정'}</button>
-                {abLoopActive && <button className="jive-ab-btn clear-btn" onClick={handleClearAB}>✕</button>}
-                <button className="jive-ab-btn clear-btn" onClick={()=>setActiveVideo(null)} style={{marginLeft:'auto'}}>✕ 닫기</button>
+          {activeVideo.driveId ? (
+            /* 구글 드라이브 영상 — 드라이브 내장 플레이어 iframe (A-B 미지원, 재생/전체화면만) */
+            <div>
+              <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%', borderRadius: '12px', overflow: 'hidden', background: '#000' }}>
+                <iframe
+                  src={`https://drive.google.com/file/d/${activeVideo.driveId}/preview`}
+                  allow="autoplay; fullscreen"
+                  allowFullScreen
+                  title="구글 드라이브 수업 영상"
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none' }}
+                />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
+                <button className="jive-ab-btn clear-btn" onClick={() => setActiveVideo(null)}>✕ 닫기</button>
               </div>
             </div>
-          </div>
+          ) : (
+            <div style={{ position: 'relative' }}>
+              {abLoopActive && <div className="jive-ab-badge">🔁 {formatTime(pointA)} → {formatTime(pointB)}</div>}
+              <JiveYouTubePlayer videoId={activeVideo.videoId} onPlayerReady={handlePlayerReady} />
+              {/* 🔁 A-B 구간 + 닫기 — 영상 하단 오버레이 */}
+              <div style={{ position:'absolute', bottom:0, left:0, right:0, background:'linear-gradient(transparent, rgba(0,0,0,0.85))', padding:'24px 10px 8px', borderRadius:'0 0 12px 12px', zIndex:5 }}>
+                <div style={{ display:'flex', gap:'6px', alignItems:'center', justifyContent:'center', flexWrap:'wrap' }}>
+                  <button className="jive-ab-btn a-btn" onClick={handleSetA}>A {pointA !== null ? formatTime(pointA) : '설정'}</button>
+                  <span style={{color:'#888',fontSize:'14px'}}>→</span>
+                  <button className="jive-ab-btn b-btn" onClick={handleSetB}>B {pointB !== null ? formatTime(pointB) : '설정'}</button>
+                  {abLoopActive && <button className="jive-ab-btn clear-btn" onClick={handleClearAB}>✕</button>}
+                  <button className="jive-ab-btn clear-btn" onClick={()=>setActiveVideo(null)} style={{marginLeft:'auto'}}>✕ 닫기</button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

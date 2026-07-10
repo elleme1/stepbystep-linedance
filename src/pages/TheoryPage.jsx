@@ -892,6 +892,11 @@ export default function TheoryPage() {
               <div style={{ fontSize: '.75rem', color: '#888', textAlign: 'center', marginTop: '6px' }}>
                 드라이브 영상은 재생·전체화면만 지원됩니다 (구간반복은 유튜브 영상만)
               </div>
+              {/* 휴대폰 일부 브라우저는 쿠키 차단으로 드라이브 임베드가 검게 나옴 — 비상구 */}
+              <button
+                onClick={() => window.open(`https://drive.google.com/file/d/${activeVideo.driveId}/view`, '_blank', 'noopener,noreferrer')}
+                style={{ width: '100%', marginTop: '8px', padding: '12px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.06)', color: '#e8e8f0', fontSize: '.9rem', fontWeight: 700, cursor: 'pointer' }}
+              >📂 화면이 검게 나오면 여기를 눌러 드라이브에서 열기</button>
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
                 <button className="jive-ab-btn clear-btn" onClick={() => setActiveVideo(null)}>✕ 닫기</button>
               </div>

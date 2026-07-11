@@ -198,6 +198,25 @@ const levelSections = [
 
 export default function TheoryPage() {
   const navigate = useNavigate();
+
+  // 🔒 자이브 코너 입장 게이트 — 자이브 단체(카톡) 회원용 비밀번호(0402).
+  //    한 번 통과하면 그 기기에서는 다시 묻지 않음(localStorage —
+  //    App.jsx PRESERVE_KEYS에 등록돼 버전 인상에도 보존됨).
+  const JIVE_GATE_PASSWORD = import.meta.env.VITE_JIVE_GATE_PASSWORD || '0402';
+  const [jiveUnlocked, setJiveUnlocked] = useState(() => localStorage.getItem('jive-gate-ok') === '1');
+  const [jiveGatePw, setJiveGatePw] = useState('');
+  const [jiveGateError, setJiveGateError] = useState(false);
+  const handleJiveGate = (e) => {
+    e.preventDefault();
+    if (jiveGatePw === JIVE_GATE_PASSWORD) {
+      localStorage.setItem('jive-gate-ok', '1');
+      setJiveUnlocked(true);
+      setJiveGateError(false);
+    } else {
+      setJiveGateError(true);
+    }
+  };
+
   const [openCardId, setOpenCardId] = useState(null);
   const [activeVideo, setActiveVideo] = useState(null);
   const [expandedSections, setExpandedSections] = useState({});
@@ -429,6 +448,51 @@ export default function TheoryPage() {
   const toggleSection = (sectionId) => {
     setExpandedSections(prev => ({ ...prev, [sectionId]: !prev[sectionId] }));
   };
+
+  // 🔒 비밀번호를 아직 통과하지 못했으면 게이트 화면만 표시
+  if (!jiveUnlocked) {
+    return (
+      <div style={{ fontFamily: "'Noto Sans KR', sans-serif", color: '#e8e8f0', padding: '40px 16px', maxWidth: '440px', margin: '0 auto' }}>
+        <div style={{ background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.1)', borderRadius: '16px', padding: '28px 20px', textAlign: 'center' }}>
+          <div style={{ fontSize: '2.2rem', marginBottom: '10px' }}>🔒</div>
+          <h2 style={{ fontSize: '1.15rem', fontWeight: 800, margin: '0 0 6px' }}>자이브 방</h2>
+          <p style={{ fontSize: '.85rem', color: '#a0a0c0', margin: '0 0 18px', lineHeight: 1.6 }}>
+            자이브 회원 전용 공간입니다.<br />비밀번호를 입력해 주세요.
+          </p>
+          <form onSubmit={handleJiveGate} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <input
+              type="password"
+              inputMode="numeric"
+              placeholder="비밀번호 입력"
+              value={jiveGatePw}
+              onChange={(e) => { setJiveGatePw(e.target.value); setJiveGateError(false); }}
+              autoFocus
+              style={{
+                width: '100%', padding: '14px', borderRadius: '12px',
+                border: `1px solid ${jiveGateError ? '#ef4444' : 'rgba(255,255,255,0.15)'}`,
+                background: 'rgba(0,0,0,0.3)', color: '#fff', fontSize: '1.1rem',
+                textAlign: 'center', letterSpacing: '0.3em', outline: 'none', boxSizing: 'border-box',
+              }}
+            />
+            {jiveGateError && (
+              <div style={{ fontSize: '.8rem', color: '#ef4444' }}>비밀번호가 올바르지 않습니다.</div>
+            )}
+            <button
+              type="submit"
+              style={{
+                width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
+                background: 'var(--primary-color, #ef4444)', color: '#fff',
+                fontSize: '1rem', fontWeight: 800, cursor: 'pointer',
+              }}
+            >들어가기</button>
+          </form>
+          <p style={{ fontSize: '.75rem', color: '#777', margin: '14px 0 0' }}>
+            한 번 입력하면 이 기기에서는 다시 묻지 않습니다.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="jive-container">

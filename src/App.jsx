@@ -51,6 +51,7 @@ const PRESERVE_KEYS = [
   'community_nickname',    // 커뮤니티 닉네임 (CommunityPage)
   'stepApp_likedIds',      // 영상 좋아요 (VideoPage)
   'sbs-install-dismissed', // PWA 설치 배너 닫음 (InstallBanner)
+  'jive-gate-ok',          // 자이브 방 비밀번호 통과 여부 (TheoryPage)
 ];
 const PRESERVE_PREFIXES = ['bookmarks_']; // 영상별 구간 북마크 (useVideoDetail)
 

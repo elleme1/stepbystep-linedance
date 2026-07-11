@@ -613,22 +613,22 @@ export default function TheoryPage() {
       {/* 탭 네비게이션 */}
       <div className="jive-header" style={{ paddingBottom: '0' }}>
         <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '16px' }}>
-          <button 
-              onClick={() => { setActiveTab('sequence'); setActiveVideo(null); }}
-              style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: activeTab === 'sequence' ? 'var(--primary-color, #ef4444)' : 'var(--bg-secondary, rgba(0,0,0,0.05))', color: activeTab === 'sequence' ? '#fff' : 'var(--text-secondary, #888)', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
-          >자이브 순서</button>
-          <button 
-              onClick={() => { setActiveTab('375'); setActiveVideo(null); }}
-              style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: activeTab === '375' ? 'var(--primary-color, #ef4444)' : 'var(--bg-secondary, rgba(0,0,0,0.05))', color: activeTab === '375' ? '#fff' : 'var(--text-secondary, #888)', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
-          >자이브 375</button>
-          <button 
-              onClick={() => { setActiveTab('education'); setActiveVideo(null); }}
-              style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: activeTab === 'education' ? 'var(--primary-color, #ef4444)' : 'var(--bg-secondary, rgba(0,0,0,0.05))', color: activeTab === 'education' ? '#fff' : 'var(--text-secondary, #888)', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
-          >자이브 교육영상</button>
           <button
               onClick={() => { setActiveTab('classlog'); setActiveVideo(null); }}
               style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: activeTab === 'classlog' ? 'var(--primary-color, #ef4444)' : 'var(--bg-secondary, rgba(0,0,0,0.05))', color: activeTab === 'classlog' ? '#fff' : 'var(--text-secondary, #888)', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
           >🎥 수업기록</button>
+          <button
+              onClick={() => { setActiveTab('sequence'); setActiveVideo(null); }}
+              style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: activeTab === 'sequence' ? 'var(--primary-color, #ef4444)' : 'var(--bg-secondary, rgba(0,0,0,0.05))', color: activeTab === 'sequence' ? '#fff' : 'var(--text-secondary, #888)', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
+          >자이브 순서</button>
+          <button
+              onClick={() => { setActiveTab('375'); setActiveVideo(null); }}
+              style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: activeTab === '375' ? 'var(--primary-color, #ef4444)' : 'var(--bg-secondary, rgba(0,0,0,0.05))', color: activeTab === '375' ? '#fff' : 'var(--text-secondary, #888)', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
+          >자이브 375</button>
+          <button
+              onClick={() => { setActiveTab('education'); setActiveVideo(null); }}
+              style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: activeTab === 'education' ? 'var(--primary-color, #ef4444)' : 'var(--bg-secondary, rgba(0,0,0,0.05))', color: activeTab === 'education' ? '#fff' : 'var(--text-secondary, #888)', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
+          >자이브 교육영상</button>
         </div>
       </div>
 

@@ -220,11 +220,11 @@ export default function TheoryPage() {
   const [openCardId, setOpenCardId] = useState(null);
   const [activeVideo, setActiveVideo] = useState(null);
   const [expandedSections, setExpandedSections] = useState({});
-  // 딥링크 지원: /theory?tab=classlog 처럼 특정 서브탭으로 바로 진입
-  // (카톡 등에 수업기록 링크를 공유하는 용도 — 유효하지 않은 값은 기본 탭)
+  // 딥링크 지원: /theory?tab=sequence 처럼 특정 서브탭으로 바로 진입
+  // (유효하지 않은 값은 기본 탭 — 자이브 방의 주 콘텐츠인 수업기록)
   const [activeTab, setActiveTab] = useState(() => {
     const t = new URLSearchParams(window.location.search).get('tab');
-    return ['sequence', '375', 'education', 'classlog'].includes(t) ? t : 'sequence';
+    return ['sequence', '375', 'education', 'classlog'].includes(t) ? t : 'classlog';
   });
 
   // 🎥 자이브 단체수업 기록 — Firebase /jiveClassVideos 실시간 구독 (모든 기기 동기화)

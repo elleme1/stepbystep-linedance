@@ -3,6 +3,11 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  // 회원층(60대) 특성상 오래된 아이폰이 많음 — Vite 7 기본 타깃(사파리 16+)은
+  // 구형 iOS에서 번들 전체가 파스 실패해 검은 화면이 됨. 사파리 12까지 하향 변환.
+  build: {
+    target: ['es2018', 'safari12'],
+  },
   plugins: [
     react(),
     VitePWA({

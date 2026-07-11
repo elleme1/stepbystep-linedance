@@ -149,8 +149,8 @@ const AdminPage = () => {
   };
 
   const getYoutubeId = (url) => {
-    // 쇼츠(shorts/) 주소까지 완벽하게 잡아내는 마법의 가위!
-    const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/|youtube\.com\/shorts\/)([\w-]{11})/i;
+    // 쇼츠(shorts/)·라이브(live/) 주소까지 잡아내는 마법의 가위!
+    const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/|youtube\.com\/(?:shorts|live)\/)([\w-]{11})/i;
     const match = url.match(regExp);
     return match ? match[1] : null;
   };
@@ -288,20 +288,26 @@ const AdminPage = () => {
             >중리 관리</button>
           </div>
           <form onSubmit={handleLogin}>
-            <input 
-              type="password" 
-              className="login-input" 
-              placeholder="비밀번호 4자리 입력" 
-              value={password} 
+            <input
+              type="password"
+              className="login-input"
+              placeholder="비밀번호 4자리 입력"
+              value={password}
               onChange={(e) => {
                 const val = e.target.value;
                 setPassword(val);
                 if (ADMIN_PASSWORD && val === ADMIN_PASSWORD) setIsAuthenticated(true);
               }}
-              autoFocus 
+              autoFocus
             />
             <button type="submit" className="login-btn">관리자 입장</button>
           </form>
+          {/* 하단 메뉴가 없는 화면(Layout 외부)이라 회원이 갇히지 않도록 탈출구 필수 */}
+          <button
+            type="button"
+            onClick={() => navigate('/')}
+            style={{ width: '100%', marginTop: '12px', padding: '12px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#94a3b8', fontSize: '0.9rem', fontWeight: 600, cursor: 'pointer' }}
+          >🏠 홈으로 돌아가기</button>
         </div>
       </div>
     );

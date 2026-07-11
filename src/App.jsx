@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 // 🎨 테마
 import { ThemeProvider } from './context/ThemeContext';
@@ -44,7 +44,7 @@ const PRESERVE_KEYS = [
   'sbs-practiced',         // 연습 기록 (PracticeContext)
   'sbs-challenges',        // 자이브 챌린지 진행도 (ChallengeContext)
   'sbs-challenge-videos',  // 챌린지 영상 링크 (ChallengeContext)
-  'sbs-theme',             // 테마 (ThemeContext)
+  'sbs-theme2',            // 테마 (ThemeContext — 2026-07 라이트 개편에서 키 교체)
   'stepbystep-location',   // 장소 선택 (LocationContext)
   'isVipUser',             // VIP 접근 플래그 (HomePage)
   'community_posts',       // 커뮤니티 게시글 (CommunityPage)
@@ -52,6 +52,7 @@ const PRESERVE_KEYS = [
   'stepApp_likedIds',      // 영상 좋아요 (VideoPage)
   'sbs-install-dismissed', // PWA 설치 배너 닫음 (InstallBanner)
   'jive-gate-ok',          // 자이브 방 비밀번호 통과 여부 (TheoryPage)
+  'dance-cue-gate-ok',     // 댄스큐 비밀번호 통과 여부 (DanceCuePage)
 ];
 const PRESERVE_PREFIXES = ['bookmarks_']; // 영상별 구간 북마크 (useVideoDetail)
 
@@ -107,6 +108,9 @@ function AppContent() {
           
           {/* 👑 관리자 전용 경로 (Layout 외부) */}
           <Route path="/admin" element={<AdminPage />} />
+
+          {/* 존재하지 않는 주소는 빈 화면 대신 홈으로 안전 착지 */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </>

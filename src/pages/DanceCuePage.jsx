@@ -7,7 +7,9 @@ export default function DanceCuePage() {
     const DANCE_CUE_APP_URL = 'https://dance-instructor-player.vercel.app/';
     const DANCE_CUE_PAGE_PASSWORD = import.meta.env.VITE_DANCE_CUE_PAGE_PASSWORD || '0402';
     const [cuePassword, setCuePassword] = useState('');
-    const [cueUnlocked, setCueUnlocked] = useState(false);
+    // 잠금 해제는 기기당 1회 — 탭을 잠깐 다녀와도 비번을 다시 묻지 않게 영속화
+    // (자이브 방 'jive-gate-ok'와 동일 패턴, App.jsx PRESERVE_KEYS 등록)
+    const [cueUnlocked, setCueUnlocked] = useState(() => localStorage.getItem('dance-cue-gate-ok') === '1');
     const [cueError, setCueError] = useState(false);
 
     return (
@@ -28,6 +30,7 @@ export default function DanceCuePage() {
                             onSubmit={(e) => {
                                 e.preventDefault();
                                 if (cuePassword === DANCE_CUE_PAGE_PASSWORD) {
+                                    localStorage.setItem('dance-cue-gate-ok', '1');
                                     setCueUnlocked(true);
                                     setCueError(false);
                                 } else {

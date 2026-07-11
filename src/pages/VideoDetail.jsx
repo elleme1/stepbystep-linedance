@@ -72,7 +72,7 @@ export default function VideoDetail() {
             <div className="video-detail" style={{ justifyContent: 'center', alignItems: 'center' }}>
                 <p style={{ fontSize: '18px', color: '#888' }}>영상을 찾을 수 없습니다</p>
                 <button
-                    onClick={() => navigate('/videos')}
+                    onClick={() => navigate('/video')}
                     style={{ marginTop: '16px', padding: '12px 24px', borderRadius: '12px', background: '#ff2d55', color: '#fff', border: 'none', fontSize: '15px', fontWeight: 700, cursor: 'pointer' }}
                 >
                     영상 보관함으로 돌아가기

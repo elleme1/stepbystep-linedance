@@ -230,6 +230,8 @@ export default function TheoryPage() {
   // 🎥 자이브 단체수업 기록 — Firebase /jiveClassVideos 실시간 구독 (모든 기기 동기화)
   //    올리기/삭제는 관리자 비밀번호 게이트(등록 탭과 동일 모델), 열람은 자유.
   const [classVideos, setClassVideos] = useState([]);
+  const [classLoaded, setClassLoaded] = useState(false);      // 첫 스냅샷 수신 여부 — '없음'과 '로딩 중' 구분
+  const [classLoadFailed, setClassLoadFailed] = useState(false);
   const [classUnlocked, setClassUnlocked] = useState(false);
   const [showClassForm, setShowClassForm] = useState(false);
   const [classPw, setClassPw] = useState('');
@@ -256,13 +258,19 @@ export default function TheoryPage() {
             return (b.createdAt || 0) - (a.createdAt || 0);
           });
         setClassVideos(arr);
+        setClassLoaded(true);
+      }, (err) => {
+        // 읽기 거부(익명 로그인 실패 등) 시 조용히 '영상 없음'으로 보이지 않게 구분
+        console.warn('[수업기록] 불러오기 실패:', err);
+        setClassLoadFailed(true);
+        setClassLoaded(true);
       });
     });
     return () => { cancelled = true; cleanup(); };
   }, []);
 
   const getClassYoutubeId = (url) => {
-    const m = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/|youtube\.com\/shorts\/)([\w-]{11})/i.exec(url || '');
+    const m = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/|youtube\.com\/(?:shorts|live)\/)([\w-]{11})/i.exec(url || '');
     return m ? m[1] : null;
   };
 
@@ -891,7 +899,17 @@ export default function TheoryPage() {
 
           {/* 영상 목록 — 수업 날짜 내림차순 */}
           <div className="video-list" style={{ marginTop: '16px' }}>
-            {classVideos.length === 0 && (
+            {!classLoaded && (
+              <div style={{ textAlign: 'center', color: '#888', padding: '28px 0', fontSize: '15px' }}>
+                수업 영상을 불러오는 중…
+              </div>
+            )}
+            {classLoaded && classLoadFailed && (
+              <div style={{ textAlign: 'center', color: '#888', padding: '28px 0', fontSize: '15px' }}>
+                영상 목록을 불러오지 못했습니다.<br/>네트워크 확인 후 앱을 다시 열어주세요.
+              </div>
+            )}
+            {classLoaded && !classLoadFailed && classVideos.length === 0 && (
               <div style={{ textAlign: 'center', color: '#888', padding: '28px 0', fontSize: '15px' }}>
                 아직 올린 수업 영상이 없습니다.<br/>위의 📹 단추로 첫 영상을 올려보세요!
               </div>

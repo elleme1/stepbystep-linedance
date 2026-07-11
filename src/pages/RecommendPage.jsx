@@ -345,9 +345,9 @@ export default function RecommendPage() {
     // --- 렌더링: 플레이어 화면 ---
     return (
         <div className="video-detail" style={{ paddingBottom: 'calc(80px + env(safe-area-inset-bottom))' }}>
-            <div style={{ position: 'sticky', top: 0, zIndex: 50, display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 12px', background: 'rgba(10,10,15,0.95)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(255,255,255,.08)' }}>
-                <button onClick={() => setSelectedVideoId(null)} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '8px 14px', borderRadius: '10px', fontSize: '.82rem', fontWeight: 700, border: '1px solid rgba(255,255,255,.12)', cursor: 'pointer', background: 'rgba(255,255,255,.06)', color: '#e8e8f0', WebkitTapHighlightColor: 'transparent' }}>← 목록</button>
-                <span style={{ flex: 1, textAlign: 'center', fontSize: '.85rem', fontWeight: 700, color: '#a0a0c0' }}>영상 재생</span>
+            <div style={{ position: 'sticky', top: 0, zIndex: 50, display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 12px', background: 'var(--nav-bg)', backdropFilter: 'blur(12px)', borderBottom: '1px solid var(--border-color)' }}>
+                <button onClick={() => setSelectedVideoId(null)} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '8px 14px', borderRadius: '10px', fontSize: '.82rem', fontWeight: 700, border: '1px solid var(--border-color)', cursor: 'pointer', background: 'var(--bg-card)', color: 'var(--text-primary)', WebkitTapHighlightColor: 'transparent' }}>← 목록</button>
+                <span style={{ flex: 1, textAlign: 'center', fontSize: '.85rem', fontWeight: 700, color: 'var(--text-secondary)' }}>영상 재생</span>
             </div>
 
             <YouTubePlayer
@@ -396,13 +396,13 @@ export default function RecommendPage() {
                     <button className={`view-toggle__btn ${vd.viewMode === 'tutorial' ? 'view-toggle__btn--active' : ''}`} onClick={() => vd.setViewMode('tutorial')}>👣 친절한 스텝 설명</button>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', marginBottom: '20px' }}>
-                    <span style={{ fontSize: '0.95rem', fontWeight: 'bold', color: '#fff' }}>▶️ 연속 재생 (끝나면 다음 곡으로)</span>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: 'var(--bg-card)', borderRadius: '12px', marginBottom: '20px' }}>
+                    <span style={{ fontSize: '0.95rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>▶️ 연속 재생 (끝나면 다음 곡으로)</span>
                     <label style={{ position: 'relative', display: 'inline-block', width: '50px', height: '28px' }}>
                         <input type="checkbox" checked={autoPlayNext} onChange={(e) => setAutoPlayNext(e.target.checked)} style={{ opacity: 0, width: 0, height: 0 }} />
                         <span style={{
                             position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0,
-                            backgroundColor: autoPlayNext ? '#ff2d55' : 'rgba(255,255,255,0.2)', borderRadius: '34px', transition: '.4s'
+                            backgroundColor: autoPlayNext ? '#ff2d55' : 'var(--bg-glass-strong)', borderRadius: '34px', transition: '.4s'
                         }}>
                             <span style={{
                                 position: 'absolute', height: '20px', width: '20px', left: '4px', bottom: '4px',

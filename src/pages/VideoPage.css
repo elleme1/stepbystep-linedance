@@ -15,13 +15,13 @@
 .video-header-wrapper {
     position: sticky;
     top: 0;
-    background-color: rgba(10, 10, 15, 0.95);
+    background-color: var(--nav-bg);
     /* 살짝 투명해서 스크롤 시 뒤가 은은하게 비침 */
     backdrop-filter: blur(10px);
     /* 아이폰처럼 배경 블러 처리 */
     padding: 24px 20px 16px 20px;
     z-index: 10;
-    border-bottom: 1px solid #1a1a24;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .video-page-title {
@@ -33,7 +33,7 @@
 .video-page-subtitle {
     margin: 0 0 20px 0;
     font-size: 15px;
-    color: #a0a0b0;
+    color: var(--text-secondary);
 }
 
 /* 알약(Pill) 탭 스크롤 영역 */
@@ -57,9 +57,9 @@
 .tab-pill {
     flex-shrink: 0;
     /* 글씨가 길어도 버튼이 찌그러지지 않게 방어 */
-    background-color: #1a1a24;
-    color: #a0a0b0;
-    border: 1px solid #2a2a35;
+    background-color: var(--bg-secondary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 24px;
     /* 완벽한 알약 모양 */
     padding: 10px 20px;
@@ -88,7 +88,7 @@
 .empty-message {
     text-align: center;
     padding: 60px 0;
-    color: #888899;
+    color: var(--text-secondary);
     font-size: 16px;
 }
 
@@ -96,19 +96,19 @@
 .video-list-item {
     display: flex;
     align-items: center;
-    background-color: #16161e;
+    background-color: var(--bg-secondary);
     border-radius: 16px;
     padding: 12px;
     gap: 16px;
     cursor: pointer;
     transition: transform 0.1s, background-color 0.2s;
-    border: 1px solid #2a2a35;
+    border: 1px solid var(--border-color);
 }
 
 .video-list-item:active {
     transform: scale(0.98);
     /* 누를 때 살짝 들어가는 손맛 */
-    background-color: #1a1a24;
+    background-color: var(--bg-card-hover);
 }
 
 /* 💖 찜한(좋아요) 리스트는 테두리에 예쁜 핑크색 포인트를 줍니다 */
@@ -173,7 +173,7 @@
 
 .info-date {
     font-size: 13px;
-    color: #a0a0b0;
+    color: var(--text-secondary);
 }
 
 .info-level {
@@ -219,7 +219,7 @@
 .info-title-kor {
     margin: 0;
     font-size: 14px;
-    color: #bbbbcc;
+    color: var(--text-secondary);
     line-height: 1.4;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -250,60 +250,10 @@
     /* 누를 때 하트가 심장처럼 쿵쾅! 커짐 */
 }
 
-/* ===== 라이트 모드 대비(contrast) 보정 ===== */
-[data-theme="light"] .video-header-wrapper {
-    background-color: rgba(245, 243, 239, 0.95);
-    border-bottom-color: rgba(0, 0, 0, 0.08);
-}
-
-[data-theme="light"] .video-page-title {
-    color: #1a1a2e;
-}
-
-[data-theme="light"] .video-page-subtitle {
-    color: #555566;
-}
-
-[data-theme="light"] .tab-pill {
-    background-color: #ffffff;
-    color: #4a5568;
-    border-color: rgba(0, 0, 0, 0.08);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-}
-
-[data-theme="light"] .tab-pill.active {
-    background-color: #ff3366;
-    color: #ffffff;
-    border-color: #ff3366;
-}
-
-[data-theme="light"] .video-list-item {
-    background-color: #ffffff;
-    border-color: rgba(0, 0, 0, 0.08);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-[data-theme="light"] .video-list-item:active {
-    background-color: #f5f3ef;
-}
-
+/* ===== 라이트 모드 대비(contrast) 보정 =====
+   (배경·글자·경계선은 이제 CSS 변수로 양 테마를 커버 —
+    변수로 못 담는 핑크 하드코딩 보정만 남김) */
 [data-theme="light"] .video-list-item.liked-item {
     border-color: rgba(255, 51, 102, 0.4);
     background-color: rgba(255, 51, 102, 0.04);
-}
-
-[data-theme="light"] .info-title-eng {
-    color: #1a1a2e;
-}
-
-[data-theme="light"] .info-title-kor {
-    color: #4a5568;
-}
-
-[data-theme="light"] .info-date {
-    color: #4a5568;
-}
-
-[data-theme="light"] .empty-message {
-    color: #555566;
 }

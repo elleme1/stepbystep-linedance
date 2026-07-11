@@ -31,14 +31,14 @@ export default function SearchPage() {
         });
 
     return (
-        <div style={{ backgroundColor: '#0a0a0f', minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ backgroundColor: 'var(--bg-primary)', minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
 
             {/* 1. 상단 고정 검색바 영역 */}
             <div style={{
                 padding: 'max(16px, env(safe-area-inset-top)) 16px 16px',
-                borderBottom: '1px solid #1a1a24',
+                borderBottom: '1px solid var(--border-color)',
                 position: 'sticky', top: 0,
-                backgroundColor: 'rgba(10, 10, 15, 0.95)', backdropFilter: 'blur(10px)', zIndex: 50
+                backgroundColor: 'var(--nav-bg)', backdropFilter: 'blur(10px)', zIndex: 50
             }}>
                 <div style={{ position: 'relative' }}>
                     <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', fontSize: '18px' }}>🔍</span>
@@ -49,7 +49,7 @@ export default function SearchPage() {
                         onChange={(e) => setKeyword(e.target.value)}
                         style={{
                             width: '100%', padding: '14px 40px 14px 44px', borderRadius: '12px',
-                            border: '1px solid #2a2a35', backgroundColor: '#1c1c26', color: '#fff',
+                            border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)',
                             fontSize: '15px', boxSizing: 'border-box', outline: 'none'
                         }}
                         autoFocus
@@ -60,7 +60,7 @@ export default function SearchPage() {
                             onClick={() => setKeyword('')}
                             style={{
                                 position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)',
-                                background: 'none', border: 'none', color: '#888', fontSize: '18px', cursor: 'pointer', padding: '4px'
+                                background: 'none', border: 'none', color: 'var(--text-secondary)', fontSize: '18px', cursor: 'pointer', padding: '4px'
                             }}
                         >
                             ✕
@@ -74,7 +74,7 @@ export default function SearchPage() {
 
                 {!keyword.trim() ? (
                     // 검색어 입력 전 (추천 해시태그 띄워주기)
-                    <div style={{ textAlign: 'center', marginTop: '60px', color: '#666' }}>
+                    <div style={{ textAlign: 'center', marginTop: '60px', color: 'var(--text-muted)' }}>
                         <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎧</div>
                         <p style={{ margin: 0, fontSize: '15px', lineHeight: '1.5' }}>
                             찾으시는 곡명이나 안무가,<br />장르를 검색해 보세요.
@@ -83,7 +83,7 @@ export default function SearchPage() {
                             {['Why', '입문', '초급', '팝', '발라드'].map(tag => (
                                 <button
                                     key={tag} onClick={() => setKeyword(tag)}
-                                    style={{ background: '#1c1c26', border: '1px solid #2a2a35', padding: '8px 16px', borderRadius: '20px', fontSize: '14px', color: '#ddd', cursor: 'pointer' }}
+                                    style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', padding: '8px 16px', borderRadius: '20px', fontSize: '14px', color: 'var(--text-secondary)', cursor: 'pointer' }}
                                 >
                                     #{tag}
                                 </button>
@@ -93,7 +93,7 @@ export default function SearchPage() {
                 ) : searchResults.length > 0 ? (
                     // 진짜 검색 결과가 있을 때 (원장님의 40곡 창고에서 꺼내온 카드들!)
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                        <p style={{ margin: '0 0 4px 0', fontSize: '14px', color: '#aaa' }}>
+                        <p style={{ margin: '0 0 4px 0', fontSize: '14px', color: 'var(--text-secondary)' }}>
                             총 <span style={{ color: '#ff2d55', fontWeight: 'bold' }}>{searchResults.length}</span>개의 곡을 찾았습니다.
                         </p>
 
@@ -101,7 +101,7 @@ export default function SearchPage() {
                             <div
                                 key={song.id}
                                 onClick={() => navigate(`/video/${song.id}`)}
-                                style={{ display: 'flex', gap: '16px', backgroundColor: '#14141d', padding: '12px', borderRadius: '12px', cursor: 'pointer', border: '1px solid #1a1a24' }}
+                                style={{ display: 'flex', gap: '16px', backgroundColor: 'var(--bg-card)', padding: '12px', borderRadius: '12px', cursor: 'pointer', border: '1px solid var(--border-color)' }}
                             >
                                 {/* 썸네일 자동 추출 */}
                                 <div style={{ width: '120px', height: '68px', borderRadius: '8px', backgroundColor: '#000', flexShrink: 0, position: 'relative', overflow: 'hidden' }}>
@@ -112,7 +112,7 @@ export default function SearchPage() {
                                             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                         />
                                     ) : (
-                                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#444', fontSize: '12px' }}>
+                                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: '12px' }}>
                                             No Image
                                         </div>
                                     )}
@@ -138,10 +138,10 @@ export default function SearchPage() {
                                             </span>
                                         )}
                                     </div>
-                                    <h3 style={{ margin: 0, fontSize: '15px', color: '#fff', fontWeight: '600', lineHeight: '1.3', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                    <h3 style={{ margin: 0, fontSize: '15px', color: 'var(--text-primary)', fontWeight: '600', lineHeight: '1.3', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                         {song.title}
                                     </h3>
-                                    <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#888', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                    <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: 'var(--text-secondary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                         {song.choreographer || '안무가 미상'}
                                     </p>
                                 </div>
@@ -150,10 +150,10 @@ export default function SearchPage() {
                     </div>
                 ) : (
                     // 검색 결과가 0개일 때
-                    <div style={{ textAlign: 'center', marginTop: '60px', color: '#666' }}>
+                    <div style={{ textAlign: 'center', marginTop: '60px', color: 'var(--text-muted)' }}>
                         <div style={{ fontSize: '48px', marginBottom: '16px' }}>🥲</div>
                         <p style={{ margin: 0, fontSize: '15px', lineHeight: '1.5' }}>
-                            '<strong style={{ color: '#fff' }}>{keyword}</strong>'에 대한<br />검색 결과가 없습니다.
+                            '<strong style={{ color: 'var(--text-primary)' }}>{keyword}</strong>'에 대한<br />검색 결과가 없습니다.
                         </p>
                     </div>
                 )}

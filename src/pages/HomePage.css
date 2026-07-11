@@ -198,7 +198,7 @@
     margin: 0;
     font-size: 16px;
     font-weight: 700;
-    color: #ffffff;
+    color: var(--text-primary);
 }
 
 .greeting-date {
@@ -269,8 +269,8 @@
 }
 
 .level-badge {
-    background-color: #2a2a35;
-    color: #e0e0e0;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
     padding: 6px 14px;
     border-radius: 20px;
     font-size: 14px;
@@ -278,13 +278,13 @@
 }
 
 .vip-card {
-    background-color: #1a1a24;
+    background-color: var(--bg-secondary);
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--shadow-lg);
     cursor: pointer;
     transition: transform 0.2s;
-    border: 1px solid #2a2a35;
+    border: 1px solid var(--border-color);
 }
 
 .vip-card:active {
@@ -345,7 +345,7 @@
 .video-title-kor {
     margin: 0 0 16px 0;
     font-size: 16px;
-    color: #a0a0b0;
+    color: var(--text-secondary);
 }
 
 /* 💡 원장님 꿀팁 (어두운 곳에서 은은하게 빛나는 프리미엄 골드 컬러) */
@@ -373,7 +373,7 @@
 }
 
 .tip-content span {
-    color: #dddddd;
+    color: var(--text-primary);
     font-size: 15px;
     line-height: 1.4;
     word-break: keep-all;
@@ -382,12 +382,9 @@
 
 
 
-/* ===== 라이트 모드 대비(contrast) 보정 ===== */
-[data-theme="light"] .home-container {
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-}
-
+/* ===== 라이트 모드 대비(contrast) 보정 =====
+   (배경·글자·경계선은 이제 CSS 변수로 양 테마를 커버 —
+    변수로 못 담는 핑크·골드 하드코딩 보정만 남김) */
 [data-theme="light"] .notice-banner {
     background-color: rgba(255, 51, 102, 0.08);
 }
@@ -399,10 +396,6 @@
 [data-theme="light"] .greeting-card {
     background: linear-gradient(135deg, rgba(255, 51, 102, 0.09) 0%, rgba(255, 153, 204, 0.05) 100%);
     border-color: rgba(255, 51, 102, 0.35);
-}
-
-[data-theme="light"] .greeting-author {
-    color: #1a1a2e;
 }
 
 [data-theme="light"] .greeting-date {
@@ -421,16 +414,6 @@
     color: #555566;
 }
 
-[data-theme="light"] .vip-card {
-    background-color: #ffffff;
-    border-color: rgba(0, 0, 0, 0.08);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
-}
-
-[data-theme="light"] .video-title-kor {
-    color: #4a4a55;
-}
-
 [data-theme="light"] .director-tip {
     background-color: rgba(212, 168, 83, 0.14);
 }
@@ -439,32 +422,23 @@
     color: #946100;
 }
 
-[data-theme="light"] .tip-content span {
-    color: #2a2a35;
-}
-
-[data-theme="light"] .level-badge {
-    background-color: #ece8e1;
-    color: #2a2a35;
-}
-
 /* --- ⚙️ 코오롱 관리자 푸터 --- */
 .home-footer {
     margin-top: 60px;
     padding: 32px 0 60px 0;
     display: flex;
     justify-content: center;
-    border-top: 1px solid rgba(212, 168, 83, 0.15);
+    border-top: 1px solid var(--border-color);
 }
 
 .admin-access-btn {
     background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(212, 168, 83, 0.3);
+    border: 1px solid var(--border-glow);
     border-radius: 12px;
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #aa8899;
+    color: var(--text-muted);
     font-size: 14px;
     cursor: pointer;
     padding: 12px 20px;

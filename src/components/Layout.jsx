@@ -49,7 +49,7 @@ export default function Layout() {
 
             <header style={{
                 position: 'sticky', top: 0, zIndex: 9998,
-                backgroundColor: theme === 'dark' ? 'rgba(10, 10, 15, 0.95)' : 'rgba(245, 243, 239, 0.95)', backdropFilter: 'blur(10px)',
+                backgroundColor: 'var(--nav-bg)', backdropFilter: 'blur(10px)',
                 paddingTop: 'max(54px, env(safe-area-inset-top))',
                 borderBottom: '1px solid var(--border-color)'
             }}>

@@ -4,9 +4,9 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    background-color: rgba(22, 22, 30, 0.95);
+    background-color: var(--nav-bg);
     backdrop-filter: blur(10px);
-    border-top: 1px solid #2a2a35;
+    border-top: 1px solid var(--border-color);
     z-index: 9999;
     pointer-events: auto;
     display: flex;
@@ -24,7 +24,7 @@
     width: 25%;
     height: 100%;
     text-decoration: none;
-    color: #888899;
+    color: var(--text-muted);
     gap: 4px;
     -webkit-tap-highlight-color: transparent;
     pointer-events: auto;

@@ -69,6 +69,7 @@ export default function useYouTubePlayer({
         rel: 0,
         modestbranding: 1,
         playsinline: 1,
+        cc_load_policy: 0,
         autoplay: autoplayRef.current ? 1 : 0,
         ...externalPlayerVarsRef.current,
       },
@@ -87,6 +88,10 @@ export default function useYouTubePlayer({
                 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen');
             }
           } catch (err) {}
+
+          // 자막(CC) 끄기 — 자막 트랙 모듈 제거 (영상에 박힌 자막은 해당 없음)
+          try { e.target.unloadModule('captions'); } catch (err) {}
+          try { e.target.unloadModule('cc'); } catch (err) {}
 
           onReadyRef.current?.(e);
         },

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useData, todayLocal } from '../context/DataContext';
+import { adminSignIn } from '../lib/firebase';
 
 /**
  * 👑 Step-by-Step 코오롱 전용 관리자 대시보드
@@ -43,7 +44,6 @@ const AdminPage = () => {
     location: locParam
   });
 
-  const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
 
   // 🎵 댄스 큐 앱(dance-instructor-player) 동기화 — 메인곡 업로드/수정 시 호출
   // role 매핑: 우리 'kolon' ↔ 큐앱 'kolong', 우리 'sindun'(중리) ↔ 큐앱 'jungri'
@@ -139,12 +139,18 @@ const AdminPage = () => {
     }
   };
 
-  const handleLogin = (e) => {
+  // 파이어베이스 관리자 계정으로 실제 로그인 — DB 쓰기 권한이 이 세션에 걸린다.
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (ADMIN_PASSWORD && password === ADMIN_PASSWORD) {
+    try {
+      await adminSignIn(password);
       setIsAuthenticated(true);
-    } else {
-      alert('비밀번호가 올바르지 않습니다.');
+    } catch (err) {
+      if (err?.code === 'auth/too-many-requests') {
+        alert('시도가 너무 잦아 잠시 잠겼습니다. 몇 분 뒤 다시 해주세요.');
+      } else {
+        alert('비밀번호가 올바르지 않습니다.');
+      }
     }
   };
 
@@ -291,13 +297,9 @@ const AdminPage = () => {
             <input
               type="password"
               className="login-input"
-              placeholder="비밀번호 4자리 입력"
+              placeholder="비밀번호 입력"
               value={password}
-              onChange={(e) => {
-                const val = e.target.value;
-                setPassword(val);
-                if (ADMIN_PASSWORD && val === ADMIN_PASSWORD) setIsAuthenticated(true);
-              }}
+              onChange={(e) => setPassword(e.target.value)}
               autoFocus
             />
             <button type="submit" className="login-btn">관리자 입장</button>

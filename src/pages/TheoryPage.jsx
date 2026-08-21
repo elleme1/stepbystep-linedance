@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ref, onValue, set, remove, push } from 'firebase/database';
-import { db, authReady } from '../lib/firebase';
+import { db, authReady, adminSignIn } from '../lib/firebase';
 import { todayLocal } from '../context/DataContext';
 import './VideoPage.css';
 
@@ -240,7 +240,6 @@ export default function TheoryPage() {
   const [classTitle, setClassTitle] = useState('');
   const [classDate, setClassDate] = useState(todayLocal());
   const [classSaving, setClassSaving] = useState(false);
-  const CLASS_ADMIN_PW = import.meta.env.VITE_ADMIN_PASSWORD;
 
   useEffect(() => {
     let cancelled = false;
@@ -283,12 +282,18 @@ export default function TheoryPage() {
     return m ? m[1] : null;
   };
 
-  const handleClassUnlock = () => {
-    if (CLASS_ADMIN_PW && classPw === CLASS_ADMIN_PW) {
+  // 파이어베이스 관리자 계정으로 실제 로그인 — DB 쓰기 권한이 이 세션에 걸린다.
+  const handleClassUnlock = async () => {
+    try {
+      await adminSignIn(classPw);
       setClassUnlocked(true);
       setClassPw('');
-    } else {
-      alert('비밀번호가 올바르지 않습니다.');
+    } catch (err) {
+      if (err?.code === 'auth/too-many-requests') {
+        alert('시도가 너무 잦아 잠시 잠겼습니다. 몇 분 뒤 다시 해주세요.');
+      } else {
+        alert('비밀번호가 올바르지 않습니다.');
+      }
     }
   };
 

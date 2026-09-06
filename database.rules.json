@@ -1,6 +1,6 @@
 {
   "rules": {
     ".read": "auth != null",
-    ".write": "auth != null"
+    ".write": "auth != null && auth.token.email === 'qaz49489+stepbystep-admin@gmail.com'"
   }
 }

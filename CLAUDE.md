@@ -30,13 +30,14 @@
   - `/hiddenSongs/{id}`: 기본곡 숨김 (구 `hiddenSongIds`)
   - `/songOverrides/{id}`: 기본곡 메타 덮어쓰기 (구 `songOverrides`)
 - **클라이언트**: `DataContext`가 `onValue`로 세 노드 모두 실시간 구독 → 어느 디바이스에서 변경이 일어나도 모든 디바이스에 즉시 반영
-- **환경변수** (Vercel + `.env.local`): `VITE_FIREBASE_*` 7개 + `VITE_ADMIN_PASSWORD`
-- **보안 규칙** (`database.rules.json`): **2026-06-01 `auth != null`로 잠금 + 익명 인증(Anonymous) 활성화** → Firebase 1차 "insecure rules"(미인증 접근) 경고 해소. 단, 방문자 전원이 익명 토큰을 받으므로 **쓰기가 관리자에게 제한된 건 아님**(경고만 끈 수준). **2026-06-04 후속**: Firebase가 다시 "로그인한 모든 사용자가 읽기/쓰기 가능" 경고 메일 발송(= 익명 인증 + `auth != null`의 예고된 결과). 사용자에게 길 A(관리자 Firebase 로그인 + `/admins/{uid}` 화이트리스트) / B(`.write:false` + Vercel 서버함수 + 서비스계정) / C(현상 유지 + 경고 메일 음소거) 제시 → **사용자가 길 C 선택**. 데이터는 공개 곡 정보뿐, 실재 위험은 복구 가능한 '쓰기 반달리즘'뿐이라 현 수준을 의도적으로 수용. 진짜 강화(관리자 신분 → 쓰기 제한)는 Phase 6로 **보류**(긴급 버그 아님). 읽기 경고는 회원 비로그인 열람이 필요해 어느 길로 가도 잔존 가능.
+- **환경변수** (Vercel + `.env.local`): `VITE_FIREBASE_*` 7개 + `VITE_DANCE_CUE_API/TOKEN` + `VITE_DANCE_CUE_PAGE_PASSWORD`(댄스큐 게이트, 기본 0402) + `VITE_JIVE_GATE_PASSWORD`(자이브 방 게이트, 기본 0402). `VITE_ADMIN_PASSWORD`는 **2026-08-21 이후 코드에서 참조 없음(죽은 키)** — 관리자 입장은 아래 Firebase 이메일 로그인.
+- **보안 규칙 — 현재 = 길 A 채택 (2026-08-21, `1bc0184`)**: 관리자 입장이 화면 비밀번호 비교 → **Firebase 이메일 로그인**(`src/lib/firebase.js`의 `adminSignIn`, `ADMIN_EMAIL` 코드 고정 — 이메일은 비밀 아님, 비밀번호만 비밀)으로 바뀌었고, 실서버 규칙은 **읽기 `auth != null`(익명 포함) / 쓰기 관리자 이메일만**. `authReady`는 브라우저에 남은 관리자 세션이 있으면 그것을 쓰고 없을 때만 익명 세션 발급(무조건 익명 로그인하면 관리자 세션을 덮어씀). **2026-09-06 REST 검침**: 미인증 읽기 401 / 익명 읽기 200 / 익명 쓰기 401(Permission denied) — 규칙 원문의 원천은 Firebase 콘솔이며, 저장소 `database.rules.json`은 그 동작을 거울처럼 옮긴 것. 앱 안의 RTDB 쓰기 6곳(곡 등록·수정·삭제, 수업기록 등록·삭제)은 전부 관리자 로그인 뒤에만 도달 — 회원 쪽 익명 쓰기 없음(전수 확인).
+  - 이력: 2026-06-01 `auth != null` + 익명 인증 → 1차 경고 해소 / 2026-06-04 "모든 로그인 사용자 쓰기" 재경고 → 당시 사용자 길 C(현상 유지) 선택 / 2026-08-21 길 A로 격상.
 - **검증 완료** (로컬 + prod): admin에서 곡 추가 → RTDB 즉시 반영 → 다른 디바이스(시크릿 창)에서도 즉시 노출 → 삭제 동기화까지 확인.
 
 ## ⚠️ 알려진 부수 결함 (우선순위순)
 
-1. **🟡 보안 규칙 — 현 수준 의도적 수용(2026-06-04 사용자 결정, 길 C)** (`database.rules.json`) — 2026-06-01 `.read/.write: "auth != null"` + 익명 인증 활성화로 1차 경고 해소(gcloud Identity Toolkit Admin API로 적용·REST로 검증: 미인증 401 / 익명 토큰 200 / 콘솔 UI "사용 설정됨"). 익명 토큰을 누구나 받으므로 쓰기 제한은 없음 → 2026-06-04 Firebase가 "로그인한 모든 사용자 읽기/쓰기" 재경고. **사용자가 현상 유지 + 메일 음소거(길 C) 선택** — 데이터는 공개 곡 정보뿐, 실재 위험은 복구 가능한 '쓰기 반달리즘'뿐. **불러서 고치지 말 것(긴급 버그 아님).** 향후 강화 옵션 보존: 길 A(`/admins/{uid}: true` 화이트리스트 + AdminPage 평문 비번 1234 → Firebase Auth 로그인) 또는 길 B(`.write:false` + Vercel 서버함수 + 서비스계정 키). 이메일 음소거는 계정 알림 설정이라 사용자 본인이 처리(마담은 계정 설정 안 건드림).
+1. ~~🟡 보안 규칙 길 C~~ — **해소(2026-08-21 길 A 채택)**: 쓰기는 관리자 Firebase 이메일 로그인 세션만 가능(위 🔥 절 참조). 남은 것: 읽기는 회원 비로그인 열람을 위해 익명 허용이 의도(Firebase "읽기 경고" 메일은 잔존 가능 — 계정 알림 설정은 사용자 영역). 관리자 비밀번호 분실 시 Firebase 콘솔 Authentication에서 재설정.
 2. ~~🟡 songSchedule 미반영~~ — **해소(2026-06-10, `2a6f4e9`)**: DataContext.allSongs가 병합곡 전체의 지점별 최신 `addedDate` 기준으로 `isThisWeek*` 플래그를 동적 재계산. songSchedule은 이제 기본곡의 날짜/장소 원천일 뿐 "이번주" 판정에 단독 권위가 없음.
 3. ~~🟡 자동 추출 실패 UX~~ — **해소(2026-06-10 전반 점검)**: noembed 실패 시 토스트 안내 + 제출 시 빈 제목 차단(AdminPage).
 4. **🟢 데드 코드** — `AdminPage.songInfo.location`은 handleAddSong에서 `locParam`으로 어차피 덮어씌워짐(동작 영향 없음). `songs.js`의 `getSongsForLocation`/`kolonOrder`/`sindunOrder`도 어디서도 import되지 않는 죽은 코드 — 단 두 order 배열은 "수업 순서" 큐레이션 기록이라 **운영 의도 확인 전 삭제 보류**(화면 순서에 적용할지 / 지울지는 사용자 결정 필요).

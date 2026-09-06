@@ -6,6 +6,12 @@
       "runtimeExecutable": "/usr/local/bin/node",
       "runtimeArgs": ["/usr/local/bin/npx", "vite", "--port", "5178", "--strictPort"],
       "port": 5178
+    },
+    {
+      "name": "stepbystep-preview",
+      "runtimeExecutable": "/usr/local/bin/node",
+      "runtimeArgs": ["/usr/local/bin/npx", "vite", "preview", "--port", "4173", "--strictPort"],
+      "port": 4173
     }
   ]
 }

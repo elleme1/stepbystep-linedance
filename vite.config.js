@@ -21,7 +21,7 @@ export default defineConfig({
         name: '스텝바이스텝',
         short_name: '스텝바이스텝',
         description: '라인댄스 회원을 위한 수업 일정, 안무 영상, 공지사항 앱',
-        theme_color: '#0a0a0f',
+        theme_color: '#fff7f5',
         icons: [
           {
             src: 'logo-192.png',

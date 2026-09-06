@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useData, todayLocal } from '../context/DataContext';
-import { adminSignIn } from '../lib/firebase';
+import { adminSignIn, adminSignInErrorMessage, writeErrorMessage } from '../lib/firebase';
 
 /**
  * 👑 Step-by-Step 코오롱 전용 관리자 대시보드
@@ -146,11 +146,7 @@ const AdminPage = () => {
       await adminSignIn(password);
       setIsAuthenticated(true);
     } catch (err) {
-      if (err?.code === 'auth/too-many-requests') {
-        alert('시도가 너무 잦아 잠시 잠겼습니다. 몇 분 뒤 다시 해주세요.');
-      } else {
-        alert('비밀번호가 올바르지 않습니다.');
-      }
+      alert(adminSignInErrorMessage(err));
     }
   };
 
@@ -260,7 +256,7 @@ const AdminPage = () => {
       });
     } catch (err) {
       console.error('곡 저장 실패:', err);
-      alert('저장 중 오류가 발생했습니다. 네트워크 상태를 확인하고 다시 시도해주세요.');
+      alert(writeErrorMessage(err, '저장'));
     } finally {
       setIsSaving(false);
     }
@@ -523,7 +519,7 @@ const AdminPage = () => {
                               await removeSong(song.id);
                             } catch (err) {
                               console.error('곡 삭제 실패:', err);
-                              alert('삭제 중 오류가 발생했습니다. 네트워크 상태를 확인해주세요.');
+                              alert(writeErrorMessage(err, '삭제'));
                               return;
                             }
                             // 큐앱 메인 슬롯과 일치하면 같이 정리 — 실패는 토스트에 구분 표시

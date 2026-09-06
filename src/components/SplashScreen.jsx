@@ -21,7 +21,8 @@ export default function SplashScreen({ onFinish }) {
     return (
         <div style={{
             position: 'fixed',
-            inset: 0,
+            // inset은 iOS 14.5+ — 구형 아이폰(사파리 12 하향 타깃)에서는 무시되므로 풀어 쓴다
+            top: 0, right: 0, bottom: 0, left: 0,
             zIndex: 9999,
             display: 'flex',
             flexDirection: 'column',

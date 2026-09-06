@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ref, onValue, set, remove, push } from 'firebase/database';
-import { db, authReady, adminSignIn } from '../lib/firebase';
+import { db, authReady, adminSignIn, adminSignInErrorMessage, writeErrorMessage } from '../lib/firebase';
 import { todayLocal } from '../context/DataContext';
 import './VideoPage.css';
 
@@ -289,11 +289,7 @@ export default function TheoryPage() {
       setClassUnlocked(true);
       setClassPw('');
     } catch (err) {
-      if (err?.code === 'auth/too-many-requests') {
-        alert('시도가 너무 잦아 잠시 잠겼습니다. 몇 분 뒤 다시 해주세요.');
-      } else {
-        alert('비밀번호가 올바르지 않습니다.');
-      }
+      alert(adminSignInErrorMessage(err));
     }
   };
 
@@ -317,7 +313,7 @@ export default function TheoryPage() {
       setShowClassForm(false);
     } catch (e) {
       console.error('수업 영상 저장 실패:', e);
-      alert('저장 중 오류가 발생했습니다. 네트워크를 확인해주세요.');
+      alert(writeErrorMessage(e, '저장'));
     } finally {
       setClassSaving(false);
     }
@@ -329,7 +325,7 @@ export default function TheoryPage() {
       await remove(ref(db, `jiveClassVideos/${v.key}`));
     } catch (e) {
       console.error('수업 영상 삭제 실패:', e);
-      alert('삭제 중 오류가 발생했습니다.');
+      alert(writeErrorMessage(e, '삭제'));
     }
   };
 
@@ -755,7 +751,7 @@ export default function TheoryPage() {
                                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                               />
                               <div style={{
-                                position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 background: 'rgba(0,0,0,.3)', color: '#fff', fontSize: '1.2rem'
                               }}>▶</div>
                             </div>
@@ -973,7 +969,7 @@ export default function TheoryPage() {
                   allow="autoplay; fullscreen"
                   allowFullScreen
                   title="구글 드라이브 수업 영상"
-                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none' }}
+                  style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
                 />
               </div>
               <div style={{ fontSize: '.75rem', color: '#888', textAlign: 'center', marginTop: '6px' }}>

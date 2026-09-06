@@ -25,6 +25,13 @@ export const DataProvider = ({ children }) => {
     authReady.then(() => {
       if (cancelled) return;
 
+      // 읽기 거부(익명 로그인 실패·규칙 강화 등) 시 SDK는 오류 콜백이 없으면
+      // 리스너를 소리 없이 제거한다 — 최소한 로딩 상태는 풀어(딥링크 영구 '불러오는 중' 방지) 기록
+      const onSubError = (what) => (err) => {
+        console.warn(`[DataContext] ${what} 구독 실패:`, err?.code || err);
+        setIsLoaded(true);
+      };
+
       const unsubSongs = onValue(ref(db, 'songs'), (snap) => {
         const data = snap.val() || {};
         const arr = Object.values(data)
@@ -42,16 +49,16 @@ export const DataProvider = ({ children }) => {
           });
         setLocalSongs(arr);
         setIsLoaded(true);
-      });
+      }, onSubError('songs'));
 
       const unsubHidden = onValue(ref(db, 'hiddenSongs'), (snap) => {
         const data = snap.val() || {};
         setHiddenSongIds(Object.keys(data).map(Number));
-      });
+      }, onSubError('hiddenSongs'));
 
       const unsubOverrides = onValue(ref(db, 'songOverrides'), (snap) => {
         setSongOverrides(snap.val() || {});
-      });
+      }, onSubError('songOverrides'));
 
       cleanup = () => {
         unsubSongs();

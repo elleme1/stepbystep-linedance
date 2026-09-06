@@ -97,6 +97,12 @@ export default function useYouTubePlayer({
         },
         onStateChange: (e) => {
           if (!mountedRef.current) return;
+          // 자막(CC) 끄기 — captions 모듈은 '재생 시작' 때 비로소 로드되고
+          // 곡 전환(loadVideoById)마다 새로 만들어지므로 PLAYING마다 언로드해야
+          // 실제로 꺼진다. (onReady 시점 호출은 모듈이 아직 없어 공회전)
+          if (e.data === window.YT?.PlayerState?.PLAYING) {
+            try { e.target.unloadModule('captions'); } catch (err) {}
+          }
           onStateChangeRef.current?.(e);
         },
       },

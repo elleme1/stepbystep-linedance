@@ -24,7 +24,7 @@ export default function Layout() {
     if (!isMainTab && !isOurSubPage) {
         return (
             <div style={{ backgroundColor: 'var(--bg-primary)', height: '100dvh', display: 'flex', flexDirection: 'column' }}>
-                <div className="layout-sub-topbar" style={{ height: 'max(54px, env(safe-area-inset-top))', flexShrink: 0, backgroundColor: 'var(--bg-primary)' }}></div>
+                <div className="layout-sub-topbar" style={{ height: 'env(safe-area-inset-top)', flexShrink: 0, backgroundColor: 'var(--bg-primary)' }}></div>
                 <div style={{ flex: 1, position: 'relative', zIndex: 1, overflow: 'auto', paddingBottom: 'calc(80px + env(safe-area-inset-bottom))' }}>
                     <Outlet />
                 </div>
@@ -50,7 +50,9 @@ export default function Layout() {
             <header style={{
                 position: 'sticky', top: 0, zIndex: 9998,
                 backgroundColor: 'var(--nav-bg)', backdropFilter: 'blur(10px)',
-                paddingTop: 'max(54px, env(safe-area-inset-top))',
+                // 상태바가 페이지 위에 겹치지 않게(status-bar-style=default) 바꿨으므로
+                // 54px 고정 여백은 불필요 — 노치 기기의 safe-area만 남긴다
+                paddingTop: 'env(safe-area-inset-top)',
                 borderBottom: '1px solid var(--border-color)'
             }}>
                 <div style={{ position: 'relative', height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

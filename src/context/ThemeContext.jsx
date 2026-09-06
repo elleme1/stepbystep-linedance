@@ -13,6 +13,11 @@ export function ThemeProvider({ children }) {
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem('sbs-theme2', theme);
+        // 상태바·브라우저 툴바 색을 테마에 맞춤 (iOS 홈화면 앱은 status-bar-style=default에서 이 색을 따름)
+        try {
+            const meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', theme === 'dark' ? '#0b1120' : '#fff7f5');
+        } catch (e) { /* 무시 */ }
     }, [theme]);
 
     const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');

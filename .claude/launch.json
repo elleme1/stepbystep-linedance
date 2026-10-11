@@ -4,14 +4,41 @@
     {
       "name": "stepbystep-dev",
       "runtimeExecutable": "/usr/local/bin/node",
-      "runtimeArgs": ["/usr/local/bin/npx", "vite", "--port", "5178", "--strictPort"],
+      "runtimeArgs": [
+        "/usr/local/bin/npx",
+        "vite",
+        "--port",
+        "5178",
+        "--strictPort"
+      ],
       "port": 5178
     },
     {
       "name": "stepbystep-preview",
       "runtimeExecutable": "/usr/local/bin/node",
-      "runtimeArgs": ["/usr/local/bin/npx", "vite", "preview", "--port", "4173", "--strictPort"],
+      "runtimeArgs": [
+        "/usr/local/bin/npx",
+        "vite",
+        "preview",
+        "--port",
+        "4173",
+        "--strictPort"
+      ],
       "port": 4173
+    },
+    {
+      "name": "jirubak-dev",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "5190",
+        "--directory",
+        "/Users/junghyunchoi/Downloads/지루박",
+        "--bind",
+        "127.0.0.1"
+      ],
+      "port": 5190
     }
   ]
 }

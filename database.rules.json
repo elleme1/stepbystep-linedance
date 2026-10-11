@@ -1,6 +1,37 @@
 {
   "rules": {
-    ".read": "auth != null",
-    ".write": "auth != null && auth.token.email === 'qaz49489+stepbystep-admin@gmail.com'"
+    ".read": false,
+    ".write": false,
+    "songs": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email === 'qaz49489+stepbystep-admin@gmail.com'"
+    },
+    "hiddenSongs": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email === 'qaz49489+stepbystep-admin@gmail.com'"
+    },
+    "songOverrides": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email === 'qaz49489+stepbystep-admin@gmail.com'"
+    },
+    "jiveClassVideos": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email === 'qaz49489+stepbystep-admin@gmail.com'"
+    },
+    "jirubak": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+        "videos": {
+          ".read": "auth != null && auth.token.firebase.sign_in_provider === 'password' && auth.token.email !== 'qaz49489+stepbystep-admin@gmail.com'"
+        }
+      }
+    },
+    "jirubakShares": {
+      "$key": {
+        ".read": "auth != null",
+        ".write": "auth != null && auth.uid === 'IVwRSkVggoYoDhOtlVAMJReZPP13'"
+      }
+    }
   }
 }

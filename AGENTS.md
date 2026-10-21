@@ -41,6 +41,7 @@
 2. ~~🟡 songSchedule 미반영~~ — **해소(2026-06-10, `2a6f4e9`)**: DataContext.allSongs가 병합곡 전체의 지점별 최신 `addedDate` 기준으로 `isThisWeek*` 플래그를 동적 재계산. songSchedule은 이제 기본곡의 날짜/장소 원천일 뿐 "이번주" 판정에 단독 권위가 없음.
 3. ~~🟡 자동 추출 실패 UX~~ — **해소(2026-06-10 전반 점검)**: noembed 실패 시 토스트 안내 + 제출 시 빈 제목 차단(AdminPage).
 4. **🟢 데드 코드** — `AdminPage.songInfo.location`은 handleAddSong에서 `locParam`으로 어차피 덮어씌워짐(동작 영향 없음). `songs.js`의 `getSongsForLocation`/`kolonOrder`/`sindunOrder`도 어디서도 import되지 않는 죽은 코드 — 단 두 order 배열은 "수업 순서" 큐레이션 기록이라 **운영 의도 확인 전 삭제 보류**(화면 순서에 적용할지 / 지울지는 사용자 결정 필요).
+5. **🟢 npm audit 잔여 high 4건(2026-10-21 점검)** — 전부 `firebase → @firebase/firestore → @grpc/grpc-js@1.9.x` 한 줄기. `npm audit fix --force`는 firebase를 **9.14로 다운그레이드**하므로 절대 실행 금지. 최신 firebase 13.0도 같은 grpc-js 1.9 계열이라 상위 해결책 없음. 이 앱은 Firestore를 import하지 않고(RTDB만 사용) grpc-js는 Node 서버용 전송 계층이라 브라우저 번들 실노출 없음 — firebase가 grpc-js를 올리면 그때 `npm audit fix`로 해소.
 
 ## 🔧 2026-06-10 전반 점검(87-에이전트 감사) 수리 내역
 
